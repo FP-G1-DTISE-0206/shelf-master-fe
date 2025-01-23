@@ -5,7 +5,7 @@ import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 const NavigationBar: FC = () => {
   return (
     <>
-      <div className="navbar-container flex justify-between rounded-xl bg-[#FAFAFA] p-4 mb-6 items-center">
+      <div className="navbar-container flex justify-between rounded-xl bg-shelf-white p-4 items-center">
         <div className="navbar-container-left">
           <FontAwesomeIcon icon={faBars} />
         </div>

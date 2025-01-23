@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${rubik.className} antialiased bg-[#D9D9D9] h-screen`}
+        className={`${rubik.className} antialiased bg-shelf-light-grey h-screen`}
       >
         <NavigationBar />
         {children}

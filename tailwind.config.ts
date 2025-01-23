@@ -16,9 +16,11 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         "shelf-blue": "#4A69E2",
-        "shelf-black": "#232321",
         "shelf-orange": "#FFA52F",
         "shelf-white": "#FFFFFF",
+        "shelf-light-grey": "#E7E7E3",
+        "shelf-grey": "#70706E",
+        "shelf-black": "#232321",
         
       },
     },

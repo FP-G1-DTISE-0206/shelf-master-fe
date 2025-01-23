@@ -2,13 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faInstagram, faTwitter, faTiktok } from '@fortawesome/free-brands-svg-icons';
 
 import { FC } from "react";
-import { faI } from "@fortawesome/free-solid-svg-icons";
 
 const Footer:FC = () => {
   return (
     <>
       <div className="footer-container relative">
-        <div className="footer-top-container bg-shelf-blue text-shelf-white rounded-3xl px-4 pt-6 pb-16 relative -z-1 top-10">
+        <div className="footer-top-container bg-shelf-blue text-shelf-white rounded-3xl px-4 pt-6 pb-16">
           <h3 className="text-3xl font-bold mb-2">Join our KiksPlus Club & get 15% off</h3>
           <p className="text-base font-semibold mb-6">Sign up for free! Join the community.</p>
           <div className="subscription-container mb-8 flex gap-1">
@@ -21,7 +20,7 @@ const Footer:FC = () => {
         </div>
 
 
-        <div className="footer-bottom-container bg-shelf-black rounded-3xl px-4 pt-6 relative">
+        <div className="footer-bottom-container bg-shelf-black rounded-3xl px-4 pt-6">
           <div className="footer-bottom-section">
             <h4 className="text-shelf-orange font-bold text-2xl mb-1">About Us</h4>
             <p className="text-shelf-white font-medium text-base">We are the biggest hyperstore in the universe. We got you all cover with our exclusive collections and latest drops.</p>

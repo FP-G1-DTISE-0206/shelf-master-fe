@@ -4,9 +4,9 @@ import Image from "next/image";
 const ProductCard: FC = () => {
   return (
     <>
-      <div className="product-card-container w-[171px] lg:w-[318px] border-2 border-red-600">
-        <div className="product-image-container border-8 rounded-[32px] ">
-          <div className="hero-card-container relative rounded-3xl w-full  lg:h-[334px] h-[180px] overflow-hidden">
+      <div className="product-card-container w-[171px] lg:w-[318px]">
+        <div className="product-image-container border-8 border-shelf-white rounded-[32px] ">
+          <div className="hero-card-container relative rounded-3xl w-full lg:h-[334px] h-[164px] overflow-hidden">
             <Image
               src="/kohceng-senam.jpg"
               alt="hero-card"
