@@ -8,7 +8,7 @@ const ProductCard: FC = () => {
         <div className="product-image-container border-8 border-shelf-white rounded-[32px] ">
           <div className="hero-card-container relative rounded-3xl w-full xl:h-[334px] h-[164px] overflow-hidden">
             <Image
-              src="/kohceng-senam.jpg"
+              src="/images/kohceng-senam.jpg"
               alt="hero-card"
               layout="fill"
               className="object-cover"
