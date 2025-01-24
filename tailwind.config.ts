@@ -1,8 +1,6 @@
 import type { Config } from "tailwindcss";
 const flowbite = require("flowbite-react/tailwind");
 
-const flowbite = require("flowbite-react/tailwind");
-
 export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -21,11 +19,8 @@ export default {
         "shelf-light-grey": "#E7E7E3",
         "shelf-grey": "#70706E",
         "shelf-black": "#232321",
-        
       },
     },
   },
-  plugins: [
-    flowbite.plugin(),
-  ],
+  plugins: [flowbite.plugin()],
 } satisfies Config;
