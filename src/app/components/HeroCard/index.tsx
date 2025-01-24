@@ -20,7 +20,7 @@ const HeroCard: FC = () => {
         </div>
       </div>
       <Image
-        src="/kohceng-senam.jpg"
+        src="/images/kohceng-senam.jpg"
         alt="hero-card"
         layout="fill"
         className="object-cover" // Ensures the image fills the container
