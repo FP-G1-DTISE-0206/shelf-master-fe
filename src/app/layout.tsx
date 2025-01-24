@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "./globals.css";
-import '@fortawesome/fontawesome-svg-core/styles.css'
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import NavigationBar from "@/components/NavigationBar";
-import Footer from "@/components/Footer";
 config.autoAddCss = false;
-
 
 const rubik = Rubik({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-rubik",
-})
+});
 
 export const metadata: Metadata = {
   title: "Shelf Master",
@@ -29,9 +26,7 @@ export default function RootLayout({
       <body
         className={`${rubik.className} antialiased bg-shelf-light-grey h-screen`}
       >
-        <NavigationBar />
         {children}
-        {/* <Footer /> */}
       </body>
     </html>
   );
