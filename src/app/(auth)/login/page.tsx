@@ -1,12 +1,16 @@
 "use client";
+import { useToast } from "@/providers/ToastProvider";
 import {
   faFacebook,
   faGoogle,
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { FC } from "react";
+import { Spinner } from "flowbite-react";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
 import * as Yup from "yup";
 
 type LoginFormValues = {
@@ -19,10 +23,47 @@ const validationSchema = Yup.object({
     .email("Invalid email format")
     .required("Email is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(4, "Password must be at least 4 characters")
     .required("Password is required"),
 });
 const LoginPage: FC = () => {
+  const router = useRouter();
+  const { showToast } = useToast();
+  // const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const handleSubmit = async (
+    values: LoginFormValues,
+    formikHelpers: FormikHelpers<LoginFormValues>
+  ) => {
+    setError(null);
+    try {
+      console.log(values);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.error) {
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password");
+        } else {
+          setError(
+            result?.error || "An unexpected error occurred. Please try again."
+          );
+        }
+      } else if (!result?.error) {
+        showToast("Login success", "success");
+        router.push("/");
+      }
+      console.log("stil running");
+      formikHelpers.resetForm();
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+    }
+  };
   return (
     <div className="flex items-center justify-center bg-white px-8 max-sm:py-8">
       <div className="w-full max-w-md">
@@ -30,9 +71,7 @@ const LoginPage: FC = () => {
         <Formik<LoginFormValues>
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log("Form submitted", values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
@@ -64,15 +103,17 @@ const LoginPage: FC = () => {
                   className="text-red-500 text-sm"
                 />
               </div>
+              {error && <span className="text-red-500">{error}</span>}
               <div className="flex justify-between items-center">
                 <button
                   type="submit"
-                  className="bg-shelf-black text-white py-2 px-6 rounded-lg hover:bg-blue-700"
+                  className="bg-shelf-black text-white py-2 px-6 rounded-lg hover:bg-shelf-orange flex gap-2"
                   disabled={isSubmitting}
                 >
                   Sign In
+                  {isSubmitting && <Spinner color="warning" />}
                 </button>
-                <a href="#" className="text-blue-500 hover:underline">
+                <a href="#" className="text-shelf-orange hover:underline">
                   Forgot Password?
                 </a>
               </div>
@@ -106,7 +147,7 @@ const LoginPage: FC = () => {
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Don't have an account?{" "}
-                <a href="#" className="text-blue-500">
+                <a href="#" className="text-shelf-orange">
                   Sign Up
                 </a>
               </p>

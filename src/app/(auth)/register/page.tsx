@@ -1,26 +1,30 @@
 "use client";
+import { useToast } from "@/providers/ToastProvider";
 import {
   faFacebook,
   faGoogle,
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import axios from "axios";
+import { Spinner } from "flowbite-react";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import * as Yup from "yup";
 type SignupFormValues = {
-  fullName: string;
+  userName: string;
   email: string;
   password: string;
   confirmPassword: string;
 };
 const validationSchema = Yup.object({
-  fullName: Yup.string().required("Full Name is required"),
+  userName: Yup.string().required("Full Name is required"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(4, "Password must be at least 4 characters")
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), ""], "Passwords must match")
@@ -28,6 +32,32 @@ const validationSchema = Yup.object({
 });
 
 const RegisterPage: FC = () => {
+  const { showToast } = useToast();
+  const router = useRouter();
+  const handleSubmit = async (
+    values: SignupFormValues,
+    formikHelpers: FormikHelpers<SignupFormValues>
+  ) => {
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
+        values
+      );
+      if (data.success) {
+        showToast(data.message, "success");
+        formikHelpers.resetForm();
+        router.push("/login");
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(error.response?.data.message, "error");
+      } else {
+        showToast("An unexpected error occurred. Please try again.", "error");
+      }
+    }
+  };
   return (
     <div className="flex items-center justify-center bg-white px-8 max-sm:py-8">
       <div className="w-full max-w-md">
@@ -36,15 +66,13 @@ const RegisterPage: FC = () => {
         </h2>
         <Formik<SignupFormValues>
           initialValues={{
-            fullName: "",
+            userName: "",
             email: "",
             password: "",
             confirmPassword: "",
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log("Form submitted", values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
@@ -52,12 +80,12 @@ const RegisterPage: FC = () => {
                 <label className="block text-gray-700">Full Name</label>
                 <Field
                   type="text"
-                  name="fullName"
+                  name="userName"
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter your full name"
                 />
                 <ErrorMessage
-                  name="fullName"
+                  name="userName"
                   component="div"
                   className="text-red-500 text-sm"
                 />
@@ -106,11 +134,12 @@ const RegisterPage: FC = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-shelf-black text-white py-2 rounded-lg hover:bg-blue-700"
+                className="w-full bg-shelf-black text-white py-2 rounded-lg hover:bg-shelf-orange"
                 disabled={isSubmitting}
               >
                 Sign Up
               </button>
+              {isSubmitting && <Spinner className="w-full" color="warning" />}
               <div className="flex items-center my-4">
                 <hr className="flex-grow border-t border-gray-300" />
                 <span className="mx-4 text-gray-500">OR</span>
