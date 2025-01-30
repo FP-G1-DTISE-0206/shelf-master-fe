@@ -13,7 +13,7 @@ const AuthLayout: FC<NestedLayoutProps> = ({ children }) => {
             alt="hero-card"
             width={600}
             height={600}
-            className="object-cover w-full h-full"
+            className="object-cover w-full lg:max-h-[100vh] h-full"
           />
           <div className="absolute text-center text-white px-8">
             <h1 className="text-4xl font-bold mb-4">Welcome to Our Store</h1>
