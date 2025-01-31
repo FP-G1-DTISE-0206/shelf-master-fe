@@ -1,5 +1,4 @@
 import { FC } from "react";
-import Header from "../../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,13 +8,11 @@ import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import ProductCard from "../../components/ProductCard";
-import Footer from "../../components/Footer";
+import ProductCard from "../components/ProductCard";
 
 const Cart: FC = () => {
   return (
     <>
-      <Header />
       <div className="py-6">
 
         <h2 className="text-2xl font-bold">Saving to celebrate</h2>
@@ -127,8 +124,6 @@ const Cart: FC = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 };
