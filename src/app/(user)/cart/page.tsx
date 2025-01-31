@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,8 +9,8 @@ import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import ProductCard from "../components/ProductCard";
-import Footer from "../components/Footer";
+import ProductCard from "../../components/ProductCard";
+import Footer from "../../components/Footer";
 
 const Cart: FC = () => {
   return (
