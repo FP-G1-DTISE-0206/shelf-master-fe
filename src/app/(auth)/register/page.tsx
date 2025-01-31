@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import * as Yup from "yup";
@@ -170,9 +171,12 @@ const RegisterPage: FC = () => {
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Already have an account?{" "}
-                <a href="#" className="text-blue-500 hover:underline">
+                <Link
+                  href="/login"
+                  className="text-shelf-orange hover:underline"
+                >
                   Login
-                </a>
+                </Link>
               </p>
             </Form>
           )}

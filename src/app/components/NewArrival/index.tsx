@@ -4,7 +4,7 @@ import ProductCard from "../ProductCard";
 const NewArrival: FC = () => {
   return (
     <>
-      <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-32">
+      <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
         <div className="max-xl:text-2xl text-7xl font-semibold">
           Don’t miss out new drops
         </div>

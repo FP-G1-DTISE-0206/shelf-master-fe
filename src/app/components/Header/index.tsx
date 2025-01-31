@@ -60,7 +60,9 @@ const Header: FC = () => {
       {/* <h2 className="text-5xl font-black mt-10 mb-6 text-center">SHOP <span className="text-[#4A69E2]">SMART</span></h2>
       <HeroCard /> */}
       <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
-        <h1 className="font-extrabold text-xl">ShelfMaster</h1>
+        <Link href="/">
+          <h1 className="font-extrabold text-xl">ShelfMaster</h1>
+        </Link>
         <div className="flex xl:gap-10 max-xl:gap-2 items-center">
           <FontAwesomeIcon icon={faSearch} />
           {!session && (

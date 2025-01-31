@@ -11,8 +11,8 @@ import { FC } from "react";
 const Footer: FC = () => {
   return (
     <>
-      <div className="">
-        <div className="footer-top-container bg-shelf-blue text-shelf-white rounded-3xl">
+      <div className="mt-4">
+        <div className="bg-shelf-blue text-shelf-white rounded-3xl">
           <div className="grid max-xl:grid-cols-1 grid-cols-2 px-16 py-12">
             <div>
               <div className="max-lg:text-3xl text-5xl font-semibold mb-2">

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import * as Yup from "yup";
@@ -147,9 +148,9 @@ const LoginPage: FC = () => {
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Don't have an account?{" "}
-                <a href="#" className="text-shelf-orange">
+                <Link href="/register" className="text-shelf-orange">
                   Sign Up
-                </a>
+                </Link>
               </p>
             </Form>
           )}
