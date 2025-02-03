@@ -11,11 +11,11 @@ const uploadToBuilder = async (file: File): Promise<string> => {
     const binaryData = await file.arrayBuffer();
 
     const response = await axios.post(
-      `https://builder.io/api/v1/upload?name=${file.name}&folder=0a6a552ba3ca45ddb8979d943927e562`,
+      `https://builder.io/api/v1/upload?name=${file.name}&folder=${process.env.NEXT_PUBLIC_BUILDER_IO_FOLDER}`,
       binaryData,
       {
         headers: {
-          Authorization: "Bearer bpk-9904f99ed9fe4997b95163a7799fc36f", // Replace with your private API key
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_BUILDER_IO_KEY}`, // Replace with your private API key
           "Content-Type": file.type,
         },
       }
