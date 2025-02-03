@@ -8,22 +8,10 @@ import useProfile from "@/hooks/useProfile";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { ProfileResponse } from "@/types/profile";
+import ProfileDetailsSection from "./components/ProfileDetailsSection";
 
 const ProfilePage: FC = () => {
-  // const profile = {
-  //   id: 1,
-  //   name: "kohceng",
-  //   imageUrl: "/images/kohceng-senam.jpg",
-  //   email: "kohceng@gmail.com",
-  //   roles: [
-  //     {
-  //       id: 1,
-  //       name: "USER",
-  //     },
-  //   ],
-  // };
   const { data: session } = useSession();
-
   const {
     error: profileError,
     isLoading: isProfileLoading,
@@ -43,16 +31,10 @@ const ProfilePage: FC = () => {
             profile={profile as ProfileResponse}
             refetch={refetch}
           />
-          <div className="flex gap-5 text-wrap">
-            <div>
-              <div className="text-lg font-medium">Name</div>
-              <div className="text-lg font-medium">Email</div>
-            </div>
-            <div>
-              <div className="text-lg font-semibold">{profile?.userName}</div>
-              <div className="text-lg font-semibold">{profile?.email}</div>
-            </div>
-          </div>
+          <ProfileDetailsSection
+            profile={profile as ProfileResponse}
+            refetch={refetch}
+          />
         </div>
       </div>
       <div className="bg-shelf-white rounded-xl w-full">
