@@ -58,7 +58,7 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
         </div>
         <div className="flex flex-col gap-5">
           <Image
-            className="rounded-md lg:w-full"
+            className="rounded-md max-lg:w-full aspect-square object-cover"
             src={`${profile.imageUrl || "/images/default-profile.jpg"}`}
             width={150}
             height={150}
