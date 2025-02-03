@@ -6,6 +6,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import ClientProvider from "@/providers/ClientProvider";
 config.autoAddCss = false;
 
 const rubik = Rubik({
@@ -28,11 +29,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <SessionProvider refetchInterval={120} session={session}>
-        <body
-          className={`${rubik.className} antialiased bg-shelf-light-grey h-screen`}
-        >
-          <ToastProvider>{children}</ToastProvider>
-        </body>
+        <ClientProvider>
+          <body
+            className={`${rubik.className} antialiased bg-shelf-light-grey h-screen`}
+          >
+            <ToastProvider>{children}</ToastProvider>
+          </body>
+        </ClientProvider>
       </SessionProvider>
     </html>
   );

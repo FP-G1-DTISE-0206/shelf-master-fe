@@ -10,9 +10,13 @@ import { useToast } from "@/providers/ToastProvider";
 
 interface ProfileImageSectionProps {
   profile: ProfileResponse;
+  refetch: () => void;
 }
 
-const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
+const ProfileImageSection: FC<ProfileImageSectionProps> = ({
+  profile,
+  refetch,
+}) => {
   const [openModalUpload, setOpenModalUpload] = useState(false);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl);
   const { data: session } = useSession();
@@ -42,6 +46,7 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
         showToast("An unexpected error occurred. Please try again.", "error");
       }
     } finally {
+      refetch();
       setOpenModalUpload(false);
     }
   };
@@ -53,8 +58,8 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
         </div>
         <div className="flex flex-col gap-5">
           <Image
-            className="rounded-md lg:w-full"
-            src={`${profile.imageUrl ?? "/images/default-profile.jpg"}`}
+            className="rounded-md max-lg:w-full aspect-square object-cover"
+            src={`${profile.imageUrl || "/images/default-profile.jpg"}`}
             width={150}
             height={150}
             alt="User Profile"
