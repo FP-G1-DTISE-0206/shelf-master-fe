@@ -1,9 +1,9 @@
-import { Card, Button } from 'flowbite-react';
+import { Card, Dropdown, DropdownItem, Button } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faAdd } from "@fortawesome/free-solid-svg-icons";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 config.autoAddCss = false;
 
 const Products = () => {
@@ -19,9 +19,13 @@ const Products = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-2xl font-bold my-4">All Products</h1>
-      <p className="mb-5"><Link href={"/dashboard"}>Home</Link> {" > "} <span>All Products</span></p>
+    <div className="container mx-auto px-4 w-full">
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold my-4">All Products</h1>
+        <Button className="flex items-center h-10 mt-4 px-2 py-2 rounded-lg" as={Link} href={"/products/create"}>
+          <FontAwesomeIcon icon={faAdd} className="mt-[0.15rem]" />&nbsp;Product
+        </Button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product, index) => (
           <Card key={index} className="max-w-sm">
@@ -50,7 +54,16 @@ const Products = () => {
               </div>
               <div className="w-1/6">
                 <div className="mr-3 w-5">
-                  <FontAwesomeIcon icon={faEllipsis} className="ml-1 w-3" />
+                  <>
+                    <Dropdown
+                      label={<FontAwesomeIcon icon={faEllipsis} />}
+                      inline
+                      arrowIcon={false}
+                    >
+                      <DropdownItem>Detail</DropdownItem>
+                      <DropdownItem>Request Stock</DropdownItem>
+                    </Dropdown>
+                  </>
                 </div>
               </div>
             </div>
@@ -68,4 +81,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Products;

@@ -7,30 +7,7 @@ config.autoAddCss = false;
 
 const Dashboard = () => {
   return (
-    <div className="flex h-screen bg-gray-100 text-black">
-      <aside className="w-64 bg-white shadow-md">
-        <div className="p-5 text-xl font-bold">SHELFMASTER</div>
-        <nav className="mt-6">
-          <ul>
-            <li className="px-5 py-3 text-blue-500 bg-blue-100 rounded-lg flex items-center">
-              <FontAwesomeIcon icon={faChartLine} className="mr-3 w-5" />
-              Dashboard
-            </li>
-            <li className="px-5 py-3 text-gray-600 hover:text-blue-500 hover:bg-blue-100 rounded-lg flex items-center">
-              <FontAwesomeIcon icon={faBoxOpen} className="mr-3 w-5" />
-              Products
-            </li>
-            <li className="px-5 py-3 text-gray-600 hover:text-blue-500 hover:bg-blue-100 rounded-lg flex items-center">
-              <div className="mr-3 w-5">
-                <FontAwesomeIcon icon={faFile} className="ml-1 w-3" />
-              </div>
-              Mutation Forms
-            </li>
-          </ul>
-          <h4 className="mt-6 px-5 text-gray-500 uppercase text-sm">Categories</h4>
-        </nav>
-      </aside>
-
+    <div className="flex w-full bg-gray-100 text-black">
       <main className="flex-1 p-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Dashboard</h1>
