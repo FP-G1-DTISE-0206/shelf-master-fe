@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
@@ -62,6 +64,15 @@ const RegisterPage: FC = () => {
   return (
     <div className="flex items-center justify-center bg-white px-8 max-sm:py-8">
       <div className="w-full max-w-md">
+        <Link href="/">
+          <Image
+            className="rounded-md w-full object-cover"
+            src="/images/shelfmaster-medium.jpeg"
+            width={1000}
+            height={500}
+            alt="User Profile"
+          />
+        </Link>
         <h2 className="text-3xl font-bold text-center mb-6">
           Create an Account
         </h2>
@@ -148,13 +159,14 @@ const RegisterPage: FC = () => {
               </div>
               <div className="space-y-4">
                 <button
+                  onClick={() => signIn("google", { callbackUrl: "/" })}
                   type="button"
                   className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
                 >
                   <FontAwesomeIcon icon={faGoogle} className="w-6 h-6 mr-2" />
                   Sign Up with Google
                 </button>
-                <button
+                {/* <button
                   type="button"
                   className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
                 >
@@ -167,7 +179,7 @@ const RegisterPage: FC = () => {
                 >
                   <FontAwesomeIcon icon={faTwitter} className="w-6 h-6 mr-2" />
                   Sign Up with X (Twitter)
-                </button>
+                </button> */}
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Already have an account?{" "}
