@@ -30,7 +30,7 @@ const CreateProduct = () => {
   );
   return (
     <div className="container mx-auto px-4 w-full">
-      <Breadcrumb aria-Label="Solid background breadcrumb example" className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
+      <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
         <Breadcrumb.Item><Link href={"/products"}>Products</Link></Breadcrumb.Item>
         <Breadcrumb.Item>Create</Breadcrumb.Item>
       </Breadcrumb>
