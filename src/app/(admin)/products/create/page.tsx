@@ -62,7 +62,6 @@ const CreateProduct = () => {
                   label={<FontAwesomeIcon icon={faSearch} />}
                   inline
                   arrowIcon={false}
-                  className="right-10"
                 >
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option, idx) => (
