@@ -1,10 +1,6 @@
 "use client";
 import { useToast } from "@/providers/ToastProvider";
-import {
-  faFacebook,
-  faGoogle,
-  faTwitter,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
@@ -31,7 +27,6 @@ const validationSchema = Yup.object({
 const LoginPage: FC = () => {
   const router = useRouter();
   const { showToast } = useToast();
-  // const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const handleSubmit = async (
     values: LoginFormValues,
@@ -142,20 +137,6 @@ const LoginPage: FC = () => {
                   <FontAwesomeIcon icon={faGoogle} className="w-6 h-6 mr-2" />
                   Continue with Google
                 </button>
-                {/* <button
-                  type="button"
-                  className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
-                >
-                  <FontAwesomeIcon icon={faFacebook} className="w-6 h-6 mr-2" />
-                  Continue with Facebook
-                </button>
-                <button
-                  type="button"
-                  className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
-                >
-                  <FontAwesomeIcon icon={faTwitter} className="w-6 h-6 mr-2" />
-                  Continue with X (Twitter)
-                </button> */}
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Don't have an account?{" "}

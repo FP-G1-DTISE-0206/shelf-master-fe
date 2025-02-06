@@ -1,10 +1,6 @@
 "use client";
 import { useToast } from "@/providers/ToastProvider";
-import {
-  faFacebook,
-  faGoogle,
-  faTwitter,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
@@ -16,22 +12,12 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 import * as Yup from "yup";
 type SignupFormValues = {
-  userName: string;
   email: string;
-  password: string;
-  confirmPassword: string;
 };
 const validationSchema = Yup.object({
-  userName: Yup.string().required("Full Name is required"),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
-  password: Yup.string()
-    .min(4, "Password must be at least 4 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), ""], "Passwords must match")
-    .required("Confirm Password is required"),
 });
 
 const RegisterPage: FC = () => {
@@ -78,30 +64,13 @@ const RegisterPage: FC = () => {
         </h2>
         <Formik<SignupFormValues>
           initialValues={{
-            userName: "",
             email: "",
-            password: "",
-            confirmPassword: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
-              <div>
-                <label className="block text-gray-700">Full Name</label>
-                <Field
-                  type="text"
-                  name="userName"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your full name"
-                />
-                <ErrorMessage
-                  name="userName"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
               <div>
                 <label className="block text-gray-700">Email</label>
                 <Field
@@ -112,34 +81,6 @@ const RegisterPage: FC = () => {
                 />
                 <ErrorMessage
                   name="email"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Password</label>
-                <Field
-                  type="password"
-                  name="password"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Create a password"
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Confirm Password</label>
-                <Field
-                  type="password"
-                  name="confirmPassword"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Confirm your password"
-                />
-                <ErrorMessage
-                  name="confirmPassword"
                   component="div"
                   className="text-red-500 text-sm"
                 />
@@ -166,20 +107,6 @@ const RegisterPage: FC = () => {
                   <FontAwesomeIcon icon={faGoogle} className="w-6 h-6 mr-2" />
                   Sign Up with Google
                 </button>
-                {/* <button
-                  type="button"
-                  className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
-                >
-                  <FontAwesomeIcon icon={faFacebook} className="w-6 h-6 mr-2" />
-                  Sign Up with Facebook
-                </button>
-                <button
-                  type="button"
-                  className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
-                >
-                  <FontAwesomeIcon icon={faTwitter} className="w-6 h-6 mr-2" />
-                  Sign Up with X (Twitter)
-                </button> */}
               </div>
               <p className="text-center text-gray-600 mt-4">
                 Already have an account?{" "}
