@@ -1,15 +1,18 @@
 "use client";
 import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faClose, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import Link from "next/link";
-import { Dropdown, DropdownItem } from "flowbite-react";
+import { Button, Dropdown, DropdownItem } from "flowbite-react";
 import Image from "next/image";
+import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
+
 const AdminHeader: FC = () => {
+  const { isOpen, setIsOpen } = useSidebarAdminStore();
   const router = useRouter();
   const { data: session } = useSession();
   const { showToast } = useToast();
@@ -50,13 +53,20 @@ const AdminHeader: FC = () => {
       router.push("/login");
     }
   };
+
   return (
     <>
-      <div className="flex bg-shelf-white p-4 items-center">
-        <div className="flex xl:gap-10 max-xl:gap-2 items-center w-full justify-end">
+      <div className="fixed h-12 w-full flex bg-shelf-white items-center z-20">
+        <div className="flex xl:gap-10 max-xl:gap-2 items-center w-full justify-between px-10">
+          {
+            isOpen ? (<div onClick={()=>setIsOpen(false)}><FontAwesomeIcon icon={faClose} /></div>)
+            : (<div onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
+          }
+          <Link href="/" className="block md:hidden">
+            <h1 className="font-semibold">ShelfMaster</h1>
+          </Link>
           {session && (
             <>
-              {/* <FontAwesomeIcon icon={faUser} /> */}
               <Dropdown
                 label={<FontAwesomeIcon icon={faUser} />}
                 inline
