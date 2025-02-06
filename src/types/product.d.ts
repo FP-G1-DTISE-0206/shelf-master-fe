@@ -12,3 +12,10 @@ export interface CreateProductRequest {
   price: number;
   categories: number[];
 }
+
+export interface UpdateProductRequest {
+  id: number;
+  name: string;
+  price: number;
+  categories: number[];
+}

@@ -124,7 +124,7 @@ const Products = () => {
               <div className="w-1/6">
                 <div className="mr-3 w-5">
                   <Dropdown label={<FontAwesomeIcon icon={faEllipsis} />} inline arrowIcon={false}>
-                    <DropdownItem>Detail</DropdownItem>
+                    <DropdownItem as={Link} href={`/products/detail/${product.id}`}>Detail</DropdownItem>
                     <DropdownItem>Request Stock</DropdownItem>
                   </Dropdown>
                 </div>

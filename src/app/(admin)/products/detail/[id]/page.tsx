@@ -20,12 +20,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
-import { CreateProductRequest } from "@/types/product";
+import { UpdateProductRequest } from "@/types/product";
 import useAdminProductCategory from "@/hooks/useAdminProductCategory";
 //import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
-import useCreateProduct from "@/hooks/useCreateProduct";
+import useUpdateProduct from "@/hooks/useUpdateProduct";
+import useAdminProductDetail from "@/hooks/useAdminProductDetail";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
+import { useParams } from "next/navigation";
+import CustomSpinner from "@/components/CustomSpinner";
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -35,33 +38,58 @@ const validationSchema = Yup.object({
     .required("Price is required"),
 });
 
-const CreateProduct = () => {
+const UpdateProduct = () => {
+  const { id }: { id: string } = useParams();
   const { data: session } = useSession();
   //const { search, setSearch } = useSearchPaginationStore();
   const { categories } = useAdminProductCategory(session?.accessToken as string);
+  const { 
+    product, isLoading, errorProductDetail, refetch, 
+  } = useAdminProductDetail(session?.accessToken as string, id);
   const [query, setQuery] = useState("");
-  const { createProduct, data } = useCreateProduct(session?.accessToken as string);
+  const { updateProduct } = useUpdateProduct(session?.accessToken as string);
+
+  if (errorProductDetail) {
+    return <div className="align-middle justify-center">Error: {errorProductDetail.message}</div>;
+  }
+  if (isLoading) {
+    return (
+      <div className="flex min-h-60 align-middle justify-center">
+        <CustomSpinner />
+      </div>
+    );
+  }
+  if(!product) {
+    return <div className="align-middle justify-center">No such product</div>;
+  }
   
+  const initialValues: UpdateProductRequest = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    categories: product.categories.map(category => category.id),
+  }
+
   const handleSubmit = async (
-    values: CreateProductRequest
+    values: UpdateProductRequest
   ) => {
       try {
-        createProduct({creationData: values});
+        updateProduct({id: id, updateData: values});
+        refetch();
       } catch (error) {
         console.error("An unexpected error occurred:", error);
-      } finally {
-    }
+      }
   };
 
   return (
     <div className="container mx-auto px-4 w-full">
       <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
         <Breadcrumb.Item><Link href={"/products"}>Products</Link></Breadcrumb.Item>
-        <Breadcrumb.Item>Create</Breadcrumb.Item>
+        <Breadcrumb.Item>Detail</Breadcrumb.Item>
       </Breadcrumb>
       <Card className="w-full">
-        <Formik<CreateProductRequest>
-          initialValues={{ name: "", price: 0, categories: [] }}
+        <Formik<UpdateProductRequest>
+          initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -166,10 +194,16 @@ const CreateProduct = () => {
                     <p className="text-gray-500 text-sm mt-2">Jpeg, png are allowed. Max 1MB.</p>
                   </div>
                 </div>
-                <Button gradientDuoTone="purpleToPink" className="w-full mt-5"
-                  disabled={isSubmitting} type="submit">
-                  Create Product
-                </Button>
+                <div className="w-full px-14 flex gap-5">
+                  <Button color="blue" className="w-1/2 mt-5"
+                    disabled={isSubmitting} type="submit">
+                    Update
+                  </Button>
+                  <Button color="failure" className="w-1/2 mt-5"
+                    disabled={isSubmitting}>
+                    Delete
+                  </Button>
+                </div>
               </div>
             </Form>
           )}
@@ -179,4 +213,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;
