@@ -6,15 +6,15 @@ import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationSto
 
 const fetchProductByAdmin = async (
   accessToken: string,
-  currentPage: number,
-  itemsPerPage: number,
+  page: number,
+  length: number,
   field: string,
   order: string,
   search: string
 ): Promise<ResponseWithPagination> => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/product?`
-    + `start=${(currentPage - 1) * itemsPerPage}&length=${itemsPerPage}`
+    + `start=${(page - 1) * length}&length=${length}`
     + `&field=${field}&order=${order}&search=${search}`,
     {
       headers: {
@@ -37,8 +37,6 @@ const useAdminProduct = (accessToken: string) => {
     queryKey: ["fetchProductByAdmin", accessToken, page, length, field, order, search],
     queryFn: () =>
       fetchProductByAdmin(accessToken, page, length, field, order, search),
-    staleTime: 60 * 1000,
-    gcTime: 60 * 1000,
   });
 
   return {
