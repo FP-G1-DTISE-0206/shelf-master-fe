@@ -21,9 +21,9 @@ import {
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { CreateProductRequest } from "@/types/product";
-import useAdminProductCategory from "@/hooks/useAdminProductCategory";
-//import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
-import useCreateProduct from "@/hooks/useCreateProduct";
+import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
+import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
+import useCreateProduct from "@/hooks/product/useCreateProduct";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 
@@ -37,10 +37,9 @@ const validationSchema = Yup.object({
 
 const CreateProduct = () => {
   const { data: session } = useSession();
-  //const { search, setSearch } = useSearchPaginationStore();
+  const { search, setSearch } = useSearchPaginationStore();
   const { categories } = useAdminProductCategory(session?.accessToken as string);
-  const [query, setQuery] = useState("");
-  const { createProduct, data } = useCreateProduct(session?.accessToken as string);
+  const { createProduct } = useCreateProduct(session?.accessToken as string);
   
   const handleSubmit = async (
     values: CreateProductRequest
@@ -99,7 +98,7 @@ const CreateProduct = () => {
                 <div className="w-full relative">
                   <Label htmlFor="category" className="font-medium">Category</Label>
                   <TextInput id="category" name="category" type="text" placeholder="Enter category"
-                    value={query} onChange={(e) => {setQuery(e.target.value)}}/>
+                    value={search} onChange={(e) => {setSearch(e.target.value)}}/>
                   <div className="absolute right-2 bottom-3">
                     <Dropdown
                       label={<FontAwesomeIcon icon={faSearch} />}
@@ -114,7 +113,7 @@ const CreateProduct = () => {
                               if (!values.categories.includes(option.id)) {
                                 setFieldValue("categories", [...values.categories, option.id]);
                               }
-                              setQuery("");
+                              setSearch("");
                             }}
                           >
                             {option.name}

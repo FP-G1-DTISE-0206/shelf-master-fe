@@ -62,8 +62,8 @@ const AdminHeader: FC = () => {
             isOpen ? (<div onClick={()=>setIsOpen(false)}><FontAwesomeIcon icon={faClose} /></div>)
             : (<div onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
           }
-          <Link href="/" className="block md:hidden">
-            <h1 className="font-semibold">ShelfMaster</h1>
+          <Link href="/">
+            <h1 className="font-semibold md:text-xl">ShelfMaster</h1>
           </Link>
           {session && (
             <>

@@ -10,14 +10,16 @@ import { faMinus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { UpdateProductRequest } from "@/types/product";
-import useAdminProductCategory from "@/hooks/useAdminProductCategory";
-import useUpdateProduct from "@/hooks/useUpdateProduct";
-import useDeleteProduct from "@/hooks/useDeleteProduct";
-import useAdminProductDetail from "@/hooks/useAdminProductDetail";
+import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
+import useUpdateProduct from "@/hooks/product/useUpdateProduct";
+import useDeleteProduct from "@/hooks/product/useDeleteProduct";
+import useAdminProductDetail from "@/hooks/product/useAdminProductDetail";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 import { useParams } from "next/navigation";
 import CustomSpinner from "@/components/CustomSpinner";
+import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
@@ -29,11 +31,11 @@ const UpdateProduct = () => {
   const [transactionType, setTransactionType] = useState<string>("");
   const { id }: { id: string } = useParams();
   const { data: session } = useSession();
+  const { search, setSearch } = useSearchPaginationStore();
   const { categories } = useAdminProductCategory(session?.accessToken as string);
   const { 
     product, isLoading, errorProductDetail, refetch,
   } = useAdminProductDetail(session?.accessToken as string, id);
-  const [query, setQuery] = useState("");
   const { updateProduct } = useUpdateProduct(session?.accessToken as string);
   const { deleteProduct } = useDeleteProduct(session?.accessToken as string);
 
@@ -116,7 +118,7 @@ const UpdateProduct = () => {
                 </div>
                 <div className="w-full relative">
                   <Label htmlFor="category" className="font-medium">Category</Label>
-                  <TextInput id="category" name="category" type="text" placeholder="Enter category" value={query} onChange={(e) => setQuery(e.target.value)} />
+                  <TextInput id="category" name="category" type="text" placeholder="Enter category" value={search} onChange={(e) => setSearch(e.target.value)} />
                   <div className="absolute right-2 bottom-3">
                     <Dropdown label={<FontAwesomeIcon icon={faSearch} />} inline arrowIcon={false}>
                       {categories?.length > 0 ? categories.map((option, idx) => (
@@ -124,7 +126,7 @@ const UpdateProduct = () => {
                           if (!values.categories.includes(option.id)) {
                             setFieldValue("categories", [...values.categories, option.id]);
                           }
-                          setQuery("");
+                          setSearch("");
                         }}>
                           {option.name}
                         </Dropdown.Item>
@@ -172,17 +174,16 @@ const UpdateProduct = () => {
                 </div>
               </div>
               
-              <Modal show={openModalConfirmation} onClose={() => setOpenModalConfirmation(false)}>
-                <Modal.Header>Confirmation changes</Modal.Header>
-                <Modal.Body>Are you sure you want to proceed with this action?</Modal.Body>
-                <Modal.Footer className="flex justify-between bg-ghost-white">
-                  <Button color="failure" onClick={handleConfirmation}>Yes</Button>
-                  <Button onClick={() => {
-                    setOpenModalConfirmation(false);
-                    setSubmitting(false);
-                  }}>No</Button>
-                </Modal.Footer>
-              </Modal>
+              <ConfirmationModal 
+                title="Confirmation changes"
+                message="Are you sure you want to proceed with this action?"
+                onClose={() => {
+                  setOpenModalConfirmation(false);
+                  setSubmitting(false);
+                }}
+                onConfirm={handleConfirmation}
+                isOpen={openModalConfirmation}
+              />
             </Form>
           )}
         </Formik>
