@@ -7,7 +7,9 @@ const PUBLIC_PATHS = [
   "/register",
   "/search",
   "/product",
-  "/set-password",
+  "/setup-account",
+  "/forgot-password",
+  "/setup-password",
 ];
 const PROTECTED_PATHS = [
   "/dashboard",

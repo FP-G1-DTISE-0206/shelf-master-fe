@@ -7,15 +7,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import * as Yup from "yup";
 import CheckingTokenCard from "../components/CheckingTokenCard";
-import TokenExpiredCard from "../components/TokenExpiredCard";
+import ForgotTokenExpiredCard from "../components/ForgotTokenExpiredCard";
 import TokenNotFoundCard from "../components/TokenNotFoundCard";
-type SetupAccountFormValues = {
+type SetupPasswordFormValues = {
   userName: string;
   password: string;
   confirmPassword: string;
 };
 const validationSchema = Yup.object({
-  userName: Yup.string().required("Full Name is required"),
   password: Yup.string()
     .min(4, "Password must be at least 4 characters")
     .required("Password is required"),
@@ -23,7 +22,7 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("password"), ""], "Passwords must match")
     .required("Confirm Password is required"),
 });
-const SetupAccountPage: FC = () => {
+const SetupPasswordPage: FC = () => {
   const { showToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,12 +31,12 @@ const SetupAccountPage: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = async (
-    values: SetupAccountFormValues,
-    formikHelpers: FormikHelpers<SetupAccountFormValues>
+    values: SetupPasswordFormValues,
+    formikHelpers: FormikHelpers<SetupPasswordFormValues>
   ) => {
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/setup-account`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/setup-forgotten-password`,
         {
           ...values,
           token: paramToken,
@@ -95,13 +94,13 @@ const SetupAccountPage: FC = () => {
     <>
       {isLoading && paramToken && <CheckingTokenCard />}
       {!paramToken && <TokenNotFoundCard />}
-      {!isValid && paramToken && !isLoading && <TokenExpiredCard />}
+      {!isValid && paramToken && !isLoading && <ForgotTokenExpiredCard />}
       {isValid && !isLoading && paramToken && (
         <>
           <h2 className="text-3xl font-bold text-center mb-6">
-            Set your Account
+            Set your Password
           </h2>
-          <Formik<SetupAccountFormValues>
+          <Formik<SetupPasswordFormValues>
             initialValues={{
               userName: "",
               password: "",
@@ -112,20 +111,6 @@ const SetupAccountPage: FC = () => {
           >
             {({ isSubmitting }) => (
               <Form className="space-y-4">
-                <div>
-                  <label className="block text-gray-700">Full Name</label>
-                  <Field
-                    type="text"
-                    name="userName"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your full name"
-                  />
-                  <ErrorMessage
-                    name="userName"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
                 <div>
                   <label className="block text-gray-700">Password</label>
                   <Field
@@ -172,4 +157,4 @@ const SetupAccountPage: FC = () => {
     </>
   );
 };
-export default SetupAccountPage;
+export default SetupPasswordPage;
