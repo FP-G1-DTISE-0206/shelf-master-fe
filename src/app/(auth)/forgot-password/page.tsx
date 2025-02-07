@@ -1,16 +1,14 @@
 "use client";
 import { useToast } from "@/providers/ToastProvider";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
-import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import * as Yup from "yup";
-type SignupFormValues = {
+type ForgotPasswordFormValues = {
   email: string;
 };
 const validationSchema = Yup.object({
@@ -19,16 +17,16 @@ const validationSchema = Yup.object({
     .required("Email is required"),
 });
 
-const RegisterPage: FC = () => {
+const ForgotPasswordPage: FC = () => {
   const { showToast } = useToast();
   const router = useRouter();
   const handleSubmit = async (
-    values: SignupFormValues,
-    formikHelpers: FormikHelpers<SignupFormValues>
+    values: ForgotPasswordFormValues,
+    formikHelpers: FormikHelpers<ForgotPasswordFormValues>
   ) => {
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forgot-password`,
         values
       );
       if (data.success) {
@@ -48,8 +46,11 @@ const RegisterPage: FC = () => {
   };
   return (
     <>
-      <h2 className="text-3xl font-bold text-center mb-6">Create an Account</h2>
-      <Formik<SignupFormValues>
+      <h2 className="text-3xl font-bold text-center mb-6">Forgot Password</h2>
+      <p className="text-center text-gray-600 mb-4">
+        Enter your email to receive a password reset link.
+      </p>
+      <Formik<ForgotPasswordFormValues>
         initialValues={{
           email: "",
         }}
@@ -77,26 +78,11 @@ const RegisterPage: FC = () => {
               className="w-full bg-shelf-black text-white py-2 rounded-lg hover:bg-shelf-orange"
               disabled={isSubmitting}
             >
-              Sign Up
+              Send Reset Link
             </button>
             {isSubmitting && <Spinner className="w-full" color="warning" />}
-            <div className="flex items-center my-4">
-              <hr className="flex-grow border-t border-gray-300" />
-              <span className="mx-4 text-gray-500">OR</span>
-              <hr className="flex-grow border-t border-gray-300" />
-            </div>
-            <div className="space-y-4">
-              <button
-                onClick={() => signIn("google", { callbackUrl: "/" })}
-                type="button"
-                className="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-100"
-              >
-                <FontAwesomeIcon icon={faGoogle} className="w-6 h-6 mr-2" />
-                Sign Up with Google
-              </button>
-            </div>
             <p className="text-center text-gray-600 mt-4">
-              Already have an account?{" "}
+              Remembered your password?{" "}
               <Link href="/login" className="text-shelf-orange hover:underline">
                 Login
               </Link>
@@ -108,4 +94,4 @@ const RegisterPage: FC = () => {
   );
 };
 
-export default RegisterPage;
+export default ForgotPasswordPage;
