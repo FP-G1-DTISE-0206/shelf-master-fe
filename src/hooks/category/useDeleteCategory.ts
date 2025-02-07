@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useToast } from "@/providers/ToastProvider";
 import { useRouter } from "next/navigation";
+import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 
 const deleteCategory = async (accessToken: string, id: string) => {
   const { data } = await axios.delete(
@@ -16,6 +17,9 @@ const deleteCategory = async (accessToken: string, id: string) => {
 };
 
 const useDeleteCategory = (accessToken: string) => {
+  const { 
+    setIsDeletingCategory,  
+  } = useSidebarAdminStore();
   const { showToast } = useToast();
   const router = useRouter();
   const {
@@ -25,7 +29,8 @@ const useDeleteCategory = (accessToken: string) => {
       deleteCategory(accessToken, id),
     onSuccess: () => {
       showToast("Category deleted successfully", "success");
-      router.push("/products");
+      setIsDeletingCategory(false)
+      router.refresh()
     },
     onError: (error: any) => {
       console.error("Error:", error);

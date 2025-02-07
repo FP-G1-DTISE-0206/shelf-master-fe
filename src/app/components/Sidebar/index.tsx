@@ -1,14 +1,14 @@
 "use client"
 import { FC, useEffect } from "react";
 import { 
-  Button, Sidebar, TextInput, Dropdown, 
+  Button, Sidebar, TextInput, 
 } from "flowbite-react";
 import { cn } from "@/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
-  faChartLine, faBoxOpen, faFile, faPlus, faEdit, 
+  faChartLine, faBoxOpen, faFile, faPlus, faEdit, faTrash, 
 } from "@fortawesome/free-solid-svg-icons";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
@@ -22,7 +22,7 @@ const AdminSidebar: FC = () => {
   const { categories } = useAdminProductCategory(session?.accessToken as string);
   const { 
     isOpen, setIsOpen, page, setPage, setIsModalCategoryOpen, 
-    setModalCategoryType, setCategory, 
+    setModalCategoryType, setCategory, setIsDeletingCategory, 
   } = useSidebarAdminStore();
   const pathName = usePathname();
   
@@ -105,14 +105,24 @@ const AdminSidebar: FC = () => {
                 </div>
                 { categories && categories.length > 0 ? (
                   categories.map((category, idx) => (
-                  <div className="flex gap-2 items-center" key={idx}>
-                    <span onClick={()=>{
-                      setModalCategoryType("update")
-                      setCategory(category)
-                      setIsModalCategoryOpen(true)
-                    }} className="cursor-pointer"><FontAwesomeIcon icon={faEdit} /></span>
-                    <span>{category.name}</span>
-                  </div>
+                    <div className="flex justify-between" key={idx}>
+                      <div className="flex gap-2 items-center">
+                        <span onClick={()=>{
+                          setModalCategoryType("update")
+                          setCategory(category)
+                          setIsModalCategoryOpen(true)
+                        }} className="cursor-pointer"><FontAwesomeIcon icon={faEdit} /></span>
+                        <span>{category.name}</span>
+                      </div>
+                      <div>
+                        <span onClick={()=>{
+                            setIsDeletingCategory(true)
+                            setCategory(category)
+                          }} className="cursor-pointer">
+                            <FontAwesomeIcon icon={faTrash} color="red" />
+                        </span>
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <div className="flex gap-2 items-center">No categories found</div>
