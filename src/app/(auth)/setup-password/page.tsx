@@ -36,7 +36,7 @@ const SetupPasswordPage: FC = () => {
   ) => {
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/setup-forgotten-password`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/setup-password`,
         {
           ...values,
           token: paramToken,

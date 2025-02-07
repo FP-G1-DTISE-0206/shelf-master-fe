@@ -1,10 +1,11 @@
 import React from "react";
-import { Modal, Button } from "flowbite-react";
+import { Modal, Button, Spinner } from "flowbite-react";
 
 interface ConfirmationModalProps {
   isOpen: boolean; // Controls modal visibility
   onClose: () => void; // Triggered when canceling/closing
   onConfirm: () => void; // Triggered on confirmation
+  isLoading?: boolean;
   title?: string; // Optional title for the modal
   message?: string; // Optional message for the modal
 }
@@ -13,6 +14,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  isLoading = false,
   title = "Confirm Action",
   message = "Are you sure you want to proceed?",
 }) => {
@@ -31,8 +33,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <Button color="light" onClick={onClose}>
               Cancel
             </Button>
-            <Button color="warning" onClick={onConfirm}>
-              Confirm
+            <Button color="warning" onClick={onConfirm} disabled={isLoading}>
+              {!isLoading ? (
+                "Confirm"
+              ) : (
+                <Spinner color="warning" aria-label="Loading..." />
+              )}
             </Button>
           </div>
         </div>
