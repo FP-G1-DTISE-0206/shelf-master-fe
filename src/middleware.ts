@@ -13,7 +13,7 @@ const PUBLIC_PATHS = [
 ];
 const PROTECTED_PATHS = [
   "/dashboard",
-  "/cart",
+  // "/cart",
   "/profile",
   "/change-password",
   "/products",

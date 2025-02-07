@@ -5,15 +5,15 @@ const ProductCard: FC = () => {
   return (
     <>
       <div className="product-card-container w-[171px] xl:w-[318px]">
-        <div className="product-image-container border-8 border-shelf-white rounded-[32px] ">
-          <div className="hero-card-container relative rounded-3xl w-full xl:h-[334px] h-[164px] overflow-hidden">
+        <div className="product-image-container border-8 border-shelf-white rounded-3xl ">
+          <div className="hero-card-container relative rounded-2xl w-full xl:h-[334px] h-[164px] overflow-hidden">
             <Image
               src="/images/kohceng-senam.jpg"
               alt="hero-card"
               layout="fill"
               className="object-cover"
             />
-            <div className="product-status bg-shelf-blue w-auto h-auto  flex items-center justify-center rounded-tl-3xl rounded-br-3xl absolute top-0">
+            <div className="product-status bg-shelf-blue w-auto h-auto  flex items-center justify-center rounded-tl-2xl rounded-br-2xl absolute top-0">
               <p className="text-shelf-white text-[12px] px-4 py-2 font-semibold">
                 10% off
               </p>
@@ -21,7 +21,7 @@ const ProductCard: FC = () => {
           </div>
         </div>
         <div className="product-information-container">
-          <div className="product-information-title my-4">
+          <div className="product-information-title my-2">
             <h3 className="font-semibold xl:text-2xl text-base text-shelf-black">
               ADIDAS 3DFWD X PARLEY RUNNING SHOES
             </h3>
