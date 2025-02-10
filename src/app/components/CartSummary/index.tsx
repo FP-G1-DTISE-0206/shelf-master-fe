@@ -2,57 +2,28 @@ import { FC } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeart,
-  faTrash,
-  faChevronLeft,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
-import ProductCard from "../../components/ProductCard";
-import CartSummary from "@/app/components/CartSummary";
-import ProductSuggestion from "@/app/components/ProductSuggestion";
+import { faHeart, faTrash } from "@fortawesome/free-solid-svg-icons";
+import ChoosenProduct from "./ChoosenProduct";
 
-const Cart: FC = () => {
-  return (
+const CartSummary:FC = () => {
+  return(
     <>
-      <div className="py-2">
-
-        <h2 className="text-2xl font-bold pb-2 lg:text-[32px]">Saving to celebrate</h2>
-
-        <p className="text-[12px] lg:text-[14px] pb-2">
-          Enjoy up to 60% off thousands of styles during the End of Year sale -
-          while supplies last. No code needed
-        </p>
-
-        <p className="text-[14px] lg:text-base">
-          <Link href="/signup" className="underline">
-            Join us
-          </Link>{" "}
-          or{" "}
-          <Link href="/login" className="underline">
-            Sign-in
-          </Link>
-        </p>
-      </div>
-
-      <CartSummary />
-
-      <ProductSuggestion />
-
-
-
-      {/* <div className="lg:grid lg:grid-cols-3 lg:gap-x-12">
+      <div className="lg:grid lg:grid-cols-3 lg:gap-x-12">
         
         <div className="w-full h-auto rounded-2xl bg-shelf-white lg:w-[90%] mb-6 p-4 lg:p-6 lg:col-span-2">
           
-          <div className="lg:pb-12">
+          <div className="lg:pb-10">
             <h3 className="text-xl lg:text-3xl lg:pb-2 font-semibold">Your Bag</h3>
             <p className="text-[14px] lg:text-base mb-2">
               Items in your bag not reserved - check out now to make them yours
             </p>
           </div>
+
+          <ChoosenProduct />
+          <ChoosenProduct />
+          <ChoosenProduct />
           
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4 border-2 border-red-600">
             <div className="hero-card-container relative rounded-3xl w-[157px] lg:w-[207px] lg:h-[225px] h-[216px] overflow-hidden">
               <Image
                 src="/kohceng-senam.jpg"
@@ -61,7 +32,7 @@ const Cart: FC = () => {
                 className="object-cover"
               />
             </div>
-            <div className="flex flex-col gap-1 relative lg:w-[70%] border-2">
+            <div className="flex flex-col gap-1 relative lg:w-[75%] border-2">
               <h4 className="text-base lg:text-2xl font-semibold">DROPSET TRAINER SHOES</h4>
               <p className="text-[14px] lg:text-xl">Men's Road Running Shoes</p>
               <p className="text-[14px] lg:text-xl">Enamel Blue / University White</p>
@@ -75,7 +46,7 @@ const Cart: FC = () => {
                 <FontAwesomeIcon icon={faTrash}/>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="w-full h-[326px] rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3">
@@ -111,34 +82,9 @@ const Cart: FC = () => {
           </div>
           
         </div>
-      </div> */}
-
-      {/* <div className="pt-7">
-        <div className="flex justify-between pb-6">
-          <h2 className="text-2xl font-semibold lg:text-5xl">You may also like</h2>
-          <div className="flex gap-2">
-            <FontAwesomeIcon icon={faChevronLeft} className="text-base w-8 h-8 bg-shelf-grey text-shelf-white rounded-lg py-2"/>
-            <FontAwesomeIcon icon={faChevronRight} className="text-base w-8 h-8 bg-shelf-black text-shelf-white rounded-lg py-2" />
-          </div>
-        </div>
-
-        <div className="pb-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 py-6 justify-center">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-          </div>
-          <div className="flex gap-2 justify-center">
-            <div className="w-8 h-1 bg-shelf-blue rounded"></div>
-            <div className="w-8 h-1 bg-shelf-grey rounded"></div>
-            <div className="w-8 h-1 bg-shelf-grey rounded"></div>
-            <div className="w-8 h-1 bg-shelf-grey rounded"></div>
-          </div>
-        </div>
-      </div> */}
+      </div>
     </>
-  );
-};
+  )
+}
 
-export default Cart;
+export default CartSummary;
