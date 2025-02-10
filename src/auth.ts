@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { LoginResponse, TokenClaims } from "./types/auth/TokenPair";
 import { jwtDecode } from "jwt-decode";
 import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
@@ -45,14 +46,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { data } = (await response.json()) as LoginResponse;
 
         // Verify the JWT signature
-        const secret = process.env.JWT_SECRET;
-        if (!secret) {
-          console.error("JWT secret not set");
-          return null;
-        }
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
         try {
-          jwt.verify(data.accessToken, secret);
+          await jwtVerify(data.accessToken, secret);
+          console.log("Token verified!", data.accessToken);
         } catch (err) {
           console.error("JWT verification failed:", err);
           return null;
@@ -156,9 +154,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return false;
         }
 
-        // Verify and decode JWT from backend
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+
         try {
-          jwt.verify(data.accessToken, process.env.JWT_SECRET!);
+          await jwtVerify(data.accessToken, secret);
+          console.log("Token verified!", data.accessToken);
         } catch (err) {
           console.error("JWT verification failed:", err);
           return false;
@@ -187,6 +187,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 });
 
 const refreshToken = async (refreshToken: string) => {
+  console.log("Refreshing token...");
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh`;
   const response = await fetch(url, {
     method: "POST",
@@ -199,26 +200,27 @@ const refreshToken = async (refreshToken: string) => {
     console.error("Failed to refresh access token");
     return null;
   }
-  const { data } = await response.json();
+  const { data } = (await response.json()) as LoginResponse;
 
-  // Verify the JWT signature
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("JWT secret not set");
-    return null;
+  if (!data?.accessToken) {
+    console.error("No access token received from backend");
+    return false;
   }
 
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+
   try {
-    jwt.verify(data, secret);
+    await jwtVerify(data.accessToken, secret);
+    console.log("Refreshed token verified!", data.accessToken);
   } catch (err) {
     console.error("JWT verification failed:", err);
     return null;
   }
 
-  const decodedToken = jwtDecode<TokenClaims>(data);
+  const decodedToken = jwtDecode<TokenClaims>(data.accessToken);
 
   return {
     claims: decodedToken,
-    value: data,
+    value: data.accessToken,
   };
 };
