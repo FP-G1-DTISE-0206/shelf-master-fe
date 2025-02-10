@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
 
-const fetchProductByAdmin = async (
+const fetchProduct = async (
   accessToken: string,
   page: number,
   length: number,
@@ -25,7 +25,7 @@ const fetchProductByAdmin = async (
   return data.data as ResponseWithPagination;
 };
 
-const useAdminProduct = (accessToken: string) => {
+const useProduct = (accessToken: string) => {
   const { page, length, field, order, search } = useSearchSortPaginationStore();
 
   const {
@@ -34,9 +34,9 @@ const useAdminProduct = (accessToken: string) => {
     data,
     refetch,
   } = useQuery({
-    queryKey: ["fetchProductByAdmin", accessToken, page, length, field, order, search],
+    queryKey: ["fetchProduct", accessToken, page, length, field, order, search],
     queryFn: () =>
-      fetchProductByAdmin(accessToken, page, length, field, order, search),
+      fetchProduct(accessToken, page, length, field, order, search),
   });
 
   return {
@@ -48,4 +48,4 @@ const useAdminProduct = (accessToken: string) => {
   };
 };
 
-export default useAdminProduct;
+export default useProduct;

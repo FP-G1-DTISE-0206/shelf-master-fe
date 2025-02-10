@@ -1,11 +1,10 @@
 "use client"
 import Link from "next/link";
-import { useState } from "react";
+import { FC } from "react";
 import { 
   Card, 
   TextInput, 
   Textarea, 
-  FileInput, 
   Button, 
   Badge, 
   Carousel, 
@@ -15,8 +14,8 @@ import {
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMinus,
-  faSearch,  
+  faMinus, faTrash, 
+  faSearch, 
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
@@ -28,14 +27,18 @@ import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
+  sku: Yup.string()
+    .required("SKU is required"),
   name: Yup.string()
     .required("Name is required"),
-  price: Yup.number()
-    .moreThan(0)
-    .required("Price is required"),
+  price: Yup.number().moreThan(0, "Price must be greater than 0").required("Price is required"),
+  weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"),
+  /*images: Yup.array()
+    .of(Yup.string().url("Invalid image URL"))
+    .min(1, "At least one image is required"),*/
 });
 
-const CreateProduct = () => {
+const CreateProduct: FC = () => {
   const { data: session } = useSession();
   const { search, setSearch } = useSearchPaginationStore();
   const { categories } = useAdminProductCategory(session?.accessToken as string);
@@ -52,6 +55,16 @@ const CreateProduct = () => {
     }
   };
 
+  const initialValues: CreateProductRequest = {
+    sku: "",
+    name: "",
+    description: "", 
+    price: 0,
+    weight: 0, 
+    categories: [], 
+    images: [], 
+  };
+
   return (
     <div className="container mx-auto px-4 w-full">
       <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
@@ -60,7 +73,7 @@ const CreateProduct = () => {
       </Breadcrumb>
       <Card className="w-full">
         <Formik<CreateProductRequest>
-          initialValues={{ name: "", price: 0, categories: [] }}
+          initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -77,20 +90,40 @@ const CreateProduct = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description" className="font-medium">Description</Label>
-                  <Textarea id="description" name="description" 
-                    placeholder="Enter product description" rows={3} />
+                  <Label htmlFor="sku" className="font-medium">SKU</Label>
+                  <Field as={TextInput} id="sku" name="sku" placeholder="Enter product SKU" />
+                  <ErrorMessage
+                    name="sku"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="sku" className="font-medium">SKU</Label>
-                  <TextInput id="sku" name="sku" placeholder="Enter SKU" />
+                  <Label htmlFor="description" className="font-medium">Description</Label>
+                  <Field as={Textarea} id="description" name="description" 
+                    placeholder="Enter product description" rows={3} />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="price" className="font-medium">Price</Label>
                   <Field as={TextInput} id="price" name="price" 
-                    type="number" placeholder="Enter regular price" />
+                    type="number" placeholder="Enter price" />
                   <ErrorMessage
                     name="price"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="weight" className="font-medium">Weight</Label>
+                  <Field as={TextInput} id="weight" name="weight" 
+                    type="number" placeholder="Enter weight in grams" />
+                  <ErrorMessage
+                    name="weight"
                     component="div"
                     className="text-red-500 text-sm"
                   />
@@ -154,15 +187,18 @@ const CreateProduct = () => {
                   <Label className="font-medium">Product Gallery</Label>
                   <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
                     <Carousel slide={false}>
-                      {["/images/kohceng-senam.jpg", "/images/kohceng-senam.jpg"].map((src, index) => (
+                      {values.images.map((src, index) => (
                         <div key={index} className="relative w-full aspect-[9/6]">
                           <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
+                          <FontAwesomeIcon icon={faSearch} color="red" className="absolute top-0 right-0" />
                         </div>
                       ))}
+                      {
+                        values.images.length == 0 && (<div className="relative w-full aspect-[9/6]"></div>)
+                      }
                     </Carousel>
                     <br/>
-                    <FileInput name="images" multiple accept="image/jpeg, image/png" />
-                    <p className="text-gray-500 text-sm mt-2">Jpeg, png are allowed. Max 1MB.</p>
+                    {/* Here will be image uploader */}
                   </div>
                 </div>
                 <Button gradientDuoTone="purpleToPink" className="w-full mt-5"

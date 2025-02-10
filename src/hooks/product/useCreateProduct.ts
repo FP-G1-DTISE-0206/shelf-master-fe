@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { CreateProductRequest, ProductResponse } from "@/types/product";
+import { CreateProductRequest, CreateProductResponse } from "@/types/product";
 import { useToast } from "@/providers/ToastProvider";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ const createProduct = async (accessToken: string, creationData: CreateProductReq
       },
     }
   );
-  return data.data as ProductResponse;
+  return data.data as CreateProductResponse;
 };
 
 const useCreateProduct = (accessToken: string) => {
@@ -22,12 +22,11 @@ const useCreateProduct = (accessToken: string) => {
   const router = useRouter();
   const {
     mutate: createProductMutate,
-    data
   } = useMutation({
     mutationFn: ({ creationData }: { creationData: CreateProductRequest }) =>
       createProduct(accessToken, creationData),
     onSuccess: (data) => {
-      showToast("Product created successfully", "success");
+      showToast(`Product '${data?.name}' created successfully`, "success");
       router.push("/products/detail/" + data?.id );
     },
     onError: (error: any) => {
@@ -38,7 +37,6 @@ const useCreateProduct = (accessToken: string) => {
 
   return {
     createProduct: createProductMutate,
-    data
   };
 };
 

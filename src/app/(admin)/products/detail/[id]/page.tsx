@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { 
   Card, TextInput, Textarea, FileInput, Button, Badge, Carousel, 
-  Breadcrumb, Label, Dropdown, Modal, 
+  Breadcrumb, Label, Dropdown, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +13,7 @@ import { UpdateProductRequest } from "@/types/product";
 import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
 import useUpdateProduct from "@/hooks/product/useUpdateProduct";
 import useDeleteProduct from "@/hooks/product/useDeleteProduct";
-import useAdminProductDetail from "@/hooks/product/useAdminProductDetail";
+import useAdminProductDetail from "@/hooks/product/useProductDetail";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 import { useParams } from "next/navigation";
@@ -45,9 +45,13 @@ const UpdateProduct = () => {
 
   const initialValues: UpdateProductRequest = {
     id: product.id,
+    sku: product.sku,
     name: product.name,
+    description: product.description, 
     price: product.price,
-    categories: product.categories.map(category => category.id),
+    weight: product.weight, 
+    categories: product.categories.map(category => category.id), 
+    images: product.images.map(images => images.imageUrl)
   };
 
   const handleSubmit = async (values: UpdateProductRequest) => {

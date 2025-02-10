@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import Link from "next/link";
-import useAdminProduct from "@/hooks/product/useAdminProduct";
+import useAdminProduct from "@/hooks/product/useProduct";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
@@ -112,13 +112,6 @@ const Products = () => {
                 <div className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {product.name}
                 </div>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {product.categories.map((category) => (
-                    <Badge key={category.id} color="info" className="relative inline-block">
-                      {category.name}
-                    </Badge>
-                  ))}
-                </p>
                 <p className="font-normal text-gray-700 dark:text-gray-400">{product.price}</p>
               </div>
               <div className="w-1/6">

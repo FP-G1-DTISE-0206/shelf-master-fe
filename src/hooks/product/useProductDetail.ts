@@ -1,8 +1,8 @@
-import { ProductResponse } from "@/types/product";
+import { DetailProductResponse } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchProductDetailByAdmin = async (accessToken: string, id:string ): Promise<ProductResponse> => {
+const fetchProductDetail = async (accessToken: string, id:string ): Promise<DetailProductResponse> => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`,
     {
@@ -11,19 +11,19 @@ const fetchProductDetailByAdmin = async (accessToken: string, id:string ): Promi
       },
     }
   );
-  return data.data as ProductResponse;
+  return data.data as DetailProductResponse;
 };
 
-const useAdminProductDetail = (accessToken: string, id: string) => {
+const useProductDetail = (accessToken: string, id: string) => {
   const {
     isLoading,
     error,
     data,
     refetch,
   } = useQuery({
-    queryKey: ["fetchProductDetailByAdmin", accessToken, id],
+    queryKey: ["fetchProductDetail", accessToken, id],
     queryFn: () =>
-      fetchProductDetailByAdmin(accessToken, id),
+      fetchProductDetail(accessToken, id),
   });
 
   return {
@@ -34,4 +34,4 @@ const useAdminProductDetail = (accessToken: string, id: string) => {
   };
 };
 
-export default useAdminProductDetail;
+export default useProductDetail;
