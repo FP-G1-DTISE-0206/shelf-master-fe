@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FC } from "react";
 interface NestedLayoutProps {
   children: React.ReactNode;
@@ -22,7 +23,20 @@ const AuthLayout: FC<NestedLayoutProps> = ({ children }) => {
             </p>
           </div>
         </div>
-        {children}
+        <div className="flex items-center justify-center bg-white px-8 max-sm:py-8">
+          <div className="w-full max-w-md">
+            <Link href="/">
+              <Image
+                className="rounded-md w-full object-cover"
+                src="/images/shelfmaster-medium.jpeg"
+                width={1000}
+                height={500}
+                alt="ShelfMaster Logo"
+              />
+            </Link>
+            {children}
+          </div>
+        </div>
       </div>
     </>
   );

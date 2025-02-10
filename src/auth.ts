@@ -1,5 +1,6 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 // import { API_URL } from "./constants/url";
 import { LoginResponse, TokenClaims } from "./types/auth/TokenPair";
 import { jwtDecode } from "jwt-decode";
@@ -17,6 +18,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -92,8 +97,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
       return session;
     },
-    async jwt({ token, user }) {
-      console.log("IN JWT CALLBACK: ", user);
+    async jwt({ token, user, account }) {
+      console.log("IN JWT CALLBACK: ", user, account);
+
       if (user) {
         token = {
           accessToken: {
@@ -110,7 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       }
 
-      // Handle access token expiration
+      // Handle access token expiration and refresh logic
       if (
         token.accessToken.claims.exp &&
         Date.now() >= token.accessToken.claims.exp * 1000
@@ -121,10 +127,60 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         token.accessToken = newToken;
       }
+
       return token;
     },
-    async signIn({ user }) {
-      console.log("IN SIGNIN CALLBACK: ", user);
+    async signIn({ user, account }) {
+      console.log("IN SIGNIN CALLBACK: ", user, account);
+
+      if (account?.provider === "google") {
+        // Exchange Google token for backend JWT
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google-login`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: account.id_token }),
+          }
+        );
+
+        if (!response.ok) {
+          console.error("Failed to exchange Google token");
+          return false;
+        }
+
+        const { data } = (await response.json()) as LoginResponse;
+        // const { data } = await response.json();
+        if (!data?.accessToken) {
+          console.error("No access token received from backend");
+          return false;
+        }
+
+        // Verify and decode JWT from backend
+        try {
+          jwt.verify(data.accessToken, process.env.JWT_SECRET!);
+        } catch (err) {
+          console.error("JWT verification failed:", err);
+          return false;
+        }
+
+        const decodedToken = jwtDecode<TokenClaims>(data.accessToken);
+
+        user.token = {
+          accessToken: {
+            claims: decodedToken,
+            value: data.accessToken,
+          },
+          refreshToken: {
+            claims: jwtDecode<TokenClaims>(data.refreshToken),
+            value: data.refreshToken,
+          },
+        };
+        user.roles = decodedToken.scope.split(" ");
+        user.userId = parseInt(decodedToken.userId);
+        user.imageUrl = decodedToken.imageUrl;
+      }
+
       return true;
     },
   },

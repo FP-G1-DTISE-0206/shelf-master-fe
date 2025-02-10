@@ -7,13 +7,20 @@ import { Button, Modal } from "flowbite-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 interface ProfileImageSectionProps {
   profile: ProfileResponse;
+  refetch: () => void;
 }
 
-const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
+const ProfileImageSection: FC<ProfileImageSectionProps> = ({
+  profile,
+  refetch,
+}) => {
   const [openModalUpload, setOpenModalUpload] = useState(false);
+  const [openModalPassword, setOpenModalPassword] = useState(false);
+  const [isLoadingPassword, setIsLoadingPassword] = useState(false);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl);
   const { data: session } = useSession();
   const { showToast } = useToast();
@@ -42,7 +49,37 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
         showToast("An unexpected error occurred. Please try again.", "error");
       }
     } finally {
+      refetch();
       setOpenModalUpload(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    setIsLoadingPassword(true);
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+      if (data.success) {
+        showToast(data.message, "success");
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(error.response?.data.message, "error");
+      } else {
+        showToast("An unexpected error occurred. Please try again.", "error");
+      }
+    } finally {
+      setOpenModalPassword(false);
+      setIsLoadingPassword(false);
     }
   };
   return (
@@ -53,8 +90,8 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
         </div>
         <div className="flex flex-col gap-5">
           <Image
-            className="rounded-md lg:w-full"
-            src={`${profile.imageUrl ?? "/images/default-profile.jpg"}`}
+            className="rounded-md max-lg:w-full aspect-square object-cover"
+            src={`${profile.imageUrl || "/images/default-profile.jpg"}`}
             width={150}
             height={150}
             alt="User Profile"
@@ -66,8 +103,11 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
             >
               Change image
             </button>
-            <button className="bg-white rounded-lg px-5 py-2 border border-platinum font-semibold">
-              Change Password
+            <button
+              onClick={() => setOpenModalPassword(true)}
+              className="bg-white rounded-lg px-5 py-2 border border-platinum font-semibold"
+            >
+              Reset Password
             </button>
           </div>
         </div>
@@ -102,6 +142,14 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({ profile }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ConfirmationModal
+        isOpen={openModalPassword}
+        onClose={() => setOpenModalPassword(false)}
+        onConfirm={() => handleResetPassword()}
+        isLoading={isLoadingPassword}
+        title="Reset Password"
+        message="Are you sure you want to reset your password? A password reset email will be sent to your registered email address."
+      />
     </>
   );
 };

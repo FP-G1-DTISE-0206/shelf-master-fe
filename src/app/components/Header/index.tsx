@@ -86,7 +86,7 @@ const Header: FC = () => {
                 <DropdownItem>
                   <div className="flex gap-2 items-start justify-start text-start flex-wrap max-lg:me-2">
                     <Image
-                      className="rounded-md"
+                      className="rounded-md aspect-square object-cover"
                       src={
                         session.user.imageUrl != ""
                           ? session.user.imageUrl
