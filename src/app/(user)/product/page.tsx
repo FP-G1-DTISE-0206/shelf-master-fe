@@ -7,7 +7,7 @@ import SizeOption from "@/app/components/SizeOptions";
 import ColorOption from "@/app/components/ColorOptions";
 import ImageGallery from "@/app/components/ImageGallery";
 import UnifiedSizeSelector from "@/app/components/SizeOptions";
-
+import CartPage from "@/app/components/CartComponent";
 interface SizeStatusMap {
   [size: number]: "active" | "disabled" | "default";
 }
@@ -47,6 +47,7 @@ const ProductPage: FC = () => {
 
   return (
     <>
+      <CartPage />
       {/* Gambar Sliding */}
       <div>
         <ImageGallery images={productImages} />
