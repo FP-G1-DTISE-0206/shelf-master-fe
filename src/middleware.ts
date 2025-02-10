@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
 
-const PUBLIC_PATHS = ["/login", "/register", "/search", "/product"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/register",
+  "/search",
+  "/product",
+  "/setup-account",
+  "/forgot-password",
+  "/setup-password",
+];
 const PROTECTED_PATHS = [
   "/dashboard",
   "/cart",

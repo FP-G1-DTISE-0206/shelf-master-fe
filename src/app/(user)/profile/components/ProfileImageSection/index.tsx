@@ -7,6 +7,7 @@ import { Button, Modal } from "flowbite-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 interface ProfileImageSectionProps {
   profile: ProfileResponse;
@@ -18,6 +19,8 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
   refetch,
 }) => {
   const [openModalUpload, setOpenModalUpload] = useState(false);
+  const [openModalPassword, setOpenModalPassword] = useState(false);
+  const [isLoadingPassword, setIsLoadingPassword] = useState(false);
   const [imageUrl, setImageUrl] = useState(profile.imageUrl);
   const { data: session } = useSession();
   const { showToast } = useToast();
@@ -50,6 +53,35 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
       setOpenModalUpload(false);
     }
   };
+
+  const handleResetPassword = async () => {
+    setIsLoadingPassword(true);
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+      if (data.success) {
+        showToast(data.message, "success");
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(error.response?.data.message, "error");
+      } else {
+        showToast("An unexpected error occurred. Please try again.", "error");
+      }
+    } finally {
+      setOpenModalPassword(false);
+      setIsLoadingPassword(false);
+    }
+  };
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -71,8 +103,11 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
             >
               Change image
             </button>
-            <button className="bg-white rounded-lg px-5 py-2 border border-platinum font-semibold">
-              Change Password
+            <button
+              onClick={() => setOpenModalPassword(true)}
+              className="bg-white rounded-lg px-5 py-2 border border-platinum font-semibold"
+            >
+              Reset Password
             </button>
           </div>
         </div>
@@ -107,6 +142,14 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
           </Button>
         </Modal.Footer>
       </Modal>
+      <ConfirmationModal
+        isOpen={openModalPassword}
+        onClose={() => setOpenModalPassword(false)}
+        onConfirm={() => handleResetPassword()}
+        isLoading={isLoadingPassword}
+        title="Reset Password"
+        message="Are you sure you want to reset your password? A password reset email will be sent to your registered email address."
+      />
     </>
   );
 };
