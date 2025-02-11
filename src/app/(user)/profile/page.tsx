@@ -1,9 +1,6 @@
 "use client";
-import Image from "next/image";
 import { FC } from "react";
 import ProfileImageSection from "./components/ProfileImageSection";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import useProfile from "@/hooks/useProfile";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
@@ -27,7 +24,7 @@ const ProfilePage: FC = () => {
         <div className="text-4xl font-semibold text-shelf-black">
           Your Profile
         </div>
-        <div className="flex gap-5 max-md:flex-col">
+        <div className="flex gap-5 max-lg:flex-col">
           <ProfileImageSection
             profile={profile as ProfileResponse}
             refetch={refetch}
