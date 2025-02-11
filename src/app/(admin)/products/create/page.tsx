@@ -1,21 +1,14 @@
 "use client"
 import Link from "next/link";
-import { FC } from "react";
+import { useState, FC } from "react";
+import { cn } from "@/utils";
 import { 
-  Card, 
-  TextInput, 
-  Textarea, 
-  Button, 
-  Badge, 
-  Carousel, 
-  Breadcrumb, 
-  Label, 
-  Dropdown, 
+  Card, TextInput, Textarea, Button, Badge, Carousel, Breadcrumb, 
+  Label, Dropdown, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMinus, faTrash, 
-  faSearch, 
+  faMinus, faSearch, faTrash, 
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
@@ -25,6 +18,8 @@ import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import useCreateProduct from "@/hooks/product/useCreateProduct";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
+import MultipleImageUploader from "../components/MultipleImageUploader";
+import CustomSpinner from "@/components/CustomSpinner";
 
 const validationSchema = Yup.object({
   sku: Yup.string()
@@ -33,9 +28,6 @@ const validationSchema = Yup.object({
     .required("Name is required"),
   price: Yup.number().moreThan(0, "Price must be greater than 0").required("Price is required"),
   weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"),
-  /*images: Yup.array()
-    .of(Yup.string().url("Invalid image URL"))
-    .min(1, "At least one image is required"),*/
 });
 
 const CreateProduct: FC = () => {
@@ -43,6 +35,7 @@ const CreateProduct: FC = () => {
   const { search, setSearch } = useSearchPaginationStore();
   const { categories } = useAdminProductCategory(session?.accessToken as string);
   const { createProduct } = useCreateProduct(session?.accessToken as string);
+  const [loading, setLoading] = useState(false);
   
   const handleSubmit = async (
     values: CreateProductRequest
@@ -52,6 +45,22 @@ const CreateProduct: FC = () => {
       } catch (error) {
         console.error("An unexpected error occurred:", error);
       } finally {
+    }
+  };
+
+  const handleDelete = async (
+    imageUrl: string, 
+    setFieldValue: (field: string, value: any) => void, 
+    values: CreateProductRequest
+  ) => {
+    setLoading(true);
+    try {
+      setFieldValue("images", values.images.filter((url) => url !== imageUrl));
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete image.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -184,21 +193,44 @@ const CreateProduct: FC = () => {
               </div>
               <div className="w-1/2 p-4 space-y-4">
                 <div>
+                  {
+                    loading && (
+                      <div className="w-full h-full z-10 bg-black bg-opacity-20 flex items-center">
+                        <CustomSpinner />
+                      </div>
+                    )
+                  }
                   <Label className="font-medium">Product Gallery</Label>
                   <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
-                    <Carousel slide={false}>
-                      {values.images.map((src, index) => (
-                        <div key={index} className="relative w-full aspect-[9/6]">
-                          <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
-                          <FontAwesomeIcon icon={faSearch} color="red" className="absolute top-0 right-0" />
-                        </div>
-                      ))}
-                      {
-                        values.images.length == 0 && (<div className="relative w-full aspect-[9/6]"></div>)
-                      }
-                    </Carousel>
+                    {values.images.length > 0 ? (
+                      <Carousel slide={false}>
+                        {values.images.map((src, index) => (
+                          <div key={index} className="relative w-full aspect-[9/6]">
+                            <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
+                            <Button
+                              onClick={() => handleDelete(src, setFieldValue, values)}
+                              className={cn(
+                                'absolute top-2 right-16', 
+                                'bg-white bg-opacity-50 w-10 h-10 rounded-full', 
+                                'flex items-center justify-center hover:bg-opacity-80 transition'
+                              )}
+                            >
+                              <FontAwesomeIcon icon={faTrash} color="red" />
+                            </Button>
+                          </div>
+                        ))}
+                      </Carousel>
+                    ) : (
+                      <div className="relative w-full aspect-[9/6] flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-500">
+                        No images available
+                      </div>
+                    )}
                     <br/>
-                    {/* Here will be image uploader */}
+                    <MultipleImageUploader
+                      setFieldValue={setFieldValue}
+                      urlImages={values.images}
+                      loading={loading}
+                      setLoading={setLoading} />
                   </div>
                 </div>
                 <Button gradientDuoTone="purpleToPink" className="w-full mt-5"

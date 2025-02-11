@@ -1,12 +1,13 @@
 "use client"
 import Link from "next/link";
 import { useState } from "react";
+import { cn } from "@/utils";
 import { 
-  Card, TextInput, Textarea, FileInput, Button, Badge, Carousel, 
+  Card, TextInput, Textarea, Button, Badge, Carousel, 
   Breadcrumb, Label, Dropdown, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { UpdateProductRequest } from "@/types/product";
@@ -20,10 +21,15 @@ import { useParams } from "next/navigation";
 import CustomSpinner from "@/components/CustomSpinner";
 import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import MultipleImageUploader from "../../components/MultipleImageUploader";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  price: Yup.number().moreThan(0).required("Price is required"),
+  sku: Yup.string()
+    .required("SKU is required"),
+  name: Yup.string()
+    .required("Name is required"),
+  price: Yup.number().moreThan(0, "Price must be greater than 0").required("Price is required"),
+  weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"), 
 });
 
 const UpdateProduct = () => {
@@ -38,6 +44,7 @@ const UpdateProduct = () => {
   } = useAdminProductDetail(session?.accessToken as string, id);
   const { updateProduct } = useUpdateProduct(session?.accessToken as string);
   const { deleteProduct } = useDeleteProduct(session?.accessToken as string);
+  const [loading, setLoading] = useState(false);
 
   if (errorProductDetail) return <div>Error: {errorProductDetail.message}</div>;
   if (isLoading) return <div><CustomSpinner /></div>;
@@ -51,7 +58,7 @@ const UpdateProduct = () => {
     price: product.price,
     weight: product.weight, 
     categories: product.categories.map(category => category.id), 
-    images: product.images.map(images => images.imageUrl)
+    images: product.images.map(images => images.imageUrl) ?? [], 
   };
 
   const handleSubmit = async (values: UpdateProductRequest) => {
@@ -72,9 +79,9 @@ const UpdateProduct = () => {
     }
   };
 
-  const handleConfirmation = () => {
+  const handleConfirmation = (value: UpdateProductRequest) => {
     if (transactionType === "update") {
-      handleSubmit(initialValues);
+      handleSubmit(value);
     } else if (transactionType === "delete") {
       handleDelete();
     } else {
@@ -82,6 +89,22 @@ const UpdateProduct = () => {
     }
     setTransactionType("");
     setOpenModalConfirmation(false);
+  };
+
+  const handleDeleteImage = async (
+      imageUrl: string, 
+      setFieldValue: (field: string, value: any) => void, 
+      values: UpdateProductRequest
+    ) => {
+      setLoading(true);
+      try {
+        setFieldValue("images", values.images.filter((url) => url !== imageUrl));
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete image.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -156,17 +179,44 @@ const UpdateProduct = () => {
               </div>
               <div className="w-1/2 p-4 space-y-4">
                 <div>
+                  {
+                    loading && (
+                      <div className="w-full h-full z-10 bg-black bg-opacity-20 flex items-center">
+                        <CustomSpinner />
+                      </div>
+                    )
+                  }
                   <Label className="font-medium">Product Gallery</Label>
                   <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
-                    <Carousel slide={false}>
-                      {["/images/kohceng-senam.jpg", "/images/kohceng-senam.jpg"].map((src, index) => (
-                        <div key={index} className="relative w-full aspect-[9/6]">
-                          <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
-                        </div>
-                      ))}
-                    </Carousel>
-                    <FileInput name="images" multiple accept="image/jpeg, image/png" />
-                    <p className="text-gray-500 text-sm mt-2">Jpeg, png are allowed. Max 1MB.</p>
+                    {values.images.length > 0 ? (
+                      <Carousel slide={false}>
+                        {values.images.map((src, index) => (
+                          <div key={index} className="relative w-full aspect-[9/6]">
+                            <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
+                            <Button
+                              onClick={() => handleDeleteImage(src, setFieldValue, values)}
+                              className={cn(
+                                'absolute top-2 right-16', 
+                                'bg-white bg-opacity-50 w-10 h-10 rounded-full', 
+                                'flex items-center justify-center hover:bg-opacity-80 transition'
+                              )}
+                            >
+                              <FontAwesomeIcon icon={faTrash} color="red" />
+                            </Button>
+                          </div>
+                        ))}
+                      </Carousel>
+                    ) : (
+                      <div className="relative w-full aspect-[9/6] flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-500">
+                        No images available
+                      </div>
+                    )}
+                    <br/>
+                    <MultipleImageUploader
+                      setFieldValue={setFieldValue}
+                      urlImages={values.images}
+                      loading={loading}
+                      setLoading={setLoading} />
                   </div>
                 </div>
                 <div className="w-full px-14 flex gap-5">
@@ -185,7 +235,7 @@ const UpdateProduct = () => {
                   setOpenModalConfirmation(false);
                   setSubmitting(false);
                 }}
-                onConfirm={handleConfirmation}
+                onConfirm={()=>handleConfirmation(values)}
                 isOpen={openModalConfirmation}
               />
             </Form>

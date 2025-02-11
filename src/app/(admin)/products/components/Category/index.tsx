@@ -79,11 +79,6 @@ const Category: FC = () => {
                     className="text-red-500 text-sm"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="description" className="font-medium">Description</Label>
-                  <Textarea id="description" name="description" 
-                    placeholder="Enter category description" rows={3} />
-                </div>
               </Modal.Body>
               <Modal.Footer className="flex justify-between bg-ghost-white">
                 <Button color="gray" onClick={() => {
