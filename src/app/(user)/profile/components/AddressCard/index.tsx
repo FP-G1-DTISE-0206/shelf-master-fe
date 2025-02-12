@@ -78,7 +78,11 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
     }
   };
   return (
-    <div className="border rounded-lg border-shelf-light-grey p-2">
+    <div
+      className={`border rounded-lg p-2 ${
+        address.isDefault ? "border-shelf-black" : "border-shelf-light-grey"
+      }`}
+    >
       <div className="flex justify-between gap-2">
         <div className="break-words">
           <div>{address.contactName}</div>
