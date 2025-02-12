@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Modal, Button, Spinner } from "flowbite-react";
 
 interface ConfirmationModalProps {
@@ -7,7 +7,7 @@ interface ConfirmationModalProps {
   onConfirm: () => void; // Triggered on confirmation
   isLoading?: boolean;
   title?: string; // Optional title for the modal
-  message?: string; // Optional message for the modal
+  message?: ReactNode; // Optional message for the modal
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -26,9 +26,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
             {title}
           </h3>
-          <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mb-5 text-sm text-gray-500 dark:text-gray-400">
             {message}
-          </p>
+          </div>
           <div className="flex justify-center gap-4">
             <Button color="light" onClick={onClose}>
               Cancel

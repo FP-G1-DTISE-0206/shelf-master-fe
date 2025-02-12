@@ -1,11 +1,14 @@
 "use client";
 import { FC, use, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useSingleUserAddress } from "@/hooks/useUserAddress";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { AreaOption } from "../../components/BiteshipSearch";
 import UserAddressForm from "../../components/UserAddressForm";
+import axios from "axios";
+import { useToast } from "@/providers/ToastProvider";
+import { FormikHelpers } from "formik";
 
 interface PageProps {
   params: Promise<{ id: string }>; // params is a Promise<{ id: string }>
@@ -26,6 +29,8 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
     notFound(); // Redirects to the 404 page
   }
   const { data: session } = useSession();
+  const { showToast } = useToast();
+  const router = useRouter();
   const { error, isLoading, singleUserAddress } = useSingleUserAddress(
     session?.accessToken as string,
     parseInt(id)
@@ -57,7 +62,10 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
     },
   };
 
-  const handleSubmit = (values: AddressFormValues) => {
+  const handleSubmit = async (
+    values: AddressFormValues,
+    formikHelpers: FormikHelpers<AddressFormValues>
+  ) => {
     const finalValues = {
       contactName: values.contactName,
       contactNumber: values.contactNumber,
@@ -70,8 +78,32 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
       postalCode: selectedArea?.postal_code,
       areaId: selectedArea?.id,
     };
-    console.log("Form Data:", finalValues);
-    alert("Form submitted successfully!");
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/address/${id}`,
+        {
+          ...finalValues,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+      if (data.success) {
+        showToast(data.message, "success");
+        formikHelpers.resetForm();
+        router.push("/profile");
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(error.response?.data.message, "error");
+      } else {
+        showToast("An unexpected error occurred. Please try again.", "error");
+      }
+    }
   };
   useEffect(() => {
     setSelectedArea(initialValues.biteshipArea);

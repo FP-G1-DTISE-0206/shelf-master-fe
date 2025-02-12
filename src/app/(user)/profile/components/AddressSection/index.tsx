@@ -1,11 +1,9 @@
 import CustomSpinner from "@/components/CustomSpinner";
 import useUserAddress from "@/hooks/useUserAddress";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge } from "flowbite-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC } from "react";
+import AddressCard from "../AddressCard";
 
 const AddressSection: FC = () => {
   const { data: session } = useSession();
@@ -27,47 +25,23 @@ const AddressSection: FC = () => {
             Create Address
           </Link>
         </div>
-        {userAddress?.map((address) => (
-          <div
-            key={address.id}
-            className="border rounded-lg border-shelf-light-grey p-2"
-          >
-            <div className="flex justify-between gap-2">
-              <div>
-                <div>{address.contactName}</div>
-                <div>{address.contactNumber}</div>
-              </div>
-              <div className="flex gap-2 items-start">
-                {address.isDefault ? (
-                  <Badge color="success" className="text-center">
-                    Default
-                  </Badge>
-                ) : (
-                  <Badge color="light" className="text-center">
-                    Set as default
-                  </Badge>
-                )}
-                <Link href={`/profile/edit-address/${address.id}`}>
-                  <FontAwesomeIcon
-                    icon={faEdit}
-                    className="text-shelf-orange "
-                  />
-                </Link>
-                <Link href={`/profile/delete-address/${address.id}`}>
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="text-shelf-grey "
-                  />
-                </Link>
-              </div>
-            </div>
+        <div className="max-h-[500px] overflow-y-auto flex flex-col gap-2">
+          {userAddress?.length === 0 ? (
             <div>
-              {address.district}, {address.city}, {address.province}.{" "}
-              {address.postalCode}
+              <div className="text-center text-lg font-medium text-shelf-black">
+                No addresses found.
+              </div>
             </div>
-            <div>{address.address}</div>
-          </div>
-        ))}
+          ) : (
+            userAddress?.map((address) => (
+              <AddressCard
+                address={address}
+                key={address.id}
+                refetch={refetch}
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

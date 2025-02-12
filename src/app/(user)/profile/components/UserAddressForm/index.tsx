@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { FC } from "react";
 import * as Yup from "yup";
 import BiteshipSearch, { AreaOption } from "../BiteshipSearch";
@@ -12,7 +12,10 @@ interface AddressFormValues {
 }
 interface UserAddressFormProps {
   initialValues: AddressFormValues;
-  handleSubmit: (values: AddressFormValues) => void;
+  handleSubmit: (
+    values: AddressFormValues,
+    formikHelpers: FormikHelpers<AddressFormValues>
+  ) => void;
   setSelectedArea: (area: AreaOption | null) => void;
   selectedArea: AreaOption | null;
 }
