@@ -18,6 +18,37 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
   const { showToast } = useToast();
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isModalDefaultOpen, setIsModalDefaultOpen] = useState(false);
+  const [isDefaultLoading, setIsDefaultLoading] = useState(false);
+  const handleSetAsDefault = async (id: number) => {
+    setIsDefaultLoading(true);
+    try {
+      const { data } = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/address/${id}/set-default`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+      if (data.success) {
+        showToast(data.message, "success");
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast(error.response?.data.message, "error");
+      } else {
+        showToast("An unexpected error occurred. Please try again.", "error");
+      }
+    } finally {
+      refetch();
+      setIsModalDefaultOpen(false);
+      setIsDefaultLoading(false);
+    }
+  };
   const handleDeleteAddress = async (id: number) => {
     setIsDeleteLoading(true);
     try {
@@ -42,14 +73,12 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
       }
     } finally {
       refetch();
+      setIsModalDeleteOpen(false);
       setIsDeleteLoading(false);
     }
   };
   return (
-    <div
-      key={address.id}
-      className="border rounded-lg border-shelf-light-grey p-2"
-    >
+    <div className="border rounded-lg border-shelf-light-grey p-2">
       <div className="flex justify-between gap-2">
         <div className="break-words">
           <div>{address.contactName}</div>
@@ -61,7 +90,11 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
               Default
             </Badge>
           ) : (
-            <Badge color="light" className="text-center">
+            <Badge
+              color="light"
+              className="text-center hover:cursor-pointer"
+              onClick={() => setIsModalDefaultOpen(true)}
+            >
               Set as default
             </Badge>
           )}
@@ -71,7 +104,7 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
           <FontAwesomeIcon
             onClick={() => setIsModalDeleteOpen(true)}
             icon={faTrash}
-            className="text-shelf-grey "
+            className="text-shelf-grey hover:cursor-pointer"
           />
         </div>
       </div>
@@ -86,8 +119,28 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
         onConfirm={() => {
           handleDeleteAddress(address.id);
         }}
-        // isLoading={}
+        isLoading={isDeleteLoading}
         title="Are you sure you want to delete this address?"
+        message={
+          <div className="bg-shelf-light-grey text-start p-2 rounded-lg">
+            <div>{address.contactName}</div>
+            <div>{address.contactNumber}</div>
+            <div>
+              {address.district}, {address.city}, {address.province}.{" "}
+              {address.postalCode}
+            </div>
+            <div>{address.address}</div>
+          </div>
+        }
+      />
+      <ConfirmationModal
+        isOpen={isModalDefaultOpen}
+        onClose={() => setIsModalDefaultOpen(false)}
+        onConfirm={() => {
+          handleSetAsDefault(address.id);
+        }}
+        isLoading={isDefaultLoading}
+        title="Are you sure you want to set this address as default shipping address?"
         message={
           <div className="bg-shelf-light-grey text-start p-2 rounded-lg">
             <div>{address.contactName}</div>
