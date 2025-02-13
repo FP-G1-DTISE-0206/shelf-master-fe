@@ -10,12 +10,15 @@ const fetchProduct = async (
   length: number,
   field: string,
   order: string,
-  search: string
+  search: string,
+  categories: number[], 
 ): Promise<ResponseWithPagination> => {
+  const splittedCategory = [...categories.map(filter => `category=${filter}`)];
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/product?`
     + `start=${(page - 1) * length}&length=${length}`
-    + `&field=${field}&order=${order}&search=${search}`,
+    + `&field=${field}&order=${order}&search=${search}`
+    + `&${splittedCategory.join("&")}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -26,7 +29,7 @@ const fetchProduct = async (
 };
 
 const useProduct = (accessToken: string) => {
-  const { page, length, field, order, search } = useSearchSortPaginationStore();
+  const { page, length, field, order, search, filters } = useSearchSortPaginationStore();
 
   const {
     isLoading,
@@ -34,9 +37,9 @@ const useProduct = (accessToken: string) => {
     data,
     refetch,
   } = useQuery({
-    queryKey: ["fetchProduct", accessToken, page, length, field, order, search],
+    queryKey: ["fetchProduct", accessToken, page, length, field, order, search, filters],
     queryFn: () =>
-      fetchProduct(accessToken, page, length, field, order, search),
+      fetchProduct(accessToken, page, length, field, order, search, filters),
   });
 
   return {

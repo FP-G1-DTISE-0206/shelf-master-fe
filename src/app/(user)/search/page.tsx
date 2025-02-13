@@ -1,8 +1,9 @@
 "use client"
-import { FC, useCallback, useState } from "react";
-import { Button, Checkbox, Label } from "flowbite-react";
+import { FC, useState } from "react";
+import { Button, Checkbox, Label, Select } from "flowbite-react";
 import SearchProductCard from "./SearchProductCard";
 import useProduct from "@/hooks/product/useProduct";
+import useProductCategory from "@/hooks/category/useProductCategory";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
@@ -10,31 +11,33 @@ import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationSto
 const SearchPage: FC = () => {
   const { data: session } = useSession();
   const { 
-    page, length, field, order, 
-    setPage, setSearch, setField, setOrder, 
+    page, length, 
+    setPage, setField, setOrder, setFilters, 
   } = useSearchSortPaginationStore();
+  const accessToken = session?.accessToken ?? "";
+  const { categories } = useProductCategory(accessToken);
   const {
     error: productError,
     isLoading: isProductLoading,
     products,
     totalData,
-  } = useProduct(session?.accessToken as string);
+  } = useProduct(accessToken);
 
-  const [selectedFilters1, setSelectedFilters1] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [filter, setfilter] = useState<string>("");
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
   const handleCheckboxChange = (
-    filter: string, 
-    setFilterState: React.Dispatch<React.SetStateAction<string[]>>, 
-    selectedFilters: string[]
+    categoryId: number, 
+    setCategoryState: React.Dispatch<React.SetStateAction<number[]>>
   ) => {
-    setFilterState((prev) => 
-      prev.includes(filter) 
-        ? prev.filter(f => f !== filter) 
-        : [...prev, filter]
+    setCategoryState((prev) => 
+      prev.includes(categoryId) 
+        ? prev.filter(c => c !== categoryId) 
+        : [...prev, categoryId]
     );
   };
 
@@ -46,22 +49,37 @@ const SearchPage: FC = () => {
           <div>
             <h3 className="text-md font-semibold mb-2">Category</h3>
             <div className="grid grid-cols-2 gap-2">
-              {["Option A", "Option B", "Option C"].map((filter) => (
-                <Label key={filter} className="flex items-center space-x-2">
+            { categories?.length > 0 ? categories.map((filter) => (
+                <Label key={filter.id} className="flex items-center space-x-2">
                   <Checkbox 
-                    checked={selectedFilters1.includes(filter)}
-                    onChange={() => handleCheckboxChange(filter, setSelectedFilters1, selectedFilters1)}
+                    checked={selectedCategories.includes(filter.id)}
+                    onChange={() => handleCheckboxChange(filter.id, setSelectedCategories)}
                   />
-                  <span>{filter}</span>
-                </Label>
-              ))}
+                  <span>{filter.name}</span>
+                </Label>)) : ("No categories found")}
             </div>
           </div>
           <div className="mt-4">
             <h3 className="text-md font-semibold mb-2">Order By:</h3>
-            <div className="grid grid-cols-2 gap-2">
-              -
-            </div>
+            <Select className="w-full" id="countries" defaultValue={""}
+              onChange={(e)=>setfilter(e.target.value)}>
+              <option value="" disabled>All</option>
+              <option value="price,asc">Lower Price</option>
+              <option value="price,desc">Higher Price</option>
+              <option value="name,asc">Name (A-Z)</option>
+              <option value="name,desc">Name (Z-A)</option>
+            </Select>
+          </div>
+          <div className="mt-4 flex justify-start">
+            <Button onClick={()=>{
+              if(filter) {
+                setField(filter.split(",")[0]);
+                setOrder(filter.split(",")[1]);
+              }
+              setFilters(selectedCategories);
+            }}>
+              Apply
+            </Button>
           </div>
         </div>
 
