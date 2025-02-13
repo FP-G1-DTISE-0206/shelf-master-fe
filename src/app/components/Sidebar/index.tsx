@@ -1,5 +1,5 @@
 "use client"
-import { FC, useEffect } from "react";
+import { FC, useEffect, useCallback } from "react";
 import { 
   Button, Sidebar, TextInput, 
 } from "flowbite-react";
@@ -11,18 +11,18 @@ import {
   faChartLine, faBoxOpen, faFile, faPlus, faEdit, faTrash, 
 } from "@fortawesome/free-solid-svg-icons";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
-import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
+import useAdminProductCategory from "@/hooks/category/useProductCategory";
 import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import { useSession } from "next-auth/react";
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash.debounce";
 
 const AdminSidebar: FC = () => {
   const { data: session } = useSession();
   const { search, setSearch } = useSearchPaginationStore();
-  const { categories } = useAdminProductCategory(session?.accessToken as string);
+  const { categories, refetch } = useAdminProductCategory(session?.accessToken as string);
   const { 
-    isOpen, setIsOpen, page, setPage, setIsModalCategoryOpen, 
-    setModalCategoryType, setCategory, setIsDeletingCategory, 
+    isOpen, setIsOpen, page, setPage, setIsModalCategoryOpen, refetchData, 
+    setModalCategoryType, setCategory, setIsDeletingCategory, setRefetchData, 
   } = useSidebarAdminStore();
   const pathName = usePathname();
   
@@ -41,13 +41,22 @@ const AdminSidebar: FC = () => {
     setPage(clickedPage);
   };
 
-  const debounceFilter = useDebouncedCallback((value) => {
-    setSearch(value);
-  }, 500);
+  const handleFilter = useCallback(
+    debounce((value: string) => {
+      setSearch(value);
+    }, 50), []
+  );
+
+  useEffect(() => {
+    if(refetchData) {
+      refetch();
+      setRefetchData(false);
+    }
+  }, [refetchData]);
   
   return (
     isOpen && (
-      <Sidebar className="w-full md:w-1/6 fixed z-10 top-12 h-[100vh]">
+      <Sidebar className="w-screen md:w-1/6 fixed z-10 top-12">
         <div>
           <div>
             <div className={cn(
@@ -100,8 +109,8 @@ const AdminSidebar: FC = () => {
               <Sidebar.CTA className="flex flex-col gap-2 mt-6 text-gray-500">
                 <div>
                   <TextInput 
-                    placeholder="Search" value={search} 
-                    onChange={(e) => debounceFilter(e.target.value)} />
+                    placeholder="Search" value={search} autoComplete="off"
+                    onChange={(e) => handleFilter(e.target.value)} />
                 </div>
                 { categories && categories.length > 0 ? (
                   categories.map((category, idx) => (

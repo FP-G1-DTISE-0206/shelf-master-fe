@@ -3,7 +3,6 @@ import axios from "axios";
 import { CreateCategoryRequest, CategoryResponse } from "@/types/category";
 import { useToast } from "@/providers/ToastProvider";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
-import { useRouter } from "next/navigation";
 
 const createCategory = async (accessToken: string, creationData: CreateCategoryRequest) => {
   const { data } = await axios.post(
@@ -20,10 +19,10 @@ const createCategory = async (accessToken: string, creationData: CreateCategoryR
 
 const useCreateCategory = (accessToken: string) => {
   const { 
+    setRefetchData, 
     setIsModalCategoryOpen,  
   } = useSidebarAdminStore();
   const { showToast } = useToast();
-  const router = useRouter();
   const {
     mutate: createCategoryMutate,
   } = useMutation({
@@ -32,7 +31,7 @@ const useCreateCategory = (accessToken: string) => {
     onSuccess: () => {
       showToast("Category created successfully", "success");
       setIsModalCategoryOpen(false);
-      router.push("/products");
+      setRefetchData(true);
     },
     onError: (error: any) => {
       console.error("Error:", error);

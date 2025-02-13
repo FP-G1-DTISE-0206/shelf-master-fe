@@ -5,7 +5,7 @@ import { useToast } from "@/providers/ToastProvider";
 import { useRouter } from "next/navigation";
 
 const updateProduct = async (accessToken: string, id: string, updateData: UpdateProductRequest) => {
-  const { data } = await axios.patch(
+  const { data } = await axios.put(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${id}`,
     updateData,
     {

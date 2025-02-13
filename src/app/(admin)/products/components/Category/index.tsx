@@ -10,7 +10,7 @@ import useDeleteCategory from '@/hooks/category/useDeleteCategory';
 import { useSession } from "next-auth/react";
 import { 
   Button, TextInput, 
-  Label, Modal, Textarea, 
+  Label, Modal, 
 } from "flowbite-react";
 
 const validationSchema = Yup.object({

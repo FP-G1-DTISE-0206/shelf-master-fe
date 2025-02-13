@@ -9,13 +9,13 @@ interface NestedLayoutProps {
 
 const AdminLayout: FC<NestedLayoutProps> = ({ children }) => {
   return (
-    <div className="bg-gray-100">
+    <>
       <AdminSidebar />
       <AdminHeader />
       <ContainerSidebar>
         {children}
       </ContainerSidebar>
-    </div>
+    </>
   );
 };
 

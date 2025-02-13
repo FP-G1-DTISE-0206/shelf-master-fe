@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { CreateProductRequest } from "@/types/product";
-import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
+import useProductCategory from "@/hooks/category/useProductCategory";
 import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import useCreateProduct from "@/hooks/product/useCreateProduct";
 import { useSession } from "next-auth/react";
@@ -33,7 +33,7 @@ const validationSchema = Yup.object({
 const CreateProduct: FC = () => {
   const { data: session } = useSession();
   const { search, setSearch } = useSearchPaginationStore();
-  const { categories } = useAdminProductCategory(session?.accessToken as string);
+  const { categories } = useProductCategory(session?.accessToken as string);
   const { createProduct } = useCreateProduct(session?.accessToken as string);
   const [loading, setLoading] = useState(false);
   
@@ -110,7 +110,7 @@ const CreateProduct: FC = () => {
                 <div>
                   <Label htmlFor="description" className="font-medium">Description</Label>
                   <Field as={Textarea} id="description" name="description" 
-                    placeholder="Enter product description" rows={3} />
+                    placeholder="Enter product description" rows={7} />
                   <ErrorMessage
                     name="description"
                     component="div"
@@ -140,7 +140,7 @@ const CreateProduct: FC = () => {
                 <div className="w-full relative">
                   <Label htmlFor="category" className="font-medium">Category</Label>
                   <TextInput id="category" name="category" type="text" placeholder="Enter category"
-                    value={search} onChange={(e) => {setSearch(e.target.value)}}/>
+                    autoComplete="off" value={search} onChange={(e) => {setSearch(e.target.value)}}/>
                   <div className="absolute right-2 bottom-3">
                     <Dropdown
                       label={<FontAwesomeIcon icon={faSearch} />}

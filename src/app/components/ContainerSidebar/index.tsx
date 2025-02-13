@@ -6,7 +6,7 @@ import { cn } from "@/utils";
 const ContainerSidebar: FC<{ children: ReactNode }> = ({ children }) => {
   const { isOpen } = useSidebarAdminStore();
   return (
-    <div className="w-full flex pt-12">
+    <div className="w-full flex pt-12 overflow-x-hidden">
       <div className={cn('hidden', isOpen? 'md:block md:w-1/6' : '')}>
         &nbsp;
       </div>

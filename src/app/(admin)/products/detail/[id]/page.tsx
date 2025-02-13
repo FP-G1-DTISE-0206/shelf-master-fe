@@ -11,10 +11,10 @@ import { faMinus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { UpdateProductRequest } from "@/types/product";
-import useAdminProductCategory from "@/hooks/category/useAdminProductCategory";
+import useProductCategory from "@/hooks/category/useProductCategory";
 import useUpdateProduct from "@/hooks/product/useUpdateProduct";
 import useDeleteProduct from "@/hooks/product/useDeleteProduct";
-import useAdminProductDetail from "@/hooks/product/useProductDetail";
+import useProductDetail from "@/hooks/product/useProductDetail";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 import { useParams } from "next/navigation";
@@ -38,10 +38,10 @@ const UpdateProduct = () => {
   const { id }: { id: string } = useParams();
   const { data: session } = useSession();
   const { search, setSearch } = useSearchPaginationStore();
-  const { categories } = useAdminProductCategory(session?.accessToken as string);
+  const { categories } = useProductCategory(session?.accessToken as string);
   const { 
     product, isLoading, errorProductDetail, refetch,
-  } = useAdminProductDetail(session?.accessToken as string, id);
+  } = useProductDetail(session?.accessToken as string, id);
   const { updateProduct } = useUpdateProduct(session?.accessToken as string);
   const { deleteProduct } = useDeleteProduct(session?.accessToken as string);
   const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ const UpdateProduct = () => {
     price: product.price,
     weight: product.weight, 
     categories: product.categories.map(category => category.id), 
-    images: product.images.map(images => images.imageUrl) ?? [], 
+    images: product.images.map(image => image.imageUrl) ?? [], 
   };
 
   const handleSubmit = async (values: UpdateProductRequest) => {
@@ -79,7 +79,7 @@ const UpdateProduct = () => {
     }
   };
 
-  const handleConfirmation = (value: UpdateProductRequest) => {
+  const handleConfirmation = (value: UpdateProductRequest, setSubmitting: (type: boolean) => void) => {
     if (transactionType === "update") {
       handleSubmit(value);
     } else if (transactionType === "delete") {
@@ -89,6 +89,7 @@ const UpdateProduct = () => {
     }
     setTransactionType("");
     setOpenModalConfirmation(false);
+    setSubmitting(false)
   };
 
   const handleDeleteImage = async (
@@ -131,21 +132,44 @@ const UpdateProduct = () => {
                   <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
-                  <Label htmlFor="description" className="font-medium">Description</Label>
-                  <Textarea id="description" name="description" placeholder="Enter product description" rows={3} />
+                  <Label htmlFor="sku" className="font-medium">SKU</Label>
+                  <Field as={TextInput} id="sku" name="sku" placeholder="Enter product SKU" />
+                  <ErrorMessage name="sku" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
-                  <Label htmlFor="sku" className="font-medium">SKU</Label>
-                  <TextInput id="sku" name="sku" placeholder="Enter SKU" />
+                  <Label htmlFor="description" className="font-medium">Description</Label>
+                  <Field as={Textarea} id="description" name="description" 
+                    placeholder="Enter product description" rows={7} />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="price" className="font-medium">Price</Label>
-                  <Field as={TextInput} id="price" name="price" type="number" placeholder="Enter regular price" />
-                  <ErrorMessage name="price" component="div" className="text-red-500 text-sm" />
+                  <Field as={TextInput} id="price" name="price" 
+                    type="number" placeholder="Enter price" />
+                  <ErrorMessage
+                    name="price"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="weight" className="font-medium">Weight</Label>
+                  <Field as={TextInput} id="weight" name="weight" 
+                    type="number" placeholder="Enter weight in grams" />
+                  <ErrorMessage
+                    name="weight"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
                 <div className="w-full relative">
                   <Label htmlFor="category" className="font-medium">Category</Label>
-                  <TextInput id="category" name="category" type="text" placeholder="Enter category" value={search} onChange={(e) => setSearch(e.target.value)} />
+                  <TextInput id="category" name="category" type="text" autoComplete="off"
+                    placeholder="Enter category" value={search} onChange={(e) => setSearch(e.target.value)} />
                   <div className="absolute right-2 bottom-3">
                     <Dropdown label={<FontAwesomeIcon icon={faSearch} />} inline arrowIcon={false}>
                       {categories?.length > 0 ? categories.map((option, idx) => (
@@ -235,7 +259,7 @@ const UpdateProduct = () => {
                   setOpenModalConfirmation(false);
                   setSubmitting(false);
                 }}
-                onConfirm={()=>handleConfirmation(values)}
+                onConfirm={()=>{handleConfirmation(values, setSubmitting)}}
                 isOpen={openModalConfirmation}
               />
             </Form>

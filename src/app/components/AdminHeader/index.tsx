@@ -7,7 +7,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import Link from "next/link";
-import { Button, Dropdown, DropdownItem } from "flowbite-react";
+import { Dropdown, DropdownItem } from "flowbite-react";
 import Image from "next/image";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 
@@ -56,10 +56,13 @@ const AdminHeader: FC = () => {
 
   return (
     <>
-      <div className="fixed h-12 w-full flex bg-shelf-white items-center z-20">
-        <div className="flex xl:gap-10 max-xl:gap-2 items-center w-full justify-between px-10">
+      <div className="w-screen fixed h-12 flex bg-shelf-white items-center z-20">
+        <div className="w-full flex xl:gap-10 max-xl:gap-2 items-center justify-between px-10">
           {
-            isOpen ? (<div onClick={()=>setIsOpen(false)}><FontAwesomeIcon icon={faClose} /></div>)
+            isOpen 
+            ? (<div onClick={()=>setIsOpen(false)} className="md:w-1/6 flex md:justify-end">
+                <FontAwesomeIcon icon={faClose} className="pr-7" />
+              </div>)
             : (<div onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
           }
           <Link href="/">

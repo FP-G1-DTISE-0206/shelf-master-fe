@@ -1,7 +1,8 @@
 "use client";
+import { useCallback } from "react";
 import { 
   Card, Dropdown, DropdownItem, Button, 
-  Badge, TextInput, Select, Label, 
+  TextInput, Select, Label, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
@@ -14,8 +15,8 @@ import useProduct from "@/hooks/product/useProduct";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
-import { useDebouncedCallback } from "use-debounce";
 import Category from "./components/Category";
+import debounce from "lodash.debounce";
 
 const Products = () => {
   const { data: session } = useSession();
@@ -30,19 +31,18 @@ const Products = () => {
     totalData,
   } = useProduct(session?.accessToken as string);
 
-  if (productError) {
-    return <div className="align-middle justify-center">Error: {productError.message}</div>;
-  }
+  const handleFilter = useCallback(
+    debounce((value: string) => {
+      setSearch(value);
+    }, 10), []
+  );
 
-  const debounceFilter = useDebouncedCallback((value) => {
-    setSearch(value);
-  }, 500);
-
-  const debounceOrder = useDebouncedCallback(
-    () => {
+  const handleOrder = useCallback(
+    debounce(() => {
       const value = order === "asc" ? "desc" : "asc";  
       setOrder(value)
-  }, 500);
+    }, 500), []
+  );
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -55,11 +55,10 @@ const Products = () => {
       </div>
     );
   }
-  console.log(products)
 
   return (
     <div className="container mx-auto px-4 w-full">
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-wrap">
         <h1 className="text-2xl font-bold my-4">All Products</h1>
         <div className="flex gap-2">
           <Label htmlFor="field" className="font-medium h-10 mt-4 pl-2 py-2">Sort by:</Label>
@@ -72,14 +71,14 @@ const Products = () => {
           </Select>
           <Button className="flex items-center h-10 mt-4 px-0 py-2 rounded-lg" 
             color="gray"
-            onClick={debounceOrder}>
+            onClick={handleOrder}>
             {order === "asc" 
               ? (<FontAwesomeIcon icon={faArrowDownAZ} />) 
               : (<FontAwesomeIcon icon={faArrowUpAZ} />)
             }
           </Button>
           <TextInput 
-            onChange={(e) => debounceFilter(e.target.value)} 
+            onChange={(e) => handleFilter(e.target.value)} autoComplete="off"
             value={search} className="flex items-center h-10 mt-4 px-2 py-2"
             id="search" name="search" placeholder="Search" />
           <Button 
@@ -90,9 +89,12 @@ const Products = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
         {
-          (!products || !totalData) && (<div className="align-middle justify-center">No product yet</div>)
+          productError && (<div className="align-middle justify-center">Error: {productError.message}</div>)
+        }
+        {
+          (!products || !totalData) && (<div className="align-middle justify-center">No products</div>)
         }
         {products.map((product) => (
           <Card key={product.id} className="max-w-sm">
@@ -131,7 +133,7 @@ const Products = () => {
       </div>
 
       {
-        totalData && (
+        products.length > 0 && totalData && (
           <div className="flex justify-center mt-4">
             <Button disabled={page === 1} onClick={() => handlePageChange(page - 1)} className="mr-2">
               Previous

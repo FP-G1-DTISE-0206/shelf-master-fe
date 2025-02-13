@@ -8,12 +8,14 @@ export interface SidebarAdminState {
   modalCategoryType: string;
   category: UpdateCategoryRequest;
   isDeletingCategory: boolean;
+  refetchData: boolean;
   setIsOpen: (isOpen: boolean) => void;
   setPage: (page: string) => void;
   setIsModalCategoryOpen: (isModalCategoryOpen: boolean) => void;
   setModalCategoryType: (page: string) => void;
   setCategory: (category: UpdateCategoryRequest) => void;
   setIsDeletingCategory: (isDeletingCategory: boolean) => void;
+  setRefetchData: (refetchData: boolean) => void;
 }
 
 export const useSidebarAdminStore = create<SidebarAdminState>((set) => ({
@@ -23,10 +25,12 @@ export const useSidebarAdminStore = create<SidebarAdminState>((set) => ({
   modalCategoryType: "create",
   category: {} as UpdateCategoryRequest,
   isDeletingCategory: false, 
+  refetchData: false, 
   setIsOpen: (isOpen) => set({ isOpen }),
   setPage: (page) => set({ page }),
   setIsModalCategoryOpen: (isModalCategoryOpen) => set({ isModalCategoryOpen }),
   setModalCategoryType: (modalCategoryType) => set({ modalCategoryType }),
   setCategory: (category) => set({ category }),
   setIsDeletingCategory: (isDeletingCategory) => set({ isDeletingCategory }),
+  setRefetchData: (refetchData) => set({ refetchData }),
 }));

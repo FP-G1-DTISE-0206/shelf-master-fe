@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 
-const fetchCategoryByAdmin = async (
+const fetchCategory = async (
   accessToken: string,
   page: number,
   length: number,
@@ -23,7 +23,7 @@ const fetchCategoryByAdmin = async (
   return data.data as ResponseWithPagination;
 };
 
-const useAdminProductCategory = (accessToken: string) => {
+const useProductCategory = (accessToken: string) => {
   const { page, length, search } = useSearchPaginationStore();
 
   const {
@@ -32,9 +32,9 @@ const useAdminProductCategory = (accessToken: string) => {
     data,
     refetch,
   } = useQuery({
-    queryKey: ["fetchCategoryByAdmin", accessToken, page, length, search],
+    queryKey: ["fetchCategory", accessToken, page, length, search],
     queryFn: () =>
-      fetchCategoryByAdmin(accessToken, page, length, search),
+      fetchCategory(accessToken, page, length, search),
   });
 
   return {
@@ -46,4 +46,4 @@ const useAdminProductCategory = (accessToken: string) => {
   };
 };
 
-export default useAdminProductCategory;
+export default useProductCategory;
