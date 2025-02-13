@@ -20,6 +20,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/react-select": "^5.0.0",
     "axios": "^1.7.9",
+    "clsx": "^2.1.1",
     "flowbite-react": "^0.10.2",
     "formik": "^2.4.6",
     "jose": "^5.9.6",
@@ -32,10 +33,12 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-select": "^5.10.0",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
