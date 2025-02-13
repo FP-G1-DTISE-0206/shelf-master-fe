@@ -76,7 +76,7 @@ const Products = () => {
             session?.user.roles.includes("SUPER_ADMIN") && (
               <Button 
                 className="flex items-center h-10 mt-4 px-2 py-2 rounded-lg" 
-                as={Link} href={"/products/create"}>
+                as={Link} href={"/create-product"}>
                 <FontAwesomeIcon icon={faAdd} className="mt-[0.15rem]" />&nbsp;Product
               </Button>
             )

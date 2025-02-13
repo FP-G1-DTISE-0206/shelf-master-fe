@@ -60,12 +60,12 @@ const AdminHeader: FC = () => {
         <div className="w-full flex xl:gap-10 max-xl:gap-2 items-center justify-between px-10">
           {
             isOpen 
-            ? (<div onClick={()=>setIsOpen(false)} className="md:w-1/6 flex md:justify-end">
+            ? (<div onClick={()=>setIsOpen(false)} className="md:w-1/6 flex md:justify-end cursor-pointer">
                 <FontAwesomeIcon icon={faClose} className="pr-7" />
               </div>)
-            : (<div onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
+            : (<div className="cursor-pointer" onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
           }
-          <Link href="/">
+          <Link href="/dashboard">
             <h1 className="font-semibold md:text-xl">ShelfMaster</h1>
           </Link>
           {session && (

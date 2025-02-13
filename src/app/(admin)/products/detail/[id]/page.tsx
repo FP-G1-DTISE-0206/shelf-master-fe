@@ -32,27 +32,35 @@ const AdminDetailProduct = () => {
               <div className="w-1/2 p-4 space-y-4">
                 <div>
                   <Label htmlFor="name" className="font-medium">Product Name</Label>
-                  <TextInput id="name" name="name" disabled={true} placeholder="Enter product name" />
+                  <TextInput id="name" name="name" disabled={true} placeholder="Enter product name" 
+                    value={product.name}/>
                 </div>
                 <div>
                   <Label htmlFor="sku" className="font-medium">SKU</Label>
-                  <TextInput id="sku" name="sku" disabled={true} placeholder="Enter product SKU" />
+                  <TextInput id="sku" name="sku" disabled={true} placeholder="Enter product SKU" 
+                    value={product.sku}/>
                 </div>
                 <div>
                   <Label htmlFor="description" className="font-medium">Description</Label>
                   <Textarea id="description" name="description" 
-                    disabled={true} placeholder="Enter product description" rows={7} />
+                    disabled={true} placeholder="Enter product description" rows={7} 
+                    value={product.description}/>
                 </div>
                 <div>
                   <Label htmlFor="price" className="font-medium">Price</Label>
                   <TextInput id="price" name="price" 
-                    type="number" disabled={true} placeholder="Enter price" />
+                    type="number" disabled={true} placeholder="Enter price" 
+                    value={product.price}/>
                 </div>
                 <div>
                   <Label htmlFor="weight" className="font-medium">Weight</Label>
                   <TextInput id="weight" name="weight" 
-                    type="number" disabled={true} placeholder="Enter weight in grams" />
+                    type="number" disabled={true} placeholder="Enter weight in grams" 
+                    value={product.weight}/>
                 </div>
+              </div>
+              <div className="w-1/2 p-4 space-y-4">
+                <Label className="font-medium">Category</Label>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {product.categories.map((category, idx) => {
                     return category && (
@@ -62,8 +70,6 @@ const AdminDetailProduct = () => {
                     );
                   })}
                 </div>
-              </div>
-              <div className="w-1/2 p-4 space-y-4">
                 <div>
                   <Label className="font-medium">Product Gallery</Label>
                   <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">

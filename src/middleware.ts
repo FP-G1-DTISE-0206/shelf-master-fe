@@ -20,9 +20,7 @@ const PROTECTED_PATHS = [
   "/order-list",
   "/stock-mutation-form",
   "/create-product",
-  "/edit-product",
-  "/create-category",
-  "/edit-category",
+  "/update-product",
 ];
 const ROLE_PATHS = {
   USER: ["/profile", "/cart"],

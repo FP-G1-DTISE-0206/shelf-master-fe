@@ -18,7 +18,7 @@ import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import useCreateProduct from "@/hooks/product/useCreateProduct";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
-import MultipleImageUploader from "../components/MultipleImageUploader";
+import MultipleImageUploader from "../products/components/MultipleImageUploader";
 import CustomSpinner from "@/components/CustomSpinner";
 import debounce from "lodash.debounce";
 
