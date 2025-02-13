@@ -21,7 +21,7 @@ import debounce from "lodash.debounce";
 const Products = () => {
   const { data: session } = useSession();
   const { 
-    page, length, search, field, order, 
+    page, length, field, order, 
     setPage, setSearch, setField, setOrder, 
   } = useSearchSortPaginationStore();
   const {
@@ -46,6 +46,14 @@ const Products = () => {
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
+
+  const currencyFormatter = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      currencySign: 'accounting',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+  });
 
   return (
     <div className="container mx-auto px-4 w-full">
@@ -116,7 +124,9 @@ const Products = () => {
                 <div className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {product.name}
                 </div>
-                <p className="font-normal text-gray-700 dark:text-gray-400">{product.price}</p>
+                <p className="font-normal text-gray-700 dark:text-gray-400">
+                  {currencyFormatter.format(product.price)}
+                </p>
               </div>
               <div className="w-1/6">
                 <div className="mr-3 w-5">

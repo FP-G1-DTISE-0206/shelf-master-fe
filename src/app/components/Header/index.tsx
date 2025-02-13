@@ -1,5 +1,5 @@
 "use client";
-import { FC } from "react";
+import { FC, useCallback, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
@@ -7,17 +7,42 @@ import {
   faSearch,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import Link from "next/link";
-import { Dropdown, DropdownItem } from "flowbite-react";
+import { Dropdown, DropdownItem, TextInput } from "flowbite-react";
 import Image from "next/image";
+import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
+import debounce from "lodash.debounce";
+
 const Header: FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const { showToast } = useToast();
+  const { setSearch } = useSearchSortPaginationStore();
+  const searchParams = useSearchParams();
+  const filter = searchParams.get("filter");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilter = useCallback(
+    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+      if(window.location.pathname !== "/search") {
+        router.push("/search?filter="+e.target.value);
+      }
+      setSearch(e.target.value);
+    }, 500), [setSearch]
+  );
+
+  useEffect(() => {
+    if (searchInputRef.current && filter) {
+      searchInputRef.current.value = filter;
+      const params = new URLSearchParams(window.location.search);
+      params.delete("filter");
+      window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+    }
+  }, [filter]);
 
   const handleLogout = async () => {
     if (!session) {
@@ -64,7 +89,17 @@ const Header: FC = () => {
           <h1 className="font-extrabold text-xl">ShelfMaster</h1>
         </Link>
         <div className="flex xl:gap-10 max-xl:gap-2 items-center">
-          <FontAwesomeIcon icon={faSearch} />
+          <div className="relative">
+            <FontAwesomeIcon 
+              icon={faSearch} 
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 z-10"
+            />
+            <TextInput ref={searchInputRef} onChange={(e)=>{
+              handleFilter(e);
+            }}
+              className="pl-10" placeholder="Search..."
+            />
+          </div>
           {!session && (
             <div className="flex gap-5 max-lg:me-2">
               <div className="text-shelf-black hover:cursor-pointer">
