@@ -1,25 +1,27 @@
 "use client"
 import Link from "next/link";
-import { useState, FC, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { cn } from "@/utils";
 import { 
-  Card, TextInput, Textarea, Button, Badge, Carousel, Breadcrumb, 
-  Label, Dropdown, 
+  Card, TextInput, Textarea, Button, Badge, Carousel, 
+  Breadcrumb, Label, Dropdown, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMinus, faSearch, faTrash, 
-} from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
-import { CreateProductRequest } from "@/types/product";
+import { UpdateProductRequest } from "@/types/product";
 import useProductCategory from "@/hooks/category/useProductCategory";
-import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
-import useCreateProduct from "@/hooks/product/useCreateProduct";
+import useUpdateProduct from "@/hooks/product/useUpdateProduct";
+import useDeleteProduct from "@/hooks/product/useDeleteProduct";
+import useProductDetail from "@/hooks/product/useProductDetail";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
-import MultipleImageUploader from "../components/MultipleImageUploader";
+import { useParams } from "next/navigation";
 import CustomSpinner from "@/components/CustomSpinner";
+import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import MultipleImageUploader from "../../products/components/MultipleImageUploader";
 import debounce from "lodash.debounce";
 
 const validationSchema = Yup.object({
@@ -28,42 +30,83 @@ const validationSchema = Yup.object({
   name: Yup.string()
     .required("Name is required"),
   price: Yup.number().moreThan(0, "Price must be greater than 0").required("Price is required"),
-  weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"),
+  weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"), 
 });
 
-const CreateProduct: FC = () => {
+const UpdateProduct = () => {
+  const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
+  const [transactionType, setTransactionType] = useState<string>("");
+  const { id }: { id: string } = useParams() ?? { id: "" };
   const { data: session } = useSession();
   const { setSearch } = useSearchPaginationStore();
-  const { categories } = useProductCategory(session?.accessToken as string);
-  const { createProduct } = useCreateProduct(session?.accessToken as string);
+  const accessToken = session?.accessToken ?? "";
+  const { categories } = useProductCategory(accessToken);
+  const { 
+    product, isLoading, errorProductDetail, 
+  } = useProductDetail(accessToken, id);
+  const { updateProduct } = useUpdateProduct(accessToken);
+  const { deleteProduct } = useDeleteProduct(accessToken);
   const [loading, setLoading] = useState(false);
-  
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   const handleFilter = useCallback(
     debounce((value: string) => {
       setSearch(value);
     }, 700), [setSearch]
   );
 
-  const handleSubmit = async (
-    values: CreateProductRequest
-  ) => {
-      try {
-        createProduct({creationData: values});
-      } catch (error) {
-        console.error("An unexpected error occurred:", error);
-      } finally {
+  if (errorProductDetail) return <div>Error: {errorProductDetail.message}</div>;
+  if (isLoading) return <div><CustomSpinner /></div>;
+  if (!product) return <div>No such product</div>;
+
+  const initialValues: UpdateProductRequest = {
+    id: product.id,
+    sku: product.sku,
+    name: product.name,
+    description: product.description, 
+    price: product.price,
+    weight: product.weight, 
+    categories: product.categories.map(category => category.id), 
+    images: product.images.map(image => image.imageUrl) ?? [], 
+  };
+
+  const handleSubmit = async (values: UpdateProductRequest) => {
+    try {
+      updateProduct({ id, updateData: values });
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
     }
   };
 
-  const handleDelete = async (
-    imageUrl: string, 
-    setFieldValue: (field: string, value: any) => void, 
-    values: CreateProductRequest
-  ) => {
-    setLoading(true);
+  const handleDelete = async () => {
     try {
-      setFieldValue("images", values.images.filter((url) => url !== imageUrl));
+      deleteProduct({ id });
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+    }
+  };
+
+  const handleConfirmation = (value: UpdateProductRequest, setSubmitting: (type: boolean) => void) => {
+    if (transactionType === "update") {
+      handleSubmit(value);
+    } else if (transactionType === "delete") {
+      handleDelete();
+    } else {
+      console.error("Unknown transaction type");
+    }
+    setTransactionType("");
+    setOpenModalConfirmation(false);
+    setSubmitting(false)
+  };
+
+  const handleDeleteImage = async (
+      imageUrl: string, 
+      setFieldValue: (field: string, value: any) => void, 
+      values: UpdateProductRequest
+    ) => {
+      setLoading(true);
+      try {
+        setFieldValue("images", values.images.filter((url) => url !== imageUrl));
     } catch (error) {
       console.error(error);
       alert("Failed to delete image.");
@@ -72,48 +115,33 @@ const CreateProduct: FC = () => {
     }
   };
 
-  const initialValues: CreateProductRequest = {
-    sku: "",
-    name: "",
-    description: "", 
-    price: 0,
-    weight: 0, 
-    categories: [], 
-    images: [], 
-  };
-
   return (
     <div className="container mx-auto px-4 w-full">
       <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
         <Breadcrumb.Item><Link href={"/products"}>Products</Link></Breadcrumb.Item>
-        <Breadcrumb.Item>Create</Breadcrumb.Item>
+        <Breadcrumb.Item>Update</Breadcrumb.Item>
       </Breadcrumb>
       <Card className="w-full">
-        <Formik<CreateProductRequest>
+        <Formik<UpdateProductRequest>
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+          onSubmit={() => {
+            setTransactionType("update");
+            setOpenModalConfirmation(true);
+          }}
         >
-          {({ values, setFieldValue, isSubmitting }) => (
+          {({ values, setFieldValue, isSubmitting, setSubmitting }) => (
             <Form className="flex w-full">
               <div className="w-1/2 p-4 space-y-4">
                 <div>
                   <Label htmlFor="name" className="font-medium">Product Name</Label>
                   <Field as={TextInput} id="name" name="name" placeholder="Enter product name" />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                  <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
                   <Label htmlFor="sku" className="font-medium">SKU</Label>
                   <Field as={TextInput} id="sku" name="sku" placeholder="Enter product SKU" />
-                  <ErrorMessage
-                    name="sku"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                  <ErrorMessage name="sku" component="div" className="text-red-500 text-sm" />
                 </div>
                 <div>
                   <Label htmlFor="description" className="font-medium">Description</Label>
@@ -147,56 +175,37 @@ const CreateProduct: FC = () => {
                 </div>
                 <div className="w-full relative">
                   <Label htmlFor="category" className="font-medium">Category</Label>
-                  <TextInput id="category" name="category" type="text" placeholder="Enter category"
-                    ref={searchInputRef}
-                    autoComplete="off" onChange={(e) => {handleFilter(e.target.value)}}/>
+                  <TextInput id="category" name="category" type="text" autoComplete="off"
+                    ref={searchInputRef} 
+                    placeholder="Enter category" onChange={(e) => handleFilter(e.target.value)} />
                   <div className="absolute right-2 bottom-3">
-                    <Dropdown
-                      label={<FontAwesomeIcon icon={faSearch} />}
-                      inline
-                      arrowIcon={false}
-                    >
-                      {categories && categories.length > 0 ? (
-                        categories.map((option, idx) => (
-                          <Dropdown.Item
-                            key={idx}
-                            onClick={() => {
-                              if (!values.categories.includes(option.id)) {
-                                setFieldValue("categories", [...values.categories, option.id]);
-                              }
-                              searchInputRef.current!.value = "";
-                              setSearch("");
-                            }}
-                          >
-                            {option.name}
-                          </Dropdown.Item>
-                        ))
-                      ) : (
-                        <Dropdown.Item disabled>No categories found</Dropdown.Item>
-                      )}
+                    <Dropdown label={<FontAwesomeIcon icon={faSearch} />} inline arrowIcon={false}>
+                      {categories?.length > 0 ? categories.map((option, idx) => (
+                        <Dropdown.Item key={idx} onClick={() => {
+                          if (!values.categories.includes(option.id)) {
+                            setFieldValue("categories", [...values.categories, option.id]);
+                          }
+                          searchInputRef.current!.value = "";
+                          setSearch("");
+                        }}>
+                          {option.name}
+                        </Dropdown.Item>
+                      )) : <Dropdown.Item disabled>No categories found</Dropdown.Item>}
                     </Dropdown>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {values.categories.map((categoryId, idx) => {
                     const category = categories.find(c => c.id === categoryId);
-                    return (
-                      category && (
-                        <Badge key={idx} color="info" className="relative inline-block pr-5">
-                          {category.name}
-                          <div
-                            className="absolute -top-2 -right-0 px-1 font-bold rounded-lg bg-black cursor-pointer"
-                            onClick={() => {
-                              setFieldValue(
-                                "categories",
-                                values.categories.filter(id => id !== categoryId)
-                              );
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faMinus} color="red" />
-                          </div>
-                        </Badge>
-                      )
+                    return category && (
+                      <Badge key={idx} color="info" className="relative inline-block pr-5">
+                        {category.name}
+                        <div className="absolute -top-2 -right-0 px-1 font-bold rounded-lg bg-black cursor-pointer"
+                          onClick={() => setFieldValue("categories", values.categories.filter(id => id !== categoryId))}
+                        >
+                          <FontAwesomeIcon icon={faMinus} color="red" />
+                        </div>
+                      </Badge>
                     );
                   })}
                 </div>
@@ -218,7 +227,7 @@ const CreateProduct: FC = () => {
                           <div key={index} className="relative w-full aspect-[9/6]">
                             <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
                             <Button
-                              onClick={() => handleDelete(src, setFieldValue, values)}
+                              onClick={() => handleDeleteImage(src, setFieldValue, values)}
                               className={cn(
                                 'absolute top-2 right-16', 
                                 'bg-white bg-opacity-50 w-10 h-10 rounded-full', 
@@ -243,11 +252,25 @@ const CreateProduct: FC = () => {
                       setLoading={setLoading} />
                   </div>
                 </div>
-                <Button gradientDuoTone="purpleToPink" className="w-full mt-5"
-                  disabled={isSubmitting} type="submit">
-                  Create Product
-                </Button>
+                <div className="w-full px-14 flex gap-5">
+                  <Button color="failure" className="w-1/2 mt-5" onClick={() => {
+                    setTransactionType("delete");
+                    setOpenModalConfirmation(true);
+                  }} disabled={isSubmitting}>Delete</Button>
+                  <Button color="blue" className="w-1/2 mt-5" disabled={isSubmitting} type="submit">Update</Button>
+                </div>
               </div>
+              
+              <ConfirmationModal 
+                title="Confirmation changes"
+                message="Are you sure you want to proceed with this action?"
+                onClose={() => {
+                  setOpenModalConfirmation(false);
+                  setSubmitting(false);
+                }}
+                onConfirm={()=>{handleConfirmation(values, setSubmitting)}}
+                isOpen={openModalConfirmation}
+              />
             </Form>
           )}
         </Formik>
@@ -256,4 +279,4 @@ const CreateProduct: FC = () => {
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;

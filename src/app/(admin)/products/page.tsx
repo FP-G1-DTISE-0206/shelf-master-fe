@@ -30,31 +30,22 @@ const Products = () => {
     products,
     totalData,
   } = useProduct(session?.accessToken as string);
-
+  
   const handleFilter = useCallback(
     debounce((value: string) => {
       setSearch(value);
-    }, 10), []
+    }, 700), [setSearch]
   );
-
+  
   const handleOrder = useCallback(
     debounce(() => {
-      const value = order === "asc" ? "desc" : "asc";  
-      setOrder(value)
-    }, 500), []
+      setOrder(order === "asc" ? "desc" : "asc");
+    }, 500), [order, setOrder]
   );
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
-
-  if (isProductLoading) {
-    return (
-      <div className="flex min-h-60 align-middle justify-center">
-        <CustomSpinner />
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 w-full">
@@ -78,25 +69,36 @@ const Products = () => {
             }
           </Button>
           <TextInput 
-            onChange={(e) => handleFilter(e.target.value)} autoComplete="off"
-            value={search} className="flex items-center h-10 mt-4 px-2 py-2"
-            id="search" name="search" placeholder="Search" />
-          <Button 
-            className="flex items-center h-10 mt-4 px-2 py-2 rounded-lg" 
-            as={Link} href={"/products/create"}>
-            <FontAwesomeIcon icon={faAdd} className="mt-[0.15rem]" />&nbsp;Product
-          </Button>
+            className="flex items-center h-10 mt-4 px-2 py-2" 
+            onChange={(e) => handleFilter(e.target.value)} autoComplete="off" 
+            placeholder="Search" />
+          {
+            session?.user.roles.includes("SUPER_ADMIN") && (
+              <Button 
+                className="flex items-center h-10 mt-4 px-2 py-2 rounded-lg" 
+                as={Link} href={"/products/create"}>
+                <FontAwesomeIcon icon={faAdd} className="mt-[0.15rem]" />&nbsp;Product
+              </Button>
+            )
+          }
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+        {
+          isProductLoading && (
+            <div className="flex min-h-60 align-middle justify-center">
+              <CustomSpinner />
+            </div>
+          )
+        }
         {
           productError && (<div className="align-middle justify-center">Error: {productError.message}</div>)
         }
         {
           (!products || !totalData) && (<div className="align-middle justify-center">No products</div>)
         }
-        {products.map((product) => (
+        {!isProductLoading && products.map((product) => (
           <Card key={product.id} className="max-w-sm">
             <div className="flex gap-2">
               <div className="w-1/3">
@@ -120,6 +122,11 @@ const Products = () => {
                 <div className="mr-3 w-5">
                   <Dropdown label={<FontAwesomeIcon icon={faEllipsis} />} inline arrowIcon={false}>
                     <DropdownItem as={Link} href={`/products/detail/${product.id}`}>Detail</DropdownItem>
+                    {
+                      session?.user.roles.includes("SUPER_ADMIN") && (
+                        <DropdownItem as={Link} href={`/update-product/${product.id}`}>Update</DropdownItem>
+                      )
+                    }
                     <DropdownItem>Request Stock</DropdownItem>
                   </Dropdown>
                 </div>
@@ -133,7 +140,7 @@ const Products = () => {
       </div>
 
       {
-        products.length > 0 && totalData && (
+        !isProductLoading && products.length > 0 && totalData && (
           <div className="flex justify-center mt-4">
             <Button disabled={page === 1} onClick={() => handlePageChange(page - 1)} className="mr-2">
               Previous

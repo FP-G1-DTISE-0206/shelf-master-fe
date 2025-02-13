@@ -18,7 +18,7 @@ import debounce from "lodash.debounce";
 
 const AdminSidebar: FC = () => {
   const { data: session } = useSession();
-  const { search, setSearch } = useSearchPaginationStore();
+  const { setSearch } = useSearchPaginationStore();
   const { categories, refetch } = useAdminProductCategory(session?.accessToken as string);
   const { 
     isOpen, setIsOpen, page, setPage, setIsModalCategoryOpen, refetchData, 
@@ -44,7 +44,7 @@ const AdminSidebar: FC = () => {
   const handleFilter = useCallback(
     debounce((value: string) => {
       setSearch(value);
-    }, 50), []
+    }, 700), [setSearch]
   );
 
   useEffect(() => {
@@ -99,37 +99,49 @@ const AdminSidebar: FC = () => {
               <div className={cn('flex justify-between items-center uppercase', 
                 'text-gray-500 font-semibold')}>
                 <span>Categories</span>
-                <Button color="gray" size="sm" onClick={()=>{
-                  setModalCategoryType("create")
-                  setIsModalCategoryOpen(true)
-                }}>
-                  <FontAwesomeIcon icon={faPlus} />
-                </Button>
+                {
+                  session?.user.roles.includes("SUPER_ADMIN") && (
+                    <Button color="gray" size="sm" onClick={()=>{
+                      setModalCategoryType("create")
+                      setIsModalCategoryOpen(true)
+                    }}>
+                      <FontAwesomeIcon icon={faPlus} />
+                    </Button>
+                  )
+                }
               </div>
               <Sidebar.CTA className="flex flex-col gap-2 mt-6 text-gray-500">
                 <div>
                   <TextInput 
-                    placeholder="Search" value={search} autoComplete="off"
+                    placeholder="Search" autoComplete="off"
                     onChange={(e) => handleFilter(e.target.value)} />
                 </div>
                 { categories && categories.length > 0 ? (
                   categories.map((category, idx) => (
                     <div className="flex justify-between" key={idx}>
                       <div className="flex gap-2 items-center">
-                        <span onClick={()=>{
-                          setModalCategoryType("update")
-                          setCategory(category)
-                          setIsModalCategoryOpen(true)
-                        }} className="cursor-pointer"><FontAwesomeIcon icon={faEdit} /></span>
+                        {
+                          session?.user.roles.includes("SUPER_ADMIN") && (
+                            <span onClick={()=>{
+                              setModalCategoryType("update")
+                              setCategory(category)
+                              setIsModalCategoryOpen(true)
+                            }} className="cursor-pointer"><FontAwesomeIcon icon={faEdit} /></span>
+                          )
+                        }
                         <span>{category.name}</span>
                       </div>
                       <div>
-                        <span onClick={()=>{
-                            setIsDeletingCategory(true)
-                            setCategory(category)
-                          }} className="cursor-pointer">
-                            <FontAwesomeIcon icon={faTrash} color="red" />
-                        </span>
+                        {
+                          session?.user.roles.includes("SUPER_ADMIN") && (
+                            <span onClick={()=>{
+                                setIsDeletingCategory(true)
+                                setCategory(category)
+                              }} className="cursor-pointer">
+                                <FontAwesomeIcon icon={faTrash} color="red" />
+                            </span>
+                          )
+                        }
                       </div>
                     </div>
                   ))
