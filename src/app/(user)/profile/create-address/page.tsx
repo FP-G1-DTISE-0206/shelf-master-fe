@@ -1,21 +1,14 @@
 "use client";
 import { FC, useState } from "react";
 import { AreaOption } from "../components/BiteshipSearch";
-import UserAddressForm from "../components/UserAddressForm";
+import UserAddressForm, {
+  AddressFormValues,
+} from "../components/UserAddressForm";
 import axios from "axios";
 import { useToast } from "@/providers/ToastProvider";
 import { useSession } from "next-auth/react";
 import { FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
-
-interface AddressFormValues {
-  contactName: string;
-  contactNumber: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  biteshipArea: AreaOption | null;
-}
 
 const CreateAddressPage: FC = () => {
   const { data: session } = useSession();
@@ -27,8 +20,8 @@ const CreateAddressPage: FC = () => {
     contactName: "",
     contactNumber: "",
     address: "",
-    latitude: 0,
-    longitude: 0,
+    latitude: null,
+    longitude: null,
     biteshipArea: null,
   };
 

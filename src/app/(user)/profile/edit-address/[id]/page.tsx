@@ -5,21 +5,15 @@ import { useSingleUserAddress } from "@/hooks/useUserAddress";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import { AreaOption } from "../../components/BiteshipSearch";
-import UserAddressForm from "../../components/UserAddressForm";
+import UserAddressForm, {
+  AddressFormValues,
+} from "../../components/UserAddressForm";
 import axios from "axios";
 import { useToast } from "@/providers/ToastProvider";
 import { FormikHelpers } from "formik";
 
 interface PageProps {
   params: Promise<{ id: string }>; // params is a Promise<{ id: string }>
-}
-interface AddressFormValues {
-  contactName: string;
-  contactNumber: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  biteshipArea: AreaOption | null;
 }
 
 const EditAddressPage: FC<PageProps> = ({ params }) => {
@@ -31,7 +25,7 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const router = useRouter();
-  const { error, isLoading, singleUserAddress } = useSingleUserAddress(
+  const { error, isLoading, singleUserAddress, refetch } = useSingleUserAddress(
     session?.accessToken as string,
     parseInt(id)
   );
@@ -103,6 +97,8 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
       } else {
         showToast("An unexpected error occurred. Please try again.", "error");
       }
+    } finally {
+      refetch();
     }
   };
   useEffect(() => {

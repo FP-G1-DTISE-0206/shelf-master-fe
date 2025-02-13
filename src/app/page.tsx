@@ -3,7 +3,6 @@ import Header from "@/app/components/Header";
 import HeroCard from "./components/HeroCard";
 import NewArrival from "./components/NewArrival";
 import Footer from "./components/Footer";
-import Head from "next/head";
 
 const Home: FC = () => {
   return (

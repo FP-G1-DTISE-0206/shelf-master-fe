@@ -1,10 +1,8 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-// import { API_URL } from "./constants/url";
 import { LoginResponse, TokenClaims } from "./types/auth/TokenPair";
 import { jwtDecode } from "jwt-decode";
-import jwt from "jsonwebtoken";
 import { jwtVerify } from "jose";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

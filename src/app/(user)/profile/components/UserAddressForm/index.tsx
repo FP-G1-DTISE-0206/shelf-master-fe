@@ -2,12 +2,13 @@ import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { FC } from "react";
 import * as Yup from "yup";
 import BiteshipSearch, { AreaOption } from "../BiteshipSearch";
-interface AddressFormValues {
+import Map from "../Map";
+export interface AddressFormValues {
   contactName: string;
   contactNumber: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   biteshipArea: AreaOption | null;
 }
 interface UserAddressFormProps {
@@ -21,15 +22,16 @@ interface UserAddressFormProps {
 }
 
 const validationSchema = Yup.object({
-  contactName: Yup.string().required("Name is required"),
+  contactName: Yup.string().trim().required("Name is required"),
   contactNumber: Yup.string()
     .matches(/^[0-9]+$/, "Only numbers are allowed")
     .min(10, "Number must be at least 10 digits")
+    .max(15, "Number must not exceed 15 digits")
     .required("Phone number is required"),
-  address: Yup.string().required("Address is required"),
-  latitude: Yup.number().required("Latitude is required"),
-  longitude: Yup.number().required("Longitude is required"),
+  address: Yup.string().trim().required("Address is required"),
   biteshipArea: Yup.object().nullable().required("Biteship area is required"),
+  latitude: Yup.number().required("Location is required"),
+  longitude: Yup.number(),
 });
 
 const UserAddressForm: FC<UserAddressFormProps> = ({
@@ -44,7 +46,7 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, setFieldValue, values }) => (
         <Form className="flex flex-col gap-4">
           <div>
             <h3 className="text-lg font-semibold">Contact Details</h3>
@@ -124,35 +126,21 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
                   className="text-red-500 text-sm"
                 />
               </div>
-
               <div>
-                <label className="block text-sm font-bold" htmlFor="latitude">
-                  Latitude
+                <label className="block text-sm font-bold">
+                  Select Location on Map
                 </label>
-                <Field
-                  type="number"
-                  name="latitude"
-                  placeholder="Coordinate (Latitude)"
-                  className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
+                <Map
+                  onLocationSelect={(lat, lng) => {
+                    setFieldValue("latitude", lat);
+                    setFieldValue("longitude", lng);
+                  }}
+                  selectedLatitude={values.latitude}
+                  selectedLongitude={values.longitude}
+                  selectedArea={selectedArea}
                 />
                 <ErrorMessage
                   name="latitude"
-                  component="p"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold" htmlFor="longitude">
-                  Longitude
-                </label>
-                <Field
-                  type="number"
-                  name="longitude"
-                  placeholder="Coordinate (Longitude)"
-                  className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
-                />
-                <ErrorMessage
-                  name="longitude"
                   component="p"
                   className="text-red-500 text-sm"
                 />
