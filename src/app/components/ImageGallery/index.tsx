@@ -26,9 +26,8 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
           <Image
             src={images[selectedImageIndex]}
             alt={`Image ${selectedImageIndex + 1}`}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-lg"
+            fill
+            className="object-cover rounded-lg"
           />
 
           {/* Dots Indicator Positioned at the Bottom Over the Image */}
@@ -69,7 +68,14 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
         </div>
       </div>
     </>
-    // <>
+  
+  );
+};
+
+export default ImageGallery;
+
+
+  // <>
     //   <div className="rounded-lg max-w-xl mx-auto">
     //     {/* Main Image */}
     //     <div className="relative flex justify-center items-center mb-4">
@@ -115,7 +121,3 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
     //     </div>
     //   </div>
     // </>
-  );
-};
-
-export default ImageGallery;
