@@ -76,7 +76,7 @@ const ProfileDetailsSection: FC<ProfileDetailSectionProps> = ({
           <div className="text-lg font-normal flex gap-2">
             {profile?.userName}
             <span
-              className="text-xs text-shelf-orange font-normal"
+              className="text-xs text-shelf-orange font-normal hover:cursor-pointer"
               onClick={() => setOpenModalUserName(true)}
             >
               Edit

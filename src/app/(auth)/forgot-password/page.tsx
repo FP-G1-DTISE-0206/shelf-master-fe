@@ -3,7 +3,6 @@ import { useToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
