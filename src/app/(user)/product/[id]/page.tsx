@@ -1,27 +1,36 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import SizeOption from "@/app/components/SizeOptions";
 import ColorOption from "@/app/components/ColorOptions";
 import ImageGallery from "@/app/components/ImageGallery";
 import UnifiedSizeSelector from "@/app/components/SizeOptions";
-import CartPage from "@/app/components/CartComponent";
+import products from "@/data/product";
+// import useCartStore from "@/store/cartStore";
+import useCartStore from "@/hooks/useCartStore";
+import { CartItem } from "@/types/cartItem";
 interface SizeStatusMap {
   [size: number]: "active" | "disabled" | "default";
 }
 
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  images: string[];
+}
+
 
 const ProductPage: FC = () => {
+  const { id } = useParams(); 
+  const [product, setProduct] = useState<Product | null>(null);
+  const {addToCart} = useCartStore((state) => state.addToCart);
+
+
   const [selectedColor, setSelectedColor] = useState<string>("navy");
-  const productImages = [
-    '/images/Shoes1.jpg',
-    '/images/Shoes2.jpg',
-    '/images/Shoes3.jpg',
-    '/images/Shoes4.jpg',
-    '/images/Shoes5.jpg',
-    ]
+
   const sizes: number[] = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
   const sizeStatus: SizeStatusMap = {
     38: "active",
@@ -45,12 +54,45 @@ const ProductPage: FC = () => {
     console.log(`Selected size: ${size}`);
   };
 
+  const handleAddToCart = () => {
+    if (product) {
+      const cartItem: CartItem = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        images: product.images,
+        quantity: 1,
+      };
+      addToCart(cartItem); // No more error
+    }
+  };
+  
+  
+
+  useEffect(() => {
+    const productData = products.find((p) => p.id === Number(id));
+    if (productData) {
+      setProduct(productData);
+    } else {
+      console.error("Product not found");
+    }
+  }, [id]);
+
+  if (!product) {
+    return <p>Loading...</p>;
+  }
+
+  // useEffect(() => {
+  //   const productData = products.find((p) => p.id === Number(id)) || null;
+  //   setProduct(productData);
+  // }, [id]);
+
   return (
     <>
-      <CartPage />
+      {/* <CartPage /> */}
       {/* Gambar Sliding */}
       <div>
-        <ImageGallery images={productImages} />
+        <ImageGallery images={product.images} />
       </div>
 
       {/* Info Utama : Nama & Harga */}
@@ -59,10 +101,10 @@ const ProductPage: FC = () => {
           <p className="text-white text-[12px] font-semibold">New Release</p>
         </div>
         <div className="mb-2">
-          <p className="text-shelf-black font-semibold text-xl">ADIDAS 4DFWD X PARLEY RUNNING SHOES</p>
+          <p className="text-shelf-black font-semibold text-xl">{product.name}</p>
         </div>
         <div>
-          <p className="text-shelf-blue font-semibold text-2xl">$125.00</p>
+          <p className="text-shelf-blue font-semibold text-2xl">Rp {product.price.toLocaleString('id-ID')}</p>
         </div>
       </div>
 
@@ -87,7 +129,9 @@ const ProductPage: FC = () => {
       {/* Tombol Add To Cart, Wishlist & Buy Now */}
       <div>
         <div className="mb-2 flex gap-2">
-          <button className="bg-shelf-black basis-5/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+          <button 
+            onClick={handleAddToCart}
+            className="bg-shelf-black basis-5/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
             ADD TO CART
           </button>
           <button className="bg-shelf-black basis-1/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
