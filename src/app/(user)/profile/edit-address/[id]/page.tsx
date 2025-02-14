@@ -4,13 +4,15 @@ import { notFound, useRouter } from "next/navigation";
 import { useSingleUserAddress } from "@/hooks/useUserAddress";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
-import { AreaOption } from "../../components/BiteshipSearch";
-import UserAddressForm, {
-  AddressFormValues,
-} from "../../components/UserAddressForm";
+import UserAddressForm from "../../components/UserAddressForm";
 import axios from "axios";
 import { useToast } from "@/providers/ToastProvider";
 import { FormikHelpers } from "formik";
+import { AddressFormValues } from "@/types/address";
+import { AreaOption } from "@/types/biteship";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface PageProps {
   params: Promise<{ id: string }>; // params is a Promise<{ id: string }>
@@ -107,14 +109,21 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
   if (isLoading) return <CustomSpinner />;
   if (error) return <div>Error: {error.message}</div>;
   return (
-    <div className="flex flex-col gap-5 p-6 w-full md:w-1/2 mx-auto bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-semibold text-gray-800">Edit Address</h2>
-      <UserAddressForm
-        initialValues={initialValues}
-        handleSubmit={handleSubmit}
-        setSelectedArea={setSelectedArea}
-        selectedArea={selectedArea}
-      />
+    <div className="flex flex-col gap-6">
+      <div className="flex gap-4 items-center hover:cursor-pointer">
+        <Link href={"/profile"}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </Link>
+        <div className="font-semibold text-2xl">Edit Address</div>
+      </div>
+      <div className="flex flex-col gap-5 p-6 w-full mx-auto bg-white shadow-lg rounded-lg">
+        <UserAddressForm
+          initialValues={initialValues}
+          handleSubmit={handleSubmit}
+          setSelectedArea={setSelectedArea}
+          selectedArea={selectedArea}
+        />
+      </div>
     </div>
   );
 };

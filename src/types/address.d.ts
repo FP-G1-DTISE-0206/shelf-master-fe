@@ -13,3 +13,16 @@ export interface UserAddressResponse {
   areaId: string;
   isDefault: boolean;
 }
+
+export interface AddressFormValues {
+  contactName: string;
+  contactNumber: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  biteshipArea: AreaOption | null;
+}
+
+export interface WarehouseFormValues extends AddressFormValues {
+  name: string;
+}
