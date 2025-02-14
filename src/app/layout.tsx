@@ -7,6 +7,8 @@ import { ToastProvider } from "@/providers/ToastProvider";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import ClientProvider from "@/providers/ClientProvider";
+
+
 config.autoAddCss = false;
 
 const rubik = Rubik({

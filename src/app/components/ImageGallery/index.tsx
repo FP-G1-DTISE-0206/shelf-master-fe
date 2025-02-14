@@ -20,9 +20,9 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
 
   return (
     <>
-      <div className="rounded-lg max-w-xl mx-auto">
+      <div className="rounded-lg max-w-xl mx-auto lg:mx-0">
         {/* Main Image Container with Fixed Aspect Ratio */}
-        <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md">
+        <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md lg:w-[640px] lg:h-[480px]">
           <Image
             src={images[selectedImageIndex]}
             alt={`Image ${selectedImageIndex + 1}`}

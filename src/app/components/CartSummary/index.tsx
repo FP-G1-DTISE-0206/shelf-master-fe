@@ -62,8 +62,10 @@ const CartSummary:FC = () => {
               </tbody>
             </table>
 
-            <button className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-            CHECKOUT
+            <button 
+              className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
+            >
+            <Link href={"/payment"}>CHECKOUT</Link>
           </button>
           <p className="pt-2 lg:text-xl">
             <Link href="/promo" className="underline text-base">User a promo code</Link>

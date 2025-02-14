@@ -43,9 +43,9 @@ const ProductCard: FC<ProductCardProps> = ({
   };
   return (
     <>
-      <div className="product-card-container w-[171px] xl:w-[318px]">
+      <div className="product-card-container w-full">
         <div className="product-image-container border-8 border-shelf-white rounded-3xl ">
-          <div className="hero-card-container relative rounded-2xl w-full xl:h-[334px] h-[164px] overflow-hidden">
+          <div className="hero-card-container relative rounded-2xl w-full lg:h-[334px] h-[164px] overflow-hidden">
             <Image 
               src={images?.[0] || "/images/kohceng-senam.jpg"} 
               alt={name || "Product Image"} 
@@ -73,7 +73,7 @@ const ProductCard: FC<ProductCardProps> = ({
               onClick={handleViewProduct}
               className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
             >
-              VIEW PRODUCT - <span className="text-shelf-orange">{formatPrice(price)}</span>
+              VIEW PRODUCT <br/><span className="text-shelf-orange">{formatPrice(price)}</span>
             </button>
           </div>
         </div>

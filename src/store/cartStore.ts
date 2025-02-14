@@ -14,6 +14,7 @@ interface CartState {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
   getTotalItems: () => number;
+  getTotalPrice: () => number;
   clearCart: () => void;
 }
 
@@ -41,10 +42,14 @@ const cartStore = createStore(
       getTotalItems: () =>
         get().cartItems.reduce((total, item) => total + item.quantity, 0),
 
+      getTotalPrice: () =>
+        get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0), // ✅ Calculate total price
+
+
       clearCart: () => set({ cartItems: [] }),
     }),
     {
-      name: "cart-storage", // Key for persisting cart data
+      name: "cart-storage",
     }
   )
 );
