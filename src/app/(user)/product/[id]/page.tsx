@@ -22,12 +22,10 @@ interface Product {
   images: string[];
 }
 
-
 const ProductPage: FC = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
-  const {addToCart} = useCartStore((state) => state.addToCart);
-
+  const { addToCart } = useCartStore((state) => state.addToCart);
 
   const [selectedColor, setSelectedColor] = useState<string>("navy");
 
@@ -62,12 +60,11 @@ const ProductPage: FC = () => {
         price: product.price,
         images: product.images,
         quantity: 1,
+        description: ""
       };
       addToCart(cartItem); // No more error
     }
   };
-  
-  
 
   useEffect(() => {
     const productData = products.find((p) => p.id === Number(id));
@@ -91,25 +88,33 @@ const ProductPage: FC = () => {
     <>
       {/* <CartPage /> */}
       {/* Gambar Sliding */}
-      <div>
-        <ImageGallery images={product.images} />
-      </div>
+      <div className="lg:grid lg:grid-cols-5">
+        <div className="lg:col-span-3  mb-6">
+          <ImageGallery images={product.images} />
+        </div>
 
-      {/* Info Utama : Nama & Harga */}
-      <div>
-        <div className="px-4 py-2 bg-shelf-blue rounded-xl inline-block mb-2">
-          <p className="text-white text-[12px] font-semibold">New Release</p>
-        </div>
-        <div className="mb-2">
-          <p className="text-shelf-black font-semibold text-xl">{product.name}</p>
-        </div>
-        <div>
-          <p className="text-shelf-blue font-semibold text-2xl">Rp {product.price.toLocaleString('id-ID')}</p>
-        </div>
-      </div>
+        {/* Info Utama : Nama & Harga */}
+        <div className="lg:col-span-2">
+          <div>
+            <div className="px-4 py-2 bg-shelf-blue rounded-xl inline-block mb-2">
+              <p className="text-white text-[12px] font-semibold">
+                New Release
+              </p>
+            </div>
+            <div className="mb-2">
+              <p className="text-shelf-black font-semibold text-xl">
+                {product.name}
+              </p>
+            </div>
+            <div>
+              <p className="text-shelf-blue font-semibold text-2xl">
+                Rp {product.price.toLocaleString("id-ID")}
+              </p>
+            </div>
+          </div>
 
-      {/* Variasi 1 ex. Color*/}
-      <div>
+          {/* Variasi 1 ex. Color*/}
+          {/* <div>
         <h2 className="text-lg font-bold mb-4">Color</h2>
         <div className="flex items-center space-x-4">
           {colors.map((color) => (
@@ -121,47 +126,51 @@ const ProductPage: FC = () => {
             />
           ))}
         </div>
-      </div>
+          </div> */}
 
-      {/* Variasi 2 ex. Size*/}
-      <UnifiedSizeSelector sizes={sizes} sizeStatus={sizeStatus} onSizeSelect={handleSizeSelect} />
+          {/* Variasi 2 ex. Size*/}
+          {/* <UnifiedSizeSelector sizes={sizes} sizeStatus={sizeStatus} onSizeSelect={handleSizeSelect} /> */}
 
-      {/* Tombol Add To Cart, Wishlist & Buy Now */}
-      <div>
-        <div className="mb-2 flex gap-2">
-          <button 
-            onClick={handleAddToCart}
-            className="bg-shelf-black basis-5/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-            ADD TO CART
-          </button>
-          <button className="bg-shelf-black basis-1/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-            <FontAwesomeIcon icon={faHeart} />
-          </button>
-        </div>
-        <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-          BUY IT NOW
-        </button>
-      </div>
+          {/* Tombol Add To Cart, Wishlist & Buy Now */}
+          <div className="my-4">
+            <div className="mb-2 flex gap-2">
+              <button
+                onClick={handleAddToCart}
+                className="bg-shelf-black basis-5/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
+              >
+                ADD TO CART
+              </button>
+              <button className="bg-shelf-black basis-1/6 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+                <FontAwesomeIcon icon={faHeart} />
+              </button>
+            </div>
+            <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+              BUY IT NOW
+            </button>
+          </div>
 
-      {/* Product Description */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">About the Product</h2>
-        <div className="text-gray-700 space-y-2">
-          <p className="text-lg font-semibold">Shadow Navy / Army Green</p>
-          <p>
-            This product is excluded from all promotional discounts and offers.
-          </p>
+          {/* Product Description */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">About the Product</h2>
+            <div className="text-gray-700 space-y-2">
+              <p className="text-lg font-semibold">Shadow Navy / Army Green</p>
+              <p>
+                This product is excluded from all promotional discounts and
+                offers.
+              </p>
 
-          <ul className="list-disc list-inside mt-4 space-y-2">
-            <li>
-              Pay over time in interest-free installments with Affirm, Klarna or
-              Afterpay.
-            </li>
-            <li>
-              Join adiClub to get unlimited free standard shipping, returns, &
-              exchanges.
-            </li>
-          </ul>
+              <ul className="list-disc list-inside mt-4 space-y-2">
+                <li>
+                  Pay over time in interest-free installments with Affirm,
+                  Klarna or Afterpay.
+                </li>
+                <li>
+                  Join adiClub to get unlimited free standard shipping, returns,
+                  & exchanges.
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
