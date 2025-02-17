@@ -30,12 +30,6 @@ interface DataRow {
   name: string;
   adminName: string;
 }
-
-const data: DataRow[] = [
-  { id: 1, name: "Warehouse A", adminName: "John Doe" },
-  { id: 2, name: "Warehouse B", adminName: "Jane Smith" },
-  { id: 3, name: "Warehouse C", adminName: "Alice Johnson" },
-];
 const WarehouseTable: FC = () => {
   const { data: session } = useSession();
   const { error, isLoading, warehouses, setParams, params } = useWarehouses(
@@ -122,12 +116,17 @@ const WarehouseTable: FC = () => {
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={4}>Searching . . .</TableCell>
+                <TableCell colSpan={4}>Loading . . .</TableCell>
               </TableRow>
             )}
             {!isLoading && warehouses?.data.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4}>No warehouses found.</TableCell>
+              </TableRow>
+            )}
+            {!isLoading && error && (
+              <TableRow>
+                <TableCell colSpan={4}>{error.message}</TableCell>
               </TableRow>
             )}
             {warehouses?.data.map((row) => (
