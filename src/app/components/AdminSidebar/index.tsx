@@ -55,17 +55,17 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
     );
   };
   return (
-    <div className="flex">
+    <div className="h-screen flex overflow-hidden">
       <motion.div
         initial={isFirstRender.current ? { x: 0 } : { x: -250 }}
         animate={{ x: isOpen ? 0 : -250 }}
         transition={{ duration: 0.2 }}
-        className={`fixed lg:relative top-0 left-0 h-screen bg-white shadow-md z-50 ${
+        className={`absolute lg:relative top-0 left-0 h-screen bg-white shadow-md z-50 ${
           isOpen ? "w-64" : "w-0"
         } overflow-hidden`}
-        onAnimationComplete={() => (isFirstRender.current = false)} // Disable `initial` after first render
+        onAnimationComplete={() => (isFirstRender.current = false)}
       >
-        <Sidebar className="w-64 fixed">
+        <Sidebar className="w-64">
           <Sidebar.Items>
             <Sidebar.ItemGroup>
               <div className="flex items-center justify-between p-4 border-b">
@@ -145,7 +145,7 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
           </Sidebar.Items>
         </Sidebar>
       </motion.div>
-      <div className="flex-1 p-6 transition-all">
+      <div className="flex-1 overflow-auto p-6 transition-all">
         <AdminHeader isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className="pt-16">{children}</div>
       </div>
