@@ -1,7 +1,5 @@
-import AdminHeader from "@/app/components/AdminHeader";
-import AdminSidebar from "@/app/components/Sidebar";
-import ContainerSidebar from "@/app/components/ContainerSidebar";
 import { FC } from "react";
+import AdminSidebar from "../components/AdminSidebar";
 
 interface NestedLayoutProps {
   children: React.ReactNode;
@@ -10,11 +8,7 @@ interface NestedLayoutProps {
 const AdminLayout: FC<NestedLayoutProps> = ({ children }) => {
   return (
     <>
-      <AdminSidebar />
-      <AdminHeader />
-      <ContainerSidebar>
-        {children}
-      </ContainerSidebar>
+      <AdminSidebar>{children}</AdminSidebar>
     </>
   );
 };

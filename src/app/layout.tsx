@@ -34,7 +34,7 @@ export default async function RootLayout({
       <SessionProvider refetchInterval={120} session={session}>
         <ClientProvider>
           <body
-            className={`${rubik.className} antialiased bg-shelf-light-grey h-screen`}
+            className={`${rubik.className} antialiased bg-shelf-light-grey`}
           >
             <ToastProvider>{children}</ToastProvider>
           </body>

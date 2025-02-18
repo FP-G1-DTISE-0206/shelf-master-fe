@@ -1,7 +1,7 @@
 "use client";
 import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faClose, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
@@ -9,10 +9,13 @@ import axios from "axios";
 import Link from "next/link";
 import { Dropdown, DropdownItem } from "flowbite-react";
 import Image from "next/image";
-import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 
-const AdminHeader: FC = () => {
-  const { isOpen, setIsOpen } = useSidebarAdminStore();
+interface NestedLayoutProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+const AdminHeader: FC<NestedLayoutProps> = ({ isOpen, setIsOpen }) => {
+  // const { isOpen, setIsOpen } = useSidebarAdminStore();
   const router = useRouter();
   const { data: session } = useSession();
   const { showToast } = useToast();
@@ -56,15 +59,13 @@ const AdminHeader: FC = () => {
 
   return (
     <>
-      <div className="w-screen fixed h-12 flex bg-shelf-white items-center z-20">
+      <div className="fixed top-0 left-0 w-full bg-shelf-white shadow-md z-20 p-4">
         <div className="w-full flex xl:gap-10 max-xl:gap-2 items-center justify-between px-10">
-          {
-            isOpen 
-            ? (<div onClick={()=>setIsOpen(false)} className="md:w-1/6 flex md:justify-end cursor-pointer">
-                <FontAwesomeIcon icon={faClose} className="pr-7" />
-              </div>)
-            : (<div className="cursor-pointer" onClick={()=>setIsOpen(true)}><FontAwesomeIcon icon={faBars} /></div>)
-          }
+          {!isOpen && (
+            <div className="cursor-pointer" onClick={() => setIsOpen(true)}>
+              <FontAwesomeIcon icon={faBars} />
+            </div>
+          )}
           <Link href="/dashboard">
             <h1 className="font-semibold md:text-xl">ShelfMaster</h1>
           </Link>

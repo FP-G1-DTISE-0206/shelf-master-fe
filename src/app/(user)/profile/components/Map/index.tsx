@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import { AreaOption } from "../BiteshipSearch";
+import { AreaOption } from "@/types/biteship";
 
 const containerStyle = {
   width: "100%",

@@ -4,21 +4,23 @@ import { notFound, useRouter } from "next/navigation";
 import { useSingleUserAddress } from "@/hooks/useUserAddress";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
-import UserAddressForm from "../../components/UserAddressForm";
 import axios from "axios";
 import { useToast } from "@/providers/ToastProvider";
 import { FormikHelpers } from "formik";
-import { AddressFormValues } from "@/types/address";
 import { AreaOption } from "@/types/biteship";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import WarehouseForm from "../../components/WarehouseForm";
+import { WarehouseFormValues } from "@/types/address";
+import { Admin, AdminOption } from "@/types/warehouse";
+import { useSingleWarehouse } from "@/hooks/useWarehouse";
 
 interface PageProps {
   params: Promise<{ id: string }>; // params is a Promise<{ id: string }>
 }
 
-const EditAddressPage: FC<PageProps> = ({ params }) => {
+const EditWarehousePage: FC<PageProps> = ({ params }) => {
   const unwrappedParams = use(params);
   const { id } = unwrappedParams;
   if (!id) {
@@ -27,42 +29,52 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const router = useRouter();
-  const { error, isLoading, singleUserAddress, refetch } = useSingleUserAddress(
+  const { error, isLoading, singleWarehouse, refetch } = useSingleWarehouse(
     session?.accessToken as string,
     parseInt(id)
   );
 
   const [selectedArea, setSelectedArea] = useState<AreaOption | null>(null);
-  const initialValues: AddressFormValues = {
-    contactName: singleUserAddress?.contactName as string,
-    contactNumber: singleUserAddress?.contactNumber as string,
-    address: singleUserAddress?.address as string,
-    latitude: singleUserAddress?.latitude as number,
-    longitude: singleUserAddress?.longitude as number,
+  const [selectedAdmins, setSelectedAdmins] = useState<AdminOption[] | null>(
+    null
+  );
+  const initialValues: WarehouseFormValues = {
+    name: singleWarehouse?.name as string,
+    contactName: singleWarehouse?.contactName as string,
+    contactNumber: singleWarehouse?.contactNumber as string,
+    address: singleWarehouse?.address as string,
+    latitude: singleWarehouse?.latitude as number,
+    longitude: singleWarehouse?.longitude as number,
     biteshipArea: {
-      value: singleUserAddress?.areaId as string,
-      label: `${singleUserAddress?.district}, ${singleUserAddress?.city}, ${singleUserAddress?.province}. ${singleUserAddress?.postalCode}`,
-      id: singleUserAddress?.areaId as string,
-      name: `${singleUserAddress?.district}, ${singleUserAddress?.city}, ${singleUserAddress?.province}. ${singleUserAddress?.postalCode}`,
+      value: singleWarehouse?.areaId as string,
+      label: `${singleWarehouse?.district}, ${singleWarehouse?.city}, ${singleWarehouse?.province}. ${singleWarehouse?.postalCode}`,
+      id: singleWarehouse?.areaId as string,
+      name: `${singleWarehouse?.district}, ${singleWarehouse?.city}, ${singleWarehouse?.province}. ${singleWarehouse?.postalCode}`,
       country_name: "Indonesia",
       country_code: "ID",
-      administrative_division_level_1_name:
-        singleUserAddress?.province as string,
+      administrative_division_level_1_name: singleWarehouse?.province as string,
       administrative_division_level_1_type: "province",
-      administrative_division_level_2_name: singleUserAddress?.city as string,
+      administrative_division_level_2_name: singleWarehouse?.city as string,
       administrative_division_level_2_type: "city",
-      administrative_division_level_3_name:
-        singleUserAddress?.district as string,
+      administrative_division_level_3_name: singleWarehouse?.district as string,
       administrative_division_level_3_type: "district",
-      postal_code: parseInt(singleUserAddress?.postalCode as string),
+      postal_code: parseInt(singleWarehouse?.postalCode as string),
     },
+    admins: singleWarehouse?.admins
+      ? singleWarehouse.admins.map((admin) => ({
+          value: admin.id.toString(),
+          label: admin.email,
+          ...admin,
+        }))
+      : null,
   };
 
   const handleSubmit = async (
-    values: AddressFormValues,
-    formikHelpers: FormikHelpers<AddressFormValues>
+    values: WarehouseFormValues,
+    formikHelpers: FormikHelpers<WarehouseFormValues>
   ) => {
     const finalValues = {
+      name: values.name,
       contactName: values.contactName,
       contactNumber: values.contactNumber,
       address: values.address,
@@ -73,10 +85,11 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
       district: selectedArea?.administrative_division_level_3_name,
       postalCode: selectedArea?.postal_code,
       areaId: selectedArea?.id,
+      adminsId: values.admins ? values.admins.map((admin) => admin.id) : [],
     };
     try {
       const { data } = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/address/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/warehouse/${id}`,
         {
           ...finalValues,
         },
@@ -89,7 +102,7 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
       if (data.success) {
         showToast(data.message, "success");
         formikHelpers.resetForm();
-        router.push("/profile");
+        router.push("/warehouse");
       } else {
         showToast(data.message, "error");
       }
@@ -105,7 +118,8 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
   };
   useEffect(() => {
     setSelectedArea(initialValues.biteshipArea);
-  }, [singleUserAddress]);
+    setSelectedAdmins(initialValues.admins);
+  }, [singleWarehouse]);
   if (isLoading) return <CustomSpinner />;
   if (error) return <div>Error: {error.message}</div>;
   return (
@@ -117,14 +131,16 @@ const EditAddressPage: FC<PageProps> = ({ params }) => {
         <div className="font-semibold text-2xl">Edit Address</div>
       </div>
       <div className="flex flex-col gap-5 p-6 w-full mx-auto bg-white shadow-lg rounded-lg">
-        <UserAddressForm
+        <WarehouseForm
           initialValues={initialValues}
           handleSubmit={handleSubmit}
           setSelectedArea={setSelectedArea}
           selectedArea={selectedArea}
+          setSelectedAdmins={setSelectedAdmins}
+          selectedAdmins={selectedAdmins}
         />
       </div>
     </div>
   );
 };
-export default EditAddressPage;
+export default EditWarehousePage;
