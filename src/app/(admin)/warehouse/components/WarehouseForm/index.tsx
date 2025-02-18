@@ -5,6 +5,8 @@ import { AreaOption } from "@/types/biteship";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { FC } from "react";
 import * as Yup from "yup";
+import AdminSearch from "../AdminSearch";
+import { Admin } from "@/types/warehouse";
 interface WarehouseFormProps {
   initialValues: WarehouseFormValues;
   handleSubmit: (
@@ -13,6 +15,8 @@ interface WarehouseFormProps {
   ) => void;
   setSelectedArea: (area: AreaOption | null) => void;
   selectedArea: AreaOption | null;
+  setSelectedAdmins: (admins: Admin[] | null) => void;
+  selectedAdmins: Admin[] | null;
 }
 
 const validationSchema = Yup.object({
@@ -27,12 +31,15 @@ const validationSchema = Yup.object({
   biteshipArea: Yup.object().nullable().required("Region is required"),
   latitude: Yup.number().required("Location is required"),
   longitude: Yup.number(),
+  // admins: Yup.object().nullable().required("Admins are required"),
 });
 const WarehouseForm: FC<WarehouseFormProps> = ({
   initialValues,
   handleSubmit,
   setSelectedArea,
   selectedArea,
+  setSelectedAdmins,
+  selectedAdmins,
 }) => {
   return (
     <Formik
@@ -138,6 +145,25 @@ const WarehouseForm: FC<WarehouseFormProps> = ({
                       name="address"
                       component="p"
                       className="text-red-500 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Admins</h3>
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <label
+                      className="block text-sm font-bold"
+                      htmlFor="biteshipArea"
+                    >
+                      Assign Admin
+                    </label>
+                    <Field
+                      name="admins"
+                      component={AdminSearch}
+                      selectedAdmins={selectedAdmins}
+                      setSelectedAdmins={setSelectedAdmins}
                     />
                   </div>
                 </div>

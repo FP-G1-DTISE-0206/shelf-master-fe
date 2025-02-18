@@ -25,4 +25,11 @@ export interface AddressFormValues {
 
 export interface WarehouseFormValues extends AddressFormValues {
   name: string;
+  admins:
+    | [
+        {
+          id: number;
+        }
+      ]
+    | null;
 }

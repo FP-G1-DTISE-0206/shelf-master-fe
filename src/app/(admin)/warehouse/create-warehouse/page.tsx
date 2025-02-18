@@ -15,12 +15,14 @@ import {
   faBackward,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { Admin } from "@/types/warehouse";
 
 const CreateWarehousePage: FC = () => {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const router = useRouter();
   const [selectedArea, setSelectedArea] = useState<AreaOption | null>(null);
+  const [selectedAdmins, setSelectedAdmins] = useState<Admin[] | null>(null);
 
   const initialValues: WarehouseFormValues = {
     name: "",
@@ -30,6 +32,7 @@ const CreateWarehousePage: FC = () => {
     latitude: null,
     longitude: null,
     biteshipArea: null,
+    admins: null,
   };
 
   const handleSubmit = async (
@@ -37,6 +40,7 @@ const CreateWarehousePage: FC = () => {
     formikHelpers: FormikHelpers<WarehouseFormValues>
   ) => {
     const finalValues = {
+      name: values.name,
       contactName: values.contactName,
       contactNumber: values.contactNumber,
       address: values.address,
@@ -47,6 +51,7 @@ const CreateWarehousePage: FC = () => {
       district: selectedArea?.administrative_division_level_3_name,
       postalCode: selectedArea?.postal_code,
       areaId: selectedArea?.id,
+      adminsId: values.admins ? values.admins.map((admin) => admin.id) : null,
     };
     try {
       const { data } = await axios.post(
@@ -63,7 +68,7 @@ const CreateWarehousePage: FC = () => {
       if (data.success) {
         showToast(data.message, "success");
         formikHelpers.resetForm();
-        router.push("/profile");
+        router.push("/warehouse");
       } else {
         showToast(data.message, "error");
       }
@@ -90,6 +95,8 @@ const CreateWarehousePage: FC = () => {
           handleSubmit={handleSubmit}
           setSelectedArea={setSelectedArea}
           selectedArea={selectedArea}
+          setSelectedAdmins={setSelectedAdmins}
+          selectedAdmins={selectedAdmins}
         />
       </div>
     </div>
