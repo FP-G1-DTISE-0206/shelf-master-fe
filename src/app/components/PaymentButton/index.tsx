@@ -1,22 +1,9 @@
 "use client";
 
 import { usePaymentStore } from "@/store/paymentStore";
-import { useEffect, useState } from "react";
 
 export default function PaymentButton() {
-  const { snapToken } = usePaymentStore();
-  const [snapLoaded, setSnapLoaded] = useState(false);
-
-  useEffect(() => {
-    const checkSnap = setInterval(() => {
-      if (window.snap) {
-        setSnapLoaded(true);
-        clearInterval(checkSnap);
-      }
-    }, 500);
-
-    return () => clearInterval(checkSnap);
-  }, []);
+  const { snapToken, isSnapEmbedded, setSnapEmbedded } = usePaymentStore();
 
   const handlePayment = () => {
     if (!snapToken) {
@@ -24,17 +11,17 @@ export default function PaymentButton() {
       return;
     }
 
-    console.log("Snap Token:", snapToken);
-
-    if (!snapLoaded) {
-      alert("Snap.js is still loading. Please wait.");
+    if (typeof window === "undefined" || !(window as any).snap) {
+      alert("Snap.js is not loaded yet. Please wait.");
       return;
     }
 
-    if (typeof window.snap !== "undefined") {
-      window.snap.embed(snapToken, { embedId: "snap-container" });
+    if (!isSnapEmbedded) {
+      console.log("Embedding Snap for the first time...");
+      (window as any).snap.embed(snapToken, { embedId: "snap-container" });
+      setSnapEmbedded(true);
     } else {
-      console.error("window.snap is undefined");
+      console.warn("Snap is already embedded.");
     }
   };
 
@@ -50,3 +37,70 @@ export default function PaymentButton() {
     </div>
   );
 }
+
+
+// "use client";
+
+// import { usePaymentStore } from "@/store/paymentStore";
+// import { useEffect, useState } from "react";
+
+// export default function PaymentButton() {
+//   const { snapToken } = usePaymentStore();
+//   const [snapLoaded, setSnapLoaded] = useState(false);
+//   const [isSnapEmbedded, setIsSnapEmbedded] = useState(false);
+
+//   useEffect(() => {
+//     if (typeof window !== "undefined" && (window as any).snap) {
+//       setSnapLoaded(true);
+//     }
+
+//     const checkSnap = setInterval(() => {
+//       if (typeof window !== "undefined" && (window as any).snap) {
+//         setSnapLoaded(true);
+//         clearInterval(checkSnap);
+//       }
+//     }, 500);
+
+//     return () => clearInterval(checkSnap);
+//   }, []);
+
+//   useEffect(() => {
+//     if (document.visibilityState === "visible" && snapToken && !isSnapEmbedded) {
+//       console.log("User returned to tab, reloading Snap...");
+//       (window as any).snap.embed(snapToken, { embedId: "snap-container" });
+//       setIsSnapEmbedded(true);
+//     }
+//   }, [snapToken, isSnapEmbedded]);
+
+//   const handlePayment = () => {
+//     if (!snapToken) {
+//       alert("No transaction token available!");
+//       return;
+//     }
+
+//     if (!snapLoaded) {
+//       alert("Snap.js is still loading. Please wait.");
+//       return;
+//     }
+
+//     if (!isSnapEmbedded) {
+//       console.log("Embedding Snap for the first time...");
+//       (window as any).snap.embed(snapToken, { embedId: "snap-container" });
+//       setIsSnapEmbedded(true);
+//     } else {
+//       console.warn("Snap is already embedded, skipping reinitialization.");
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <button
+//         onClick={handlePayment}
+//         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+//       >
+//         Pay Now
+//       </button>
+//       <div id="snap-container" className="h-[600px]"></div>
+//     </div>
+//   );
+// }

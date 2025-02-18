@@ -19,7 +19,6 @@ const UserLayout: FC<NestedLayoutProps> = ({ children }) => {
     <div className="xl:mx-14 max-xl:mx-4 mt-8">
       <Header />
       <div className="flex flex-col gap-6 mt-6">{children}</div>
-      {snapLoaded ? children : <p>Loading Snap.js...</p>}
       <Footer />
     </div>
   );

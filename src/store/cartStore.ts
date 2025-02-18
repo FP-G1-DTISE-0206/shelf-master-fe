@@ -1,4 +1,4 @@
-import { createStore } from "zustand/vanilla";
+import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface CartItem {
@@ -13,13 +13,15 @@ interface CartItem {
 interface CartState {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
+  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
   clearCart: () => void;
 }
 
-const cartStore = createStore(
-  persist<CartState>(
+const useCartStore = create<CartState>()(
+  persist(
     (set, get) => ({
       cartItems: [],
 
@@ -39,19 +41,33 @@ const cartStore = createStore(
         });
       },
 
+      removeFromCart: (id: number) => {
+        set((state) => ({
+          cartItems: state.cartItems.filter((item) => item.id !== id),
+        }));
+      },
+
+      updateQuantity: (id: number, quantity: number) => {
+        set((state) => {
+          return {
+            cartItems: state.cartItems.map((item) =>
+              item.id === id ? { ...item, quantity } : item
+            ),
+          };
+        }, false);
+      },
+      
+
       getTotalItems: () =>
         get().cartItems.reduce((total, item) => total + item.quantity, 0),
 
       getTotalPrice: () =>
-        get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0), // ✅ Calculate total price
-
+        get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
 
       clearCart: () => set({ cartItems: [] }),
     }),
-    {
-      name: "cart-storage",
-    }
+    { name: "cart-storage" }
   )
 );
 
-export default cartStore;
+export default useCartStore;

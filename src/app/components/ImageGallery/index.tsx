@@ -22,16 +22,21 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
     <>
       <div className="rounded-lg max-w-xl mx-auto lg:mx-0">
         {/* Main Image Container with Fixed Aspect Ratio */}
-        <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-md lg:w-[640px] lg:h-[480px]">
-          <Image
-            src={images[selectedImageIndex]}
-            alt={`Image ${selectedImageIndex + 1}`}
-            fill
-            className="object-cover rounded-lg"
-          />
+        <div className="relative w-full h-80 overflow-hidden lg:w-[full] md:h-[480px]">
+          <div className="hero-card-container relative w-fit rounded-2xl h-full overflow-hidden">
+            <Image
+              src={images[selectedImageIndex]}
+              alt={`Image ${selectedImageIndex + 1}`}
+              width={500}
+              height={500}
+              className="object-cover"
+            />
+          </div>
 
-          {/* Dots Indicator Positioned at the Bottom Over the Image */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          
+
+          {/* <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2"> */}
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-[80%] flex space-x-2">
             {images.map((_, index) => (
               <span
                 key={index}
@@ -68,56 +73,7 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
         </div>
       </div>
     </>
-  
   );
 };
 
 export default ImageGallery;
-
-
-  // <>
-    //   <div className="rounded-lg max-w-xl mx-auto">
-    //     {/* Main Image */}
-    //     <div className="relative flex justify-center items-center mb-4">
-    //       <img
-    //         src={images[selectedImageIndex]}
-    //         alt={`Image ${selectedImageIndex + 1}`}
-    //         className="w-full h-auto rounded-lg shadow-md"
-    //       />
-    //     </div>
-
-    //     {/* Dots Indicator */}
-    //     <div className="flex justify-center space-x-2 mb-4 relative border-2 border-red-600 -top-8">
-    //       {images.map((_, index) => (
-    //         <span
-    //           key={index}
-    //           className={`w-2 h-2 rounded-full cursor-pointer ${
-    //             selectedImageIndex === index ? "bg-blue-500" : "bg-gray-300"
-    //           }`}
-    //           onClick={() => setSelectedImageIndex(index)}
-    //         ></span>
-    //       ))}
-    //     </div>
-
-    //     {/* Thumbnails */}
-    //     <div className="flex space-x-4">
-    //       {images.map((image, index) => (
-    //         <div
-    //           key={index}
-    //           className={`w-16 h-16 p-1 rounded-lg cursor-pointer border-2 ${
-    //             selectedImageIndex === index
-    //               ? "border-blue-500"
-    //               : "border-transparent"
-    //           }`}
-    //           onClick={() => setSelectedImageIndex(index)}
-    //         >
-    //           <img
-    //             src={image}
-    //             alt={`Thumbnail ${index + 1}`}
-    //             className="w-full h-full object-cover rounded-md"
-    //           />
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // </>
