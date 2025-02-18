@@ -6,7 +6,7 @@ import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { FC } from "react";
 import * as Yup from "yup";
 import AdminSearch from "../AdminSearch";
-import { Admin } from "@/types/warehouse";
+import { AdminOption } from "@/types/warehouse";
 interface WarehouseFormProps {
   initialValues: WarehouseFormValues;
   handleSubmit: (
@@ -15,8 +15,8 @@ interface WarehouseFormProps {
   ) => void;
   setSelectedArea: (area: AreaOption | null) => void;
   selectedArea: AreaOption | null;
-  setSelectedAdmins: (admins: Admin[] | null) => void;
-  selectedAdmins: Admin[] | null;
+  setSelectedAdmins: (admins: AdminOption[] | null) => void;
+  selectedAdmins: AdminOption[] | null;
 }
 
 const validationSchema = Yup.object({
@@ -31,7 +31,6 @@ const validationSchema = Yup.object({
   biteshipArea: Yup.object().nullable().required("Region is required"),
   latitude: Yup.number().required("Location is required"),
   longitude: Yup.number(),
-  // admins: Yup.object().nullable().required("Admins are required"),
 });
 const WarehouseForm: FC<WarehouseFormProps> = ({
   initialValues,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, FC, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Select, { MultiValue } from "react-select";
@@ -8,6 +8,7 @@ interface SelectFieldProps extends FieldProps {
   setSelectedAdmins: (admins: Admin[] | null) => void;
   selectedAdmins: Admin[] | null;
 }
+
 interface Admin {
   id: string;
   email: string;
@@ -21,9 +22,15 @@ const AdminSearch: FC<SelectFieldProps> = ({
 }) => {
   const { data: session } = useSession();
   const [admins, setAdmins] = useState<Admin[]>([]);
-  //   const [selectedAdmins, setSelectedAdmins] = useState<Admin[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!admins.length) {
+      fetchAdmins(); // Fetch admins when the component loads
+    }
+  }, [admins]);
+
+  // Fetch admins from the API
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
@@ -53,17 +60,29 @@ const AdminSearch: FC<SelectFieldProps> = ({
   };
 
   const handleFocus = () => {
-    if (admins.length === 0) {
+    if (!admins.length) {
       fetchAdmins();
     }
   };
 
   const handleChange = (newValue: MultiValue<any>) => {
     const selectedAdminsArray = Array.from(newValue);
-    setSelectedAdmins(selectedAdminsArray);
-    form.setFieldValue(field.name, selectedAdminsArray);
+    // Remove duplicates: Only keep unique admins based on the `id`
+    const uniqueAdmins = Array.from(
+      new Set(selectedAdminsArray.map((admin: Admin) => admin.id))
+    ).map((id) => selectedAdminsArray.find((admin: Admin) => admin.id === id));
+
+    setSelectedAdmins(uniqueAdmins);
+    form.setFieldValue(field.name, uniqueAdmins);
   };
+
   const hasError = form.touched[field.name] && form.errors[field.name];
+
+  // Filter out already selected admins from the options
+  const filteredAdmins = admins.filter(
+    (admin) =>
+      !selectedAdmins?.some((selectedAdmin) => selectedAdmin.id === admin.id)
+  );
 
   return (
     <>
@@ -72,7 +91,7 @@ const AdminSearch: FC<SelectFieldProps> = ({
         value={selectedAdmins}
         onChange={handleChange}
         onFocus={handleFocus}
-        options={admins}
+        options={filteredAdmins} // Show filtered admins that are not selected
         isLoading={isLoading}
         placeholder="Select Admins"
         onBlur={() => form.setFieldTouched(field.name, true)}

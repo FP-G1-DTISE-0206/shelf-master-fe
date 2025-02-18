@@ -44,3 +44,8 @@ export interface WarehouseRequest {
   field: string;
   order: string;
 }
+
+export interface AdminOption extends Admin {
+  readonly value: string;
+  readonly label: string;
+}

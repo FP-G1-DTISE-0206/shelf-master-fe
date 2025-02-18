@@ -1,5 +1,6 @@
 "use client";
 import {
+  WarehouseFullResponse,
   WarehousePaginationResponse,
   WarehouseRequest,
 } from "@/types/warehouse";
@@ -51,4 +52,40 @@ const useWarehouses = (accessToken: string) => {
     setParams,
   };
 };
+
+const fetchSingleWarehouse = async (
+  accessToken: string,
+  id: number
+): Promise<WarehouseFullResponse> => {
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/warehouse/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  return data.data as WarehouseFullResponse;
+};
+
+export const useSingleWarehouse = (accessToken: string, id: number) => {
+  const {
+    isLoading,
+    error,
+    data: singleWarehouse,
+    refetch,
+  } = useQuery({
+    queryKey: ["fetchSingleUserAddress", accessToken, id],
+    queryFn: async () => fetchSingleWarehouse(accessToken, id),
+    staleTime: 60 * 1000,
+    gcTime: 60 * 1000,
+  });
+  return {
+    isLoading,
+    error,
+    singleWarehouse,
+    refetch,
+  };
+};
+
 export default useWarehouses;

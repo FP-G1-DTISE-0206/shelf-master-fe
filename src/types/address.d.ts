@@ -1,3 +1,5 @@
+import { AdminOption } from "./warehouse";
+
 export interface UserAddressResponse {
   id: number;
   userId: number;
@@ -25,11 +27,5 @@ export interface AddressFormValues {
 
 export interface WarehouseFormValues extends AddressFormValues {
   name: string;
-  admins:
-    | [
-        {
-          id: number;
-        }
-      ]
-    | null;
+  admins: AdminOption[] | null;
 }

@@ -9,20 +9,18 @@ import { FC, useState } from "react";
 import WarehouseForm from "../components/WarehouseForm";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faBackspace,
-  faBackward,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { Admin } from "@/types/warehouse";
+import { AdminOption } from "@/types/warehouse";
 
 const CreateWarehousePage: FC = () => {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const router = useRouter();
   const [selectedArea, setSelectedArea] = useState<AreaOption | null>(null);
-  const [selectedAdmins, setSelectedAdmins] = useState<Admin[] | null>(null);
+  const [selectedAdmins, setSelectedAdmins] = useState<AdminOption[] | null>(
+    null
+  );
 
   const initialValues: WarehouseFormValues = {
     name: "",

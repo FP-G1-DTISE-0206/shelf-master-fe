@@ -1,5 +1,5 @@
 "use client";
-import CustomSpinner from "@/components/CustomSpinner";
+import ConfirmationModal from "@/components/ConfirmationModal";
 import useWarehouses from "@/hooks/useWarehouse";
 import {
   faPlus,
@@ -23,18 +23,13 @@ import {
 import { debounce } from "lodash";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
+import WarehouseItem from "../WarehouseItem";
 
-interface DataRow {
-  id: number;
-  name: string;
-  adminName: string;
-}
 const WarehouseTable: FC = () => {
   const { data: session } = useSession();
-  const { error, isLoading, warehouses, setParams, params } = useWarehouses(
-    session?.accessToken as string
-  );
+  const { error, isLoading, warehouses, setParams, params, refetch } =
+    useWarehouses(session?.accessToken as string);
   const [searchTerm, setSearchTerm] = useState(params.search);
   const handleSearch = useCallback(
     debounce((value: string) => {
@@ -64,6 +59,10 @@ const WarehouseTable: FC = () => {
     setSearchTerm(value);
     handleSearch(value);
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <div className="bg-shelf-white rounded-lg p-5">
@@ -129,26 +128,12 @@ const WarehouseTable: FC = () => {
                 <TableCell colSpan={4}>{error.message}</TableCell>
               </TableRow>
             )}
-            {warehouses?.data.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>
-                  {row.admins.length === 0 && <>No assigned Admin.</>}
-                  {row.admins.map((admin) => admin.email).join(", ")}
-                </TableCell>
-                <TableCell className="flex gap-2 justify-center">
-                  <Button size="xs" color="blue">
-                    Assign Admin
-                  </Button>
-                  <Button size="xs" color="blue">
-                    Edit
-                  </Button>
-                  <Button size="xs" color="red" className="ml-2">
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
+            {warehouses?.data.map((warehouse) => (
+              <WarehouseItem
+                warehouse={warehouse}
+                key={warehouse.id}
+                refetch={refetch}
+              />
             ))}
           </TableBody>
         </Table>

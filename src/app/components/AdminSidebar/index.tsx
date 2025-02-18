@@ -127,12 +127,6 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
                     Warehouse
                   </Sidebar.Item>
                   <Sidebar.Item
-                    href="/warehouse-admin"
-                    className={SidebarItemStyle("warehouse-admin")}
-                  >
-                    Warehouse Admin
-                  </Sidebar.Item>
-                  <Sidebar.Item
                     href="/user"
                     className={SidebarItemStyle("user")}
                   >
