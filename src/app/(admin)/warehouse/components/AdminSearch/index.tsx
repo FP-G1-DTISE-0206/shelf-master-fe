@@ -26,11 +26,10 @@ const AdminSearch: FC<SelectFieldProps> = ({
 
   useEffect(() => {
     if (!admins.length) {
-      fetchAdmins(); // Fetch admins when the component loads
+      fetchAdmins();
     }
   }, [admins]);
 
-  // Fetch admins from the API
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
@@ -67,7 +66,6 @@ const AdminSearch: FC<SelectFieldProps> = ({
 
   const handleChange = (newValue: MultiValue<any>) => {
     const selectedAdminsArray = Array.from(newValue);
-    // Remove duplicates: Only keep unique admins based on the `id`
     const uniqueAdmins = Array.from(
       new Set(selectedAdminsArray.map((admin: Admin) => admin.id))
     ).map((id) => selectedAdminsArray.find((admin: Admin) => admin.id === id));
@@ -78,7 +76,6 @@ const AdminSearch: FC<SelectFieldProps> = ({
 
   const hasError = form.touched[field.name] && form.errors[field.name];
 
-  // Filter out already selected admins from the options
   const filteredAdmins = admins.filter(
     (admin) =>
       !selectedAdmins?.some((selectedAdmin) => selectedAdmin.id === admin.id)
@@ -91,7 +88,7 @@ const AdminSearch: FC<SelectFieldProps> = ({
         value={selectedAdmins}
         onChange={handleChange}
         onFocus={handleFocus}
-        options={filteredAdmins} // Show filtered admins that are not selected
+        options={filteredAdmins}
         isLoading={isLoading}
         placeholder="Select Admins"
         onBlur={() => form.setFieldTouched(field.name, true)}

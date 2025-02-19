@@ -51,7 +51,7 @@ const LoginPage: FC = () => {
       } else if (!result?.error) {
         showToast("Login success", "success");
         formikHelpers.resetForm();
-        router.push("/");
+        router.refresh();
       }
       console.log("stil running");
     } catch (error) {
