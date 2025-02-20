@@ -1,15 +1,10 @@
 "use client";
-import { BiteshipArea } from "@/types/biteship";
+import { AreaOption, BiteshipArea } from "@/types/biteship";
 import { FC, useCallback, useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
 import axios from "axios";
 import { FieldProps } from "formik";
-
-export interface AreaOption extends BiteshipArea {
-  readonly value: string;
-  readonly label: string;
-}
 
 interface SelectFieldProps extends FieldProps {
   setSelectedArea: (area: AreaOption | null) => void;

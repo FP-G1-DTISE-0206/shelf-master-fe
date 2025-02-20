@@ -11,3 +11,8 @@ export interface BiteshipArea {
   administrative_division_level_3_type: string;
   postal_code: number;
 }
+
+export interface AreaOption extends BiteshipArea {
+  readonly value: string;
+  readonly label: string;
+}

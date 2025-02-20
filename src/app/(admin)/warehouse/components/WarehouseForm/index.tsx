@@ -1,22 +1,26 @@
+import BiteshipSearch from "@/app/(user)/profile/components/BiteshipSearch";
+import Map from "@/app/(user)/profile/components/Map";
+import { WarehouseFormValues } from "@/types/address";
+import { AreaOption } from "@/types/biteship";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { FC } from "react";
 import * as Yup from "yup";
-import BiteshipSearch from "../BiteshipSearch";
-import Map from "../Map";
-import { AddressFormValues } from "@/types/address";
-import { AreaOption } from "@/types/biteship";
-
-interface UserAddressFormProps {
-  initialValues: AddressFormValues;
+import AdminSearch from "../AdminSearch";
+import { AdminOption } from "@/types/warehouse";
+interface WarehouseFormProps {
+  initialValues: WarehouseFormValues;
   handleSubmit: (
-    values: AddressFormValues,
-    formikHelpers: FormikHelpers<AddressFormValues>
+    values: WarehouseFormValues,
+    formikHelpers: FormikHelpers<WarehouseFormValues>
   ) => void;
   setSelectedArea: (area: AreaOption | null) => void;
   selectedArea: AreaOption | null;
+  setSelectedAdmins: (admins: AdminOption[] | null) => void;
+  selectedAdmins: AdminOption[] | null;
 }
 
 const validationSchema = Yup.object({
+  name: Yup.string().trim().required("Warehouse name is required"),
   contactName: Yup.string().trim().required("Name is required"),
   contactNumber: Yup.string()
     .matches(/^[0-9]+$/, "Only numbers are allowed")
@@ -24,16 +28,17 @@ const validationSchema = Yup.object({
     .max(15, "Number must not exceed 15 digits")
     .required("Phone number is required"),
   address: Yup.string().trim().required("Address is required"),
-  biteshipArea: Yup.object().nullable().required("Biteship area is required"),
+  biteshipArea: Yup.object().nullable().required("Region is required"),
   latitude: Yup.number().required("Location is required"),
   longitude: Yup.number(),
 });
-
-const UserAddressForm: FC<UserAddressFormProps> = ({
+const WarehouseForm: FC<WarehouseFormProps> = ({
   initialValues,
   handleSubmit,
   setSelectedArea,
   selectedArea,
+  setSelectedAdmins,
+  selectedAdmins,
 }) => {
   return (
     <Formik
@@ -43,11 +48,27 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
     >
       {({ isSubmitting, setFieldValue, values }) => (
         <Form className="flex flex-col gap-4">
-          <div className="flex gap-4 max-lg:flex-col">
+          <div className="flex max-lg:flex-col gap-4">
             <div className="flex flex-col gap-4 w-full">
               <div>
                 <h3 className="text-lg font-semibold">Contact Details</h3>
                 <div className="flex flex-col gap-2">
+                  <div>
+                    <label className="block text-sm font-bold" htmlFor="name">
+                      Warehouse Name
+                    </label>
+                    <Field
+                      type="text"
+                      name="name"
+                      placeholder="Warehouse Name"
+                      className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
+                    />
+                    <ErrorMessage
+                      name="name"
+                      component="p"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
                   <div>
                     <label
                       className="block text-sm font-bold"
@@ -105,7 +126,6 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
                       selectedArea={selectedArea}
                     />
                   </div>
-
                   <div>
                     <label
                       className="block text-sm font-bold"
@@ -124,6 +144,25 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
                       name="address"
                       component="p"
                       className="text-red-500 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Admins</h3>
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <label
+                      className="block text-sm font-bold"
+                      htmlFor="biteshipArea"
+                    >
+                      Assign Admin
+                    </label>
+                    <Field
+                      name="admins"
+                      component={AdminSearch}
+                      selectedAdmins={selectedAdmins}
+                      setSelectedAdmins={setSelectedAdmins}
                     />
                   </div>
                 </div>
@@ -149,7 +188,6 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
               />
             </div>
           </div>
-
           <button
             type="submit"
             className="bg-shelf-blue text-white py-2 px-5 rounded-lg w-max"
@@ -162,4 +200,4 @@ const UserAddressForm: FC<UserAddressFormProps> = ({
     </Formik>
   );
 };
-export default UserAddressForm;
+export default WarehouseForm;

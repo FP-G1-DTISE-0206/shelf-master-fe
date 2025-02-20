@@ -1,5 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import axios from "axios";
+import { FileInput } from "flowbite-react";
 
 interface ImageUploaderProps {
   setImageProfile: Dispatch<SetStateAction<string>>;
@@ -40,6 +41,12 @@ const ImageUploader: FC<ImageUploaderProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+    if (file.size > MAX_SIZE) {
+      alert("File size must be less than 1MB.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -56,7 +63,11 @@ const ImageUploader: FC<ImageUploaderProps> = ({
 
   return (
     <div>
-      <input type="file" accept="image/*" onChange={handleFileChange} />
+      <FileInput accept="image/*" multiple onChange={handleFileChange} />
+      <p className="w-full text-gray-500 text-sm mt-2 text-center">
+        Jpg, Jpeg, gif, png are allowed. Max 1MB.
+      </p>
+      {/* <FileInput type="file" accept="image/*" onChange={handleFileChange} /> */}
       {loading && <p>Uploading...</p>}
       {uploadedImageUrl && (
         <div>

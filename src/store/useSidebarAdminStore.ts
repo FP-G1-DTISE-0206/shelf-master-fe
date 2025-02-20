@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { UpdateCategoryRequest } from "@/types/category";
 
 export interface SidebarAdminState {
+  openMenus: { [key: string]: boolean };
+  setOpenMenus: (openMenus: { [key: string]: boolean }) => void;
   isOpen: boolean;
   page: string;
   isModalCategoryOpen: boolean;
@@ -19,13 +21,15 @@ export interface SidebarAdminState {
 }
 
 export const useSidebarAdminStore = create<SidebarAdminState>((set) => ({
-  isOpen: false,
+  openMenus: {},
+  setOpenMenus: (openMenus) => set({ openMenus }),
+  isOpen: true,
   page: "dashboard",
   isModalCategoryOpen: false,
   modalCategoryType: "create",
   category: {} as UpdateCategoryRequest,
-  isDeletingCategory: false, 
-  refetchData: false, 
+  isDeletingCategory: false,
+  refetchData: false,
   setIsOpen: (isOpen) => set({ isOpen }),
   setPage: (page) => set({ page }),
   setIsModalCategoryOpen: (isModalCategoryOpen) => set({ isModalCategoryOpen }),
