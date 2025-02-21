@@ -74,7 +74,7 @@ const WarehouseForm: FC<WarehouseFormProps> = ({
                       className="block text-sm font-bold"
                       htmlFor="contactName"
                     >
-                      Name
+                      Contact Name
                     </label>
                     <Field
                       type="text"
