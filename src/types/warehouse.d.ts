@@ -1,11 +1,3 @@
-export interface WarehousePaginationResponse {
-  recordsFiltered: number;
-  data: WarehouseResponse[];
-}
-export interface AdminPaginationResponse {
-  recordsFiltered: number;
-  data: Admin[];
-}
 export interface WarehouseResponse {
   id: number;
   name: string;
@@ -39,14 +31,6 @@ export interface Admin {
 export interface AdminRole {
   id: number;
   name: string;
-}
-
-export interface PaginationRequest {
-  start: number;
-  length: number;
-  search: string;
-  field: string;
-  order: string;
 }
 
 export interface AdminOption extends Admin {

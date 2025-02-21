@@ -1,16 +1,16 @@
 "use client";
 import { PaginationRequest, PaginationResponse } from "@/types/pagination";
-import { Admin } from "@/types/warehouse";
+import { ProfileResponse } from "@/types/profile";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 
-const fetchAdmins = async (
+const fetchUsers = async (
   accessToken: string,
   params: PaginationRequest
-): Promise<PaginationResponse<Admin>> => {
+): Promise<PaginationResponse<ProfileResponse>> => {
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -18,10 +18,10 @@ const fetchAdmins = async (
       params,
     }
   );
-  return data.data as PaginationResponse<Admin>;
+  return data.data as PaginationResponse<ProfileResponse>;
 };
 
-const useAdmins = (accessToken: string) => {
+const useUsers = (accessToken: string) => {
   const [params, setParams] = useState<PaginationRequest>({
     start: 0,
     length: 10,
@@ -32,22 +32,22 @@ const useAdmins = (accessToken: string) => {
   const {
     isLoading,
     error,
-    data: admins,
+    data: users,
     refetch,
   } = useQuery({
-    queryKey: ["fetchAdmins", accessToken, params],
-    queryFn: async () => fetchAdmins(accessToken, params),
+    queryKey: ["fetchUsers", accessToken, params],
+    queryFn: async () => fetchUsers(accessToken, params),
     staleTime: 60 * 1000,
     gcTime: 60 * 1000,
   });
   return {
     isLoading,
     error,
-    admins,
+    users,
     refetch,
     params,
     setParams,
   };
 };
 
-export default useAdmins;
+export default useUsers;

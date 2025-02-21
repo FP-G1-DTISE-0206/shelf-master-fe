@@ -112,44 +112,51 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
           </div>
         </div>
       </div>
-      <Modal show={openModalUpload} onClose={() => setOpenModalUpload(false)}>
-        <Modal.Header>Update profile picture</Modal.Header>
-        <Modal.Body>
-          <div className="space-y-6">
-            <ImageUploader
-              setImageProfile={setImageUrl}
-              loading={loading}
-              setLoading={setLoading}
-            />
-          </div>
-        </Modal.Body>
+      {session?.user.roles.includes("USER") && (
+        <>
+          <Modal
+            show={openModalUpload}
+            onClose={() => setOpenModalUpload(false)}
+          >
+            <Modal.Header>Update profile picture</Modal.Header>
+            <Modal.Body>
+              <div className="space-y-6">
+                <ImageUploader
+                  setImageProfile={setImageUrl}
+                  loading={loading}
+                  setLoading={setLoading}
+                />
+              </div>
+            </Modal.Body>
 
-        <Modal.Footer className="flex justify-between bg-ghost-white">
-          <Button
-            color="light"
-            className="bg-white rounded-lg"
-            onClick={() => setOpenModalUpload(false)}
-          >
-            Decline
-          </Button>
-          <Button
-            color="warning"
-            className="rounded-lg text-white"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            Accept
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <ConfirmationModal
-        isOpen={openModalPassword}
-        onClose={() => setOpenModalPassword(false)}
-        onConfirm={() => handleResetPassword()}
-        isLoading={isLoadingPassword}
-        title="Reset Password"
-        message="Are you sure you want to reset your password? A password reset email will be sent to your registered email address."
-      />
+            <Modal.Footer className="flex justify-between bg-ghost-white">
+              <Button
+                color="light"
+                className="bg-white rounded-lg"
+                onClick={() => setOpenModalUpload(false)}
+              >
+                Decline
+              </Button>
+              <Button
+                color="warning"
+                className="rounded-lg text-white"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                Accept
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <ConfirmationModal
+            isOpen={openModalPassword}
+            onClose={() => setOpenModalPassword(false)}
+            onConfirm={() => handleResetPassword()}
+            isLoading={isLoadingPassword}
+            title="Reset Password"
+            message="Are you sure you want to reset your password? A password reset email will be sent to your registered email address."
+          />
+        </>
+      )}
     </>
   );
 };
