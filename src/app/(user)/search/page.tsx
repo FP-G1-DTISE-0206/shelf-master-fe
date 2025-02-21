@@ -48,7 +48,7 @@ const SearchPage: FC = () => {
           <h2 className="font-bold text-lg mb-4">Filters</h2>
           <div>
             <h3 className="text-md font-semibold mb-2">Category</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
             { categories?.length > 0 ? categories.map((filter) => (
                 <Label key={filter.id} className="flex items-center space-x-2">
                   <Checkbox 

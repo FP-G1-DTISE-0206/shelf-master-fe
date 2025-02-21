@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 const PUBLIC_PATHS = [
   "/login",
   "/register",
-  "/search",
   "/product",
   "/setup-account",
   "/forgot-password",
@@ -15,6 +14,7 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/cart",
   "/profile",
+  "/search",
   "/change-password",
   "/products",
   "/order-list",
