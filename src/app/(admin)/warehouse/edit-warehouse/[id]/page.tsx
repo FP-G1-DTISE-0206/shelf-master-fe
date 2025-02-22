@@ -1,7 +1,6 @@
 "use client";
 import { FC, use, useEffect, useState } from "react";
 import { notFound, useRouter } from "next/navigation";
-import { useSingleUserAddress } from "@/hooks/useUserAddress";
 import { useSession } from "next-auth/react";
 import CustomSpinner from "@/components/CustomSpinner";
 import axios from "axios";
@@ -13,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WarehouseForm from "../../components/WarehouseForm";
 import { WarehouseFormValues } from "@/types/address";
-import { Admin, AdminOption } from "@/types/warehouse";
+import { AdminOption } from "@/types/warehouse";
 import { useSingleWarehouse } from "@/hooks/useWarehouse";
 
 interface PageProps {
@@ -36,7 +35,7 @@ const EditWarehousePage: FC<PageProps> = ({ params }) => {
 
   const [selectedArea, setSelectedArea] = useState<AreaOption | null>(null);
   const [selectedAdmins, setSelectedAdmins] = useState<AdminOption[] | null>(
-    null
+    []
   );
   const initialValues: WarehouseFormValues = {
     name: singleWarehouse?.name as string,
@@ -125,7 +124,7 @@ const EditWarehousePage: FC<PageProps> = ({ params }) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex gap-4 items-center hover:cursor-pointer">
-        <Link href={"/profile"}>
+        <Link href={"/warehouse"}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </Link>
         <div className="font-semibold text-2xl">Edit Address</div>

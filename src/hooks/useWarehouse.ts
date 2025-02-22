@@ -1,17 +1,14 @@
 "use client";
-import {
-  WarehouseFullResponse,
-  WarehousePaginationResponse,
-  WarehouseRequest,
-} from "@/types/warehouse";
+import { PaginationRequest, PaginationResponse } from "@/types/pagination";
+import { WarehouseFullResponse, WarehouseResponse } from "@/types/warehouse";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 
 const fetchWarehouses = async (
   accessToken: string,
-  params: WarehouseRequest
-): Promise<WarehousePaginationResponse> => {
+  params: PaginationRequest
+): Promise<PaginationResponse<WarehouseResponse>> => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/warehouse`,
     {
@@ -21,11 +18,11 @@ const fetchWarehouses = async (
       params,
     }
   );
-  return data.data as WarehousePaginationResponse;
+  return data.data as PaginationResponse<WarehouseResponse>;
 };
 
 const useWarehouses = (accessToken: string) => {
-  const [params, setParams] = useState<WarehouseRequest>({
+  const [params, setParams] = useState<PaginationRequest>({
     start: 0,
     length: 10,
     search: "",

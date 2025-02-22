@@ -15,8 +15,10 @@ const AddressSection: FC = () => {
   useEffect(() => {
     refetch();
   }, []);
+  if (!session?.user.roles.includes("USER")) return;
   if (isLoading) return <CustomSpinner />;
   if (error) return <div>Error: {error.message}</div>;
+
   return (
     <div className="bg-shelf-white rounded-xl w-full">
       <div className="mx-6 my-6 flex flex-col gap-4">

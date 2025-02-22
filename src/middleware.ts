@@ -15,15 +15,18 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/cart",
   "/profile",
-  "/change-password",
+  "/create-address",
+  "/edit-address",
   "/products",
   "/order-list",
   "/stock-mutation-form",
   "/create-product",
   "/update-product",
+  "/warehouse",
+  "/user",
 ];
 const ROLE_PATHS = {
-  USER: ["/profile", "/cart"],
+  USER: ["/profile", "/cart", "/create-address", "/edit-address"],
   WH_ADMIN: ["/profile", "/products", "/order-list", "/dashboard"],
   // Admin can access everything
   SUPER_ADMIN: ["*"],
@@ -60,24 +63,28 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
   const { pathname } = request.nextUrl;
 
-  if (session && (pathname === "/login" || pathname === "/register")) {
-    // Redirect to the dashboard or homepage if logged in
-    return NextResponse.redirect(new URL("/", request.url));
+  if (session) {
+    const userRoles = session.user?.roles || [];
+    if (
+      (pathname === "/login" || pathname === "/register") &&
+      (userRoles.includes("SUPER_ADMIN") || userRoles.includes("WH_ADMIN"))
+    ) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    if (pathname === "/login" || pathname === "/register") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
-  if (session && isPublicPath(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+  if (!session && isProtectedPath(pathname)) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (isProtectedPath(pathname)) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
+  if (session && isProtectedPath(pathname)) {
     const userRoles = session.user?.roles || [];
     if (!hasRequiredRole(userRoles, pathname)) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));

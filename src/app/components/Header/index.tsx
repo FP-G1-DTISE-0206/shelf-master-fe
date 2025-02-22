@@ -61,100 +61,103 @@ const Header: FC = () => {
   };
 
   return (
-    <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
-      {/* Logo */}
-      <Link href="/">
-        <h1 className="font-extrabold text-xl">ShelfMaster</h1>
-      </Link>
-
-      {/* Right-side icons */}
-      <div className="flex xl:gap-10 max-xl:gap-2 items-center">
-        <FontAwesomeIcon icon={faSearch} />
-
-        {!session ? (
-          <div className="flex gap-5 max-lg:me-2">
-            <Link href="/login" className="text-shelf-black">
-              Login
-            </Link>
-            <Link href="/register" className="text-shelf-black">
-              Register
-            </Link>
-          </div>
-        ) : (
-          <>
-            {/* User Dropdown */}
-            <Dropdown
-              label={<FontAwesomeIcon icon={faUser} />}
-              inline
-              arrowIcon={false}
-            >
-              <DropdownItem>
-                <div className="flex gap-2 items-start justify-start text-start flex-wrap max-lg:me-2">
-                  <Image
-                    className="rounded-md aspect-square object-cover"
-                    src={session.user.imageUrl || "/images/default-profile.jpg"}
-                    width={45}
-                    height={45}
-                    alt="User Profile"
-                  />
-                  <div className="flex flex-col justify-center max-sm:hidden">
-                    <div>{session.user.email}</div>
-                    <div className="text-slate-gray text-xs">
-                      {session.user.roles[0]}
-                    </div>
-                  </div>
-                </div>
-              </DropdownItem>
-              <Dropdown.Divider />
-              <DropdownItem>
-                <Link href="/profile">Profile Settings</Link>
-              </DropdownItem>
-              <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
-            </Dropdown>
-
-            {/* Cart Dropdown */}
-            <Dropdown
-              label={
-                <div className="relative">
-                  <FontAwesomeIcon icon={faCartShopping} size="lg" />
-                  {totalItems > 0 && (
-                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
-                      {totalItems}
-                    </span>
-                  )}
-                </div>
-              }
-              inline
-              arrowIcon={false}
-            >
-              {cartItems.length > 0 ? (
-                cartItems.map((item: CartItem) => (
-                  <DropdownItem key={item.id}>
-                    <div className="flex gap-3 items-center">
-                      <Image
-                        src={
-                          item.images[0] || "/images/default-placeholder.jpg"
-                        }
-                        alt={item.name}
-                        width={40}
-                        height={40}
-                        className="rounded-md"
-                      />
-                      <div>
-                        <p className="font-semibold text-left ">
-                          {item.name.length > 40 ? 
-                            item.name.substring(0, 40) + "..." : item.name
-                          }
-                        </p>
-                        <p className="text-sm text-gray-600 text-left">
-                          {item.quantity} pc(s) - Rp{" "}
-                          {item.price.toLocaleString("id-ID")}
-                        </p>
+    <>
+      {/* <h2 className="text-5xl font-black mt-10 mb-6 text-center">SHOP <span className="text-[#4A69E2]">SMART</span></h2>
+      <HeroCard /> */}
+      <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
+        <Link href="/">
+          <h1 className="font-extrabold text-xl">ShelfMaster</h1>
+        </Link>
+        <div className="flex xl:gap-10 max-xl:gap-2 items-center">
+          <FontAwesomeIcon icon={faSearch} />
+          {!session && (
+            <div className="flex gap-5 max-lg:me-2">
+              <div className="text-shelf-black hover:cursor-pointer">
+                <Link href="/login">Login</Link>
+              </div>
+              <div className="text-shelf-black  hover:cursor-pointer">
+                <Link href="/register">Register</Link>
+              </div>
+            </div>
+          )}
+          {session && (
+            <>
+              {/* <FontAwesomeIcon icon={faUser} /> */}
+              <Dropdown
+                label={<FontAwesomeIcon icon={faUser} />}
+                inline
+                arrowIcon={false}
+              >
+                <DropdownItem>
+                  <div className="flex gap-2 items-start justify-start text-start flex-wrap max-lg:me-2">
+                    <Image
+                      className="rounded-md aspect-square object-cover"
+                      src={
+                        session.user.imageUrl != ""
+                          ? session.user.imageUrl
+                          : "/images/default-profile.jpg"
+                      }
+                      width={45}
+                      height={45}
+                      alt="User Profile"
+                    />
+                    <div className="flex flex-col justify-center max-sm:hidden">
+                      <div>{session.user.email}</div>
+                      <div className="text-slate-gray text-xs">
+                        {session.user.roles[0]}
                       </div>
                     </div>
-                  </DropdownItem>
-                ))
-              ) : (
+                  </div>
+                </DropdownItem>
+                <Dropdown.Divider />
+                <DropdownItem>
+                  <Link href="/profile">Profile Settings</Link>
+                </DropdownItem>
+                {(session.user.roles.includes("SUPER_ADMIN") ||
+                  session.user.roles.includes("WH_ADMIN")) && (
+                  <>
+                    <DropdownItem>
+                      <Link href="/dashboard">Admin Dashboard</Link>
+                    </DropdownItem>
+                  </>
+                )}
+                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+              </Dropdown>
+              <Dropdown
+                label={<FontAwesomeIcon icon={faCartShopping} />}
+                inline
+                arrowIcon={false}
+              >
+                <DropdownItem>
+                  <Link href="/cart">
+                    Checkout <FontAwesomeIcon icon={faArrowRight} />
+                  </Link>
+                </DropdownItem>
+                <Dropdown.Divider />
+                <DropdownItem>
+                  <div className="flex gap-2 items-start justify-start text-start flex-wrap max-lg:me-2">
+                    <Image
+                      className="rounded-md"
+                      src={
+                        session.user.imageUrl != ""
+                          ? session.user.imageUrl
+                          : "/images/kohceng-senam.jpg"
+                      }
+                      width={45}
+                      height={45}
+                      alt="Item Image"
+                    />
+                    <div className="flex flex-col justify-center max-sm:hidden">
+                      <div>ADIDAS 3DFWD X PARLEY RUNNING SHOES</div>
+                      <div className="flex justify-between">
+                        <div className="text-shelf-black text-xs">1 pc(s)</div>
+                        <div className="text-shelf-black text-xs">
+                          Rp 10.000,-
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </DropdownItem>
                 <DropdownItem>
                   <p className="text-center text-gray-500">
                     Your cart is empty.

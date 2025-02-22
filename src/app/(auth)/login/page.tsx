@@ -51,20 +51,7 @@ const LoginPage: FC = () => {
       } else if (!result?.error) {
         showToast("Login success", "success");
         formikHelpers.resetForm();
-
-        // ✅ Get the access token from NextAuth's session
-      const session = await fetch("/api/auth/session").then((res) => res.json());
-
-      if (session?.accessToken) {
-        console.log("🔑 Bearer Token:", session.accessToken);
-
-        // Store token for future API calls
-        localStorage.setItem("token", session.accessToken);
-      } else {
-        console.warn("⚠️ No token found in session.");
-      }
-
-        router.push("/");
+        router.refresh();
       }
       console.log("stil running");
     } catch (error) {
