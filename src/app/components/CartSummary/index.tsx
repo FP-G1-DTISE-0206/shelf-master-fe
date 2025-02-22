@@ -5,7 +5,7 @@ import ChoosenProduct from "./ChoosenProduct";
 import useCartStore from "@/store/cartStore";
 
 const CartSummary: FC = () => {
-  const { cartItems, getTotalPrice } = useCartStore();
+  const { cartItems, totalAmount, totalItems } = useCartStore();
 
   return (
     <div className="lg:grid lg:grid-cols-3 lg:gap-x-12">
@@ -22,7 +22,9 @@ const CartSummary: FC = () => {
 
         {/* Choosen Products */}
         {cartItems.length > 0 ? (
-          cartItems.map((item) => <ChoosenProduct key={item.id} product={item} />)
+          cartItems.map((item) => (
+            <ChoosenProduct key={item.id} product={item} />
+          ))
         ) : (
           <p className="text-center text-gray-500">Your bag is empty.</p>
         )}
@@ -35,9 +37,10 @@ const CartSummary: FC = () => {
           <table className="w-full">
             <tbody>
               <tr className="lg:text-xl">
-                <td className="py-2">{cartItems.length} ITEM(S)</td>
+                <td className="py-2">{totalItems} ITEM(S)</td>
+              
                 <td className="text-right py-2">
-                  Rp {getTotalPrice().toLocaleString("id-ID")}
+                  Rp {totalAmount.toLocaleString("id-ID")}
                 </td>
               </tr>
               <tr className="lg:text-xl">
@@ -51,24 +54,25 @@ const CartSummary: FC = () => {
               <tr className="font-bold lg:text-2xl">
                 <td className="py-2">Total</td>
                 <td className="text-right py-2">
-                  Rp {(getTotalPrice() + 6999).toLocaleString("id-ID")}
+                  Rp {(totalAmount + 6999).toLocaleString("id-ID")}
+                
                 </td>
               </tr>
             </tbody>
           </table>
 
           {/* Checkout Button */}
-          <Link href="/payment">
+          <Link href="/checkout">
             <button className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
               CHECKOUT
             </button>
           </Link>
 
-          <p className="pt-2 lg:text-xl">
+          <div className="pt-2 lg:text-xl">
             <Link href="/promo" className="underline text-base">
               Use a promo code
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>

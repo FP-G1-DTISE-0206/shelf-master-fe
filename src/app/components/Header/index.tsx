@@ -1,7 +1,12 @@
 "use client";
 import { FC, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCartShopping, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faCartShopping,
+  faSearch,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
@@ -16,10 +21,10 @@ const Header: FC = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const { showToast } = useToast();
-  
+
   const cartItems = useCartStore((state) => state.cartItems);
-  const totalItems = useCartStore((state) => state.getTotalItems());
-  
+  const totalItems = useCartStore((state) => state.totalItems);
+  const totalAmount = useCartStore((state) => state.totalAmount);
 
   const handleLogout = async (): Promise<void> => {
     if (!session) {
@@ -47,7 +52,10 @@ const Header: FC = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        showToast(error.response?.data.message || "Error during logout.", "error");
+        showToast(
+          error.response?.data.message || "Error during logout.",
+          "error"
+        );
       } else {
         showToast("An unexpected error occurred. Please try again.", "error");
       }
@@ -70,13 +78,21 @@ const Header: FC = () => {
 
         {!session ? (
           <div className="flex gap-5 max-lg:me-2">
-            <Link href="/login" className="text-shelf-black">Login</Link>
-            <Link href="/register" className="text-shelf-black">Register</Link>
+            <Link href="/login" className="text-shelf-black">
+              Login
+            </Link>
+            <Link href="/register" className="text-shelf-black">
+              Register
+            </Link>
           </div>
         ) : (
           <>
             {/* User Dropdown */}
-            <Dropdown label={<FontAwesomeIcon icon={faUser} />} inline arrowIcon={false}>
+            <Dropdown
+              label={<FontAwesomeIcon icon={faUser} />}
+              inline
+              arrowIcon={false}
+            >
               <DropdownItem>
                 <div className="flex gap-2 items-start justify-start text-start flex-wrap max-lg:me-2">
                   <Image
@@ -88,7 +104,9 @@ const Header: FC = () => {
                   />
                   <div className="flex flex-col justify-center max-sm:hidden">
                     <div>{session.user.email}</div>
-                    <div className="text-slate-gray text-xs">{session.user.roles[0]}</div>
+                    <div className="text-slate-gray text-xs">
+                      {session.user.roles[0]}
+                    </div>
                   </div>
                 </div>
               </DropdownItem>
@@ -119,16 +137,23 @@ const Header: FC = () => {
                   <DropdownItem key={item.id}>
                     <div className="flex gap-3 items-center">
                       <Image
-                        src={item.images[0] || "/images/default-placeholder.jpg"}
+                        src={
+                          item.images[0] || "/images/default-placeholder.jpg"
+                        }
                         alt={item.name}
                         width={40}
                         height={40}
                         className="rounded-md"
                       />
                       <div>
-                        <p className="font-semibold text-left">{item.name}</p>
+                        <p className="font-semibold text-left ">
+                          {item.name.length > 40 ? 
+                            item.name.substring(0, 40) + "..." : item.name
+                          }
+                        </p>
                         <p className="text-sm text-gray-600 text-left">
-                          {item.quantity} pc(s) - Rp {item.price.toLocaleString("id-ID")}
+                          {item.quantity} pc(s) - Rp{" "}
+                          {item.price.toLocaleString("id-ID")}
                         </p>
                       </div>
                     </div>
@@ -136,7 +161,9 @@ const Header: FC = () => {
                 ))
               ) : (
                 <DropdownItem>
-                  <p className="text-center text-gray-500">Your cart is empty.</p>
+                  <p className="text-center text-gray-500">
+                    Your cart is empty.
+                  </p>
                 </DropdownItem>
               )}
 
@@ -144,17 +171,17 @@ const Header: FC = () => {
               <DropdownItem>
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">Total</span>
+                  {/* ✅ Use totalAmount from backend instead of local calculation */}
                   <span className="font-semibold">
-                    Rp{" "}
-                    {cartItems.reduce(
-                      (total: number, item: CartItem) => total + item.price * item.quantity,
-                      0
-                    ).toLocaleString("id-ID")}
+                    Rp {totalAmount.toLocaleString("id-ID")}
                   </span>
                 </div>
               </DropdownItem>
               <DropdownItem>
-                <Link href="/cart" className="block w-full text-center text-blue-500">
+                <Link
+                  href="/cart"
+                  className="block w-full text-center text-blue-500"
+                >
                   Checkout <FontAwesomeIcon icon={faArrowRight} />
                 </Link>
               </DropdownItem>
@@ -163,7 +190,6 @@ const Header: FC = () => {
         )}
       </div>
     </div>
-
   );
 };
 

@@ -5,7 +5,7 @@ import ProductSuggestion from "@/app/components/ProductSuggestion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import ImageGallery from "@/app/components/ImageGallery";
-import useCartStore from "@/store/cartStore"; 
+import useCartStore from "@/store/cartStore";
 import { CartItem } from "@/types/cartItem";
 import products from "@/data/product";
 
@@ -38,7 +38,7 @@ const ProductPage: FC = () => {
   if (loading) return <p>Loading...</p>;
   if (!product) return <p className="text-red-500">Product not found</p>;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
       const cartItem: CartItem = {
         id: product.id,
@@ -50,6 +50,15 @@ const ProductPage: FC = () => {
       };
       console.log("✅ Add to Cart Button Clicked");
       addToCart(cartItem); // ✅ Uses Zustand state function correctly
+
+      // ✅ Log the entire updated cart state after adding a product
+      setTimeout(() => {
+        console.log(
+          "🛒 Updated Cart State:",
+          useCartStore.getState().cartItems
+        );
+        useCartStore.getState().sendCartToBackend();
+      }, 100);
     }
   };
 
@@ -65,10 +74,14 @@ const ProductPage: FC = () => {
         <div className="lg:col-span-2 xl:col-span-1">
           <div>
             <div className="px-4 py-2 bg-shelf-blue rounded-xl inline-block mb-2">
-              <p className="text-white text-[12px] font-semibold">New Release</p>
+              <p className="text-white text-[12px] font-semibold">
+                New Release
+              </p>
             </div>
             <div className="mb-2">
-              <p className="text-shelf-black font-semibold text-xl">{product.name}</p>
+              <p className="text-shelf-black font-semibold text-xl">
+                {product.name}
+              </p>
             </div>
             <div>
               <p className="text-shelf-blue font-semibold text-2xl">
@@ -100,10 +113,19 @@ const ProductPage: FC = () => {
             <h2 className="text-2xl font-bold mb-4">About the Product</h2>
             <div className="text-gray-700 space-y-2">
               <p className="text-lg font-semibold">Shadow Navy / Army Green</p>
-              <p>This product is excluded from all promotional discounts and offers.</p>
+              <p>
+                This product is excluded from all promotional discounts and
+                offers.
+              </p>
               <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Pay over time in interest-free installments with Affirm, Klarna or Afterpay.</li>
-                <li>Join adiClub to get unlimited free standard shipping, returns, & exchanges.</li>
+                <li>
+                  Pay over time in interest-free installments with Affirm,
+                  Klarna or Afterpay.
+                </li>
+                <li>
+                  Join adiClub to get unlimited free standard shipping, returns,
+                  & exchanges.
+                </li>
               </ul>
             </div>
           </div>

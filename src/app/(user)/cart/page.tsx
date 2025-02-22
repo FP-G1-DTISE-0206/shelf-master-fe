@@ -16,7 +16,7 @@ const Cart: FC = () => {
           while supplies last. No code needed
         </p>
 
-        <p className="text-[14px] lg:text-base">
+        {/* <div className="text-[14px] lg:text-base">
           <Link href="/signup" className="underline">
             Join us
           </Link>{" "}
@@ -24,7 +24,7 @@ const Cart: FC = () => {
           <Link href="/login" className="underline">
             Sign-in
           </Link>
-        </p>
+        </div> */}
       </div>
 
       <CartSummary />

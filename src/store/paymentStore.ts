@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface PaymentState {
   snapToken: string | null;
@@ -7,12 +8,17 @@ interface PaymentState {
   setSnapEmbedded: (status: boolean) => void;
 }
 
-export const usePaymentStore = create<PaymentState>((set) => ({
-  snapToken: null,
-  isSnapEmbedded: false,
-  setSnapToken: (token) => set({ snapToken: token, isSnapEmbedded: false }), // Reset embed state when token changes
-  setSnapEmbedded: (status) => set({ isSnapEmbedded: status }),
-}));
+export const usePaymentStore = create<PaymentState>()(
+  persist(
+    (set) => ({
+      snapToken: null,
+      isSnapEmbedded: false,
+      setSnapToken: (token) => set({ snapToken: token }),
+      setSnapEmbedded: (isEmbedded) => set({ isSnapEmbedded: isEmbedded }),
+    }),
+    { name: "payment-store" }
+  )
+);
 
 
 // import { create } from "zustand";
