@@ -1,12 +1,7 @@
 "use client";
 import { FC, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faCartShopping,
-  faSearch,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCartShopping, faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
