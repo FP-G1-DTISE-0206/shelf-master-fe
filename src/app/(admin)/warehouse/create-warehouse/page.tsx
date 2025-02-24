@@ -30,7 +30,7 @@ const CreateWarehousePage: FC = () => {
     latitude: null,
     longitude: null,
     biteshipArea: null,
-    admins: null,
+    admins: [],
   };
 
   const handleSubmit = async (

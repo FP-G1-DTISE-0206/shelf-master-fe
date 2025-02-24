@@ -1,5 +1,6 @@
 "use client";
-import { AdminPaginationResponse, PaginationRequest } from "@/types/warehouse";
+import { PaginationRequest, PaginationResponse } from "@/types/pagination";
+import { Admin } from "@/types/warehouse";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
@@ -7,7 +8,7 @@ import { useState } from "react";
 const fetchAdmins = async (
   accessToken: string,
   params: PaginationRequest
-): Promise<AdminPaginationResponse> => {
+): Promise<PaginationResponse<Admin>> => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin`,
     {
@@ -17,7 +18,7 @@ const fetchAdmins = async (
       params,
     }
   );
-  return data.data as AdminPaginationResponse;
+  return data.data as PaginationResponse<Admin>;
 };
 
 const useAdmins = (accessToken: string) => {

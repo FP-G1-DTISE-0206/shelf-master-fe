@@ -14,6 +14,8 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/cart",
   "/profile",
+  "/create-address",
+  "/edit-address",
   "/search",
   "/change-password",
   "/products",
@@ -22,9 +24,10 @@ const PROTECTED_PATHS = [
   "/create-product",
   "/update-product",
   "/warehouse",
+  "/user",
 ];
 const ROLE_PATHS = {
-  USER: ["/profile", "/cart"],
+  USER: ["/profile", "/cart", "/create-address", "/edit-address"],
   WH_ADMIN: ["/profile", "/products", "/order-list", "/dashboard"],
   // Admin can access everything
   SUPER_ADMIN: ["*"],

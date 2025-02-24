@@ -101,6 +101,14 @@ const AdminHeader: FC<NestedLayoutProps> = ({ isOpen, setIsOpen }) => {
                 <DropdownItem>
                   <Link href="/profile">Profile Settings</Link>
                 </DropdownItem>
+                {(session.user.roles.includes("SUPER_ADMIN") ||
+                  session.user.roles.includes("WH_ADMIN")) && (
+                  <>
+                    <DropdownItem>
+                      <Link href="/dashboard">Admin Dashboard</Link>
+                    </DropdownItem>
+                  </>
+                )}
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </Dropdown>
             </>
