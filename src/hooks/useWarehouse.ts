@@ -85,4 +85,47 @@ export const useSingleWarehouse = (accessToken: string, id: number) => {
   };
 };
 
+const findClosestWarehouse = async (
+  accessToken: string,
+  userAddressId: number
+): Promise<WarehouseFullResponse> => {
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/warehouse/find-closest`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        userAddressId: userAddressId,
+      },
+    }
+  );
+  return data.data as WarehouseFullResponse;
+};
+
+export const useFindClosest = (accessToken: string) => {
+  const [userAddressId, setUserAddressId] = useState(0);
+  const isRequestValid = Boolean(userAddressId);
+  const {
+    isLoading,
+    error,
+    data: closestWarehouse,
+    refetch,
+  } = useQuery({
+    queryKey: ["fetchSingleUserAddress", accessToken, userAddressId],
+    queryFn: async () => findClosestWarehouse(accessToken, userAddressId),
+    staleTime: 60 * 1000,
+    gcTime: 60 * 1000,
+    enabled: isRequestValid,
+  });
+  return {
+    isLoading,
+    error,
+    closestWarehouse,
+    refetch,
+    userAddressId,
+    setUserAddressId,
+  };
+};
+
 export default useWarehouses;

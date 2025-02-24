@@ -1,5 +1,5 @@
 import { FC } from "react";
-import AdminSidebar from "../components/AdminSidebar";
+import AdminSidebar from "./components/AdminSidebar";
 
 interface NestedLayoutProps {
   children: React.ReactNode;
