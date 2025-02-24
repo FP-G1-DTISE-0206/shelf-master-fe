@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePaymentStore } from "@/store/paymentStore";
 
 // Define global `snap` type properly
@@ -33,8 +33,6 @@ export default function PaymentButton() {
     </div>
   );
 }
-
-
 
 // "use client";
 
@@ -75,7 +73,6 @@ export default function PaymentButton() {
 //     </div>
 //   );
 // }
-
 
 // "use client";
 

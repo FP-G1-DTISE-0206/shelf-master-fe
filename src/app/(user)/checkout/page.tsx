@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usePaymentStore } from "@/store/paymentStore";
 import { useSession } from "next-auth/react";
-import PaymentButton from "@/app/components/PaymentButton";
+import PaymentButton from "@/app/(user)/payment/components/PaymentButton";
 import useCartStore from "@/store/cartStore";
 
 const CheckoutPage = () => {
@@ -92,10 +92,6 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
-
-
-
 
 // "use client";
 
