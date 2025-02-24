@@ -15,13 +15,13 @@ const CheckoutPage = () => {
 
   const fetchToken = async () => {
     if (!session?.accessToken) {
-      console.error("❌ No access token available.");
+      console.error("No access token available.");
       setError("Please log in to proceed with the payment.");
       return;
     }
 
     if (totalAmount <= 0) {
-      console.warn("⚠️ Total amount is 0. Cannot proceed with payment.");
+      console.warn("Total amount is 0. Cannot proceed with payment.");
       setError("Your cart is empty.");
       return;
     }
@@ -55,7 +55,7 @@ const CheckoutPage = () => {
         setSnapToken(transactionData);
       }
     } catch (error) {
-      console.error("❌ Error fetching payment token:", error);
+      console.error("Error fetching payment token:", error);
       setError("Failed to fetch payment token. Please try again.");
     } finally {
       setLoading(false);
