@@ -74,12 +74,12 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
                   alt="Logo"
                   className="w-full"
                 />
-                <button onClick={() => setIsOpen(false)}>
+                <div onClick={() => setIsOpen(false)} className="cursor-pointer">
                   <FontAwesomeIcon
                     icon={faTimes}
                     className="text-gray-600 hover:text-gray-800 w-5 h-5"
                   />
-                </button>
+                </div>
               </div>
 
               <Sidebar.Item
@@ -97,11 +97,11 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
                 Products
               </Sidebar.Item>
               <Sidebar.Item
-                href="/mutation-form"
+                href="/product-mutation"
                 icon={() => <FontAwesomeIcon icon={faFile} />}
-                className={SidebarItemStyle("mutation-form")}
+                className={SidebarItemStyle("product-mutation")}
               >
-                Mutation Form
+                Product Mutation
               </Sidebar.Item>
               <Sidebar.Item
                 onClick={() => toggleMenu("management")}

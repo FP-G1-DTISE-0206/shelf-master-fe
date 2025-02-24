@@ -31,7 +31,7 @@ const useUpdateProduct = (accessToken: string) => {
     },
     onError: (error: any) => {
       console.error("Error:", error);
-      showToast("Error updating product", "error");
+      showToast(error.response.data.message, "error");
     },
   });
 

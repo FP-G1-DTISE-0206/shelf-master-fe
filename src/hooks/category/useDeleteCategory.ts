@@ -33,7 +33,7 @@ const useDeleteCategory = (accessToken: string) => {
     },
     onError: (error: any) => {
       console.error("Error:", error);
-      showToast("Error deleting category", "error");
+      showToast(error.response.data.message, "error");
     },
   });
 

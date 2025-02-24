@@ -31,7 +31,7 @@ const useCreateProduct = (accessToken: string) => {
     },
     onError: (error: any) => {
       console.error("Error:", error);
-      showToast("Error creating product", "error");
+      showToast(error.response.data.message, "error");
     },
   });
 

@@ -59,7 +59,7 @@ const Products = () => {
     <div className="container mx-auto px-4 w-full">
       <div className="flex justify-between flex-wrap">
         <h1 className="text-2xl font-bold my-4">All Products</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Label htmlFor="field" className="font-medium h-10 mt-4 pl-2 py-2">Sort by:</Label>
           <Select value={field} name="field"
             onChange={(e) => setField(e.target.value)} 
@@ -92,19 +92,23 @@ const Products = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 relative">
         {
           isProductLoading && (
-            <div className="flex min-h-60 align-middle justify-center">
+            <div className="flex w-full min-h-60 align-middle justify-center absolute z-10 top-0">
               <CustomSpinner />
             </div>
           )
         }
         {
-          productError && (<div className="align-middle justify-center">Error: {productError.message}</div>)
+          productError && (<div className="flex w-full items-center justify-center absolute top-0">
+            Error: {productError.message}</div>)
         }
         {
-          (!products || !totalData) && (<div className="align-middle justify-center">No products</div>)
+          (!products || !totalData) && !isProductLoading && (
+          <div className="flex w-full items-center justify-center absolute top-0">
+            <div className="mt-6">No products</div>
+          </div>)
         }
         {!isProductLoading && products.map((product) => (
           <Card key={product.id} className="max-w-sm">

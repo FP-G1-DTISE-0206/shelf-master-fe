@@ -20,7 +20,7 @@ const PROTECTED_PATHS = [
   "/change-password",
   "/products",
   "/order-list",
-  "/stock-mutation-form",
+  "/product-mutation",
   "/create-product",
   "/update-product",
   "/warehouse",
