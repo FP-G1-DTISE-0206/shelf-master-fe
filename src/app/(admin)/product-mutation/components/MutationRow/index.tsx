@@ -10,6 +10,23 @@ interface MutationRowProps {
   refetch: () => void;
 }
 
+enum MutationTypeEnum {
+  WAREHOUSE = "WAREHOUSE",
+  VENDOR = "VENDOR",
+  USER = "USER"
+}
+
+const mutationTypeMap: Record<string, string> = {
+  [`${MutationTypeEnum.WAREHOUSE}-${MutationTypeEnum.WAREHOUSE}`]: "Internal",
+  [`${MutationTypeEnum.WAREHOUSE}-${MutationTypeEnum.USER}`]: "Order",
+  [`${MutationTypeEnum.USER}-${MutationTypeEnum.WAREHOUSE}`]: "Return Order",
+  [`${MutationTypeEnum.VENDOR}-${MutationTypeEnum.WAREHOUSE}`]: "Restock",
+};
+
+export const getMutationType = (originType: string, destinationType: string): string => {
+  return mutationTypeMap[`${originType}-${destinationType}`] || "Unknown";
+};
+
 const MutationRow: FC<MutationRowProps> = ({
   mutation,
   refetch
@@ -18,7 +35,12 @@ const MutationRow: FC<MutationRowProps> = ({
     <>
       <TableRow key={mutation.id}>
         <TableCell>{mutation.id}</TableCell>
-        <TableCell>{mutation.destinationType}</TableCell>
+        <TableCell>
+          {getMutationType(
+            mutation.originType, 
+            mutation.destinationType
+          )}
+        </TableCell>
         <TableCell>
           {mutation.productName}
         </TableCell>

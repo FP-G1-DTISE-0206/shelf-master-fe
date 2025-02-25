@@ -18,7 +18,8 @@ import useMutationType from '@/hooks/mutation/useMutationType';
 import { AssignedWarehouse } from '@/types/product';
 import { debounce } from "lodash";
 import WarehouseSelect from '../WarehouseSelect';
-import MutationRow from '../MutationRow';
+import MutationRow, { getMutationType } from '../MutationRow';
+import { MutationTypeResponse } from '@/types/mutation';
 
 const MutationTable: FC = () => {
   const [warehouse, setWarehouse] = useState<AssignedWarehouse>({ id: 0, name: "No Warehouse" });
@@ -38,6 +39,10 @@ const MutationTable: FC = () => {
     setParams({ ...params, order: sort });
   }
 
+  const handleFilter = (type: MutationTypeResponse) => {
+    setParams({ ...params, mutationTypeId: type.id })
+  }
+
   const onPageChange = (page: number) => {
     setParams({ ...params, start: (page - 1) * params.length });
   };
@@ -47,6 +52,11 @@ const MutationTable: FC = () => {
     setSearchTerm(value);
     handleSearch(value);
   };
+
+  const getMutationTypeName = (id: number): string => {
+    const type = types?.find(type => type.id === id);
+    return type ? getMutationType(type.originType, type.destinationType) : "All Type";
+  }
   
   useEffect(() => {
     refetch();
@@ -56,9 +66,26 @@ const MutationTable: FC = () => {
     <div className="bg-shelf-white rounded-lg p-5">
       <div className="flex justify-between max-lg:flex-col max-lg:items-start">
         <div className="font-semibold text-xl">
-          <WarehouseSelect session={session} warehouse={warehouse} setWarehouse={setWarehouse} />
+          <WarehouseSelect session={session} isAllowedAll={false}
+            warehouse={warehouse} setWarehouse={setWarehouse} />
         </div>
         <div className="flex gap-2 items-center max-md:flex-col max-md:items-start">
+          <Dropdown
+            color="light"
+            label={getMutationTypeName(params.mutationTypeId)}
+            dismissOnClick={true}
+          >
+            <DropdownItem onClick={() => handleFilter({ id: 0, originType: "", destinationType: "" })}>
+              All Type
+            </DropdownItem>
+            {
+              types?.map((type) => (
+                <DropdownItem key={type.id} onClick={() => handleFilter(type)}>
+                  {getMutationType(type.originType, type.destinationType)}
+                </DropdownItem>
+              ))
+            }
+          </Dropdown>
           <Dropdown
             color="light"
             label={params.order == "desc" ? "From Latest" : "From Oldest"}
@@ -80,9 +107,8 @@ const MutationTable: FC = () => {
         </div>
       </div>
       <hr className="border-t border-gray-300 my-4" />
-
       <div className="overflow-x-auto">
-        <Table hoverable className="min-w-max">
+        <Table hoverable className="min-w-max" id="mutation">
           <TableHead>
             <TableHeadCell>ID</TableHeadCell>
             <TableHeadCell>Type</TableHeadCell>
@@ -96,21 +122,21 @@ const MutationTable: FC = () => {
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell colSpan={4}>Loading . . .</TableCell>
+                <TableCell className="text-center" colSpan={4}>Loading . . .</TableCell>
               </TableRow>
             )}
             {!isLoading && mutations?.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4}>No Mutation found.</TableCell>
+                <TableCell className="text-center" colSpan={4}>No Mutation found.</TableCell>
               </TableRow>
             )}
             {!isLoading && error && (
               <TableRow>
-                <TableCell colSpan={4}>{error.message}</TableCell>
+                <TableCell className="text-center" colSpan={4}>{error.message}</TableCell>
               </TableRow>
             )}
             {mutations?.data.map((mutation) => (
-              <MutationRow mutation={mutation} refetch={refetch} />
+              <MutationRow key={mutation.id} mutation={mutation} refetch={refetch} />
             ))}
           </TableBody>
         </Table>

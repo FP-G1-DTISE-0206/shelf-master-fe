@@ -27,7 +27,7 @@ const useCreateProduct = (accessToken: string) => {
       createProduct(accessToken, creationData),
     onSuccess: (data) => {
       showToast(`Product '${data?.name}' created successfully`, "success");
-      router.push("/products/detail/" + data?.id );
+      router.push("/update-product/" + data?.id );
     },
     onError: (error: any) => {
       console.error("Error:", error);

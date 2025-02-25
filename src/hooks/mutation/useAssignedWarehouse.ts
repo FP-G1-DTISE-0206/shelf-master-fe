@@ -5,10 +5,12 @@ import axios from "axios";
 import { useState } from "react";
 
 const fetchAssignedWarehouse = async (
-  accessToken: string
+  accessToken: string,
+  search: string
 ): Promise<AssignedWarehouse[]> => {
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/product-mutation/warehouse-list`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/product-mutation/warehouse-list`
+    + `?search=${search}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -19,17 +21,15 @@ const fetchAssignedWarehouse = async (
 };
 
 const useAssignedWarehouse = (accessToken: string) => {
-  const [search, setSearch] = useState<{search: ""}>({
-    search: "",
-  });
+  const [search, setSearch] = useState<string>("");
   const {
     isLoading,
     error,
     data: warehouses,
     refetch,
   } = useQuery({
-    queryKey: ["fetchAssignedWarehouse", accessToken],
-    queryFn: async () => fetchAssignedWarehouse(accessToken),
+    queryKey: ["fetchAssignedWarehouse", accessToken, search],
+    queryFn: async () => fetchAssignedWarehouse(accessToken, search),
     staleTime: 60 * 1000,
     gcTime: 60 * 1000,
   });

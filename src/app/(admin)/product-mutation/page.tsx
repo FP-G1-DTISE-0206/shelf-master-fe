@@ -1,9 +1,5 @@
 import { FC } from 'react'
 import MutationTable from './components/MutationTable';
-import {
-  Dropdown,
-  DropdownItem,
-} from "flowbite-react";
 
 const ProductMutation: FC = () => {
   return (
