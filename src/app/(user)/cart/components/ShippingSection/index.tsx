@@ -31,17 +31,13 @@ const ShippingSection: FC = () => {
     session?.accessToken as string
   );
 
-  const {
-    couriers,
-    setRequest,
-    request,
-    isLoading: isCourierLoading,
-  } = useCourier();
+  const { couriers, setRequest, isLoading: isCourierLoading } = useCourier();
 
   const [defaultAddress, setDefaultAddress] =
     useState<UserAddressResponse | null>(null);
   const [isChangeAddressModalOpen, setIsChangeAddressModalOpen] =
     useState(false);
+  const [choosenCourier, setChoosenCourier] = useState<Pricing | null>(null);
 
   useEffect(() => {
     if (userAddress?.length) {
@@ -131,7 +127,11 @@ const ShippingSection: FC = () => {
           <div className="mt-2 space-y-4">
             {isCourierLoading && <CustomSpinner />}
             {groupedCouriers && (
-              <GroupedCouriers groupedCouriers={groupedCouriers} />
+              <GroupedCouriers
+                groupedCouriers={groupedCouriers}
+                choosenCourier={choosenCourier}
+                setChoosenCourier={setChoosenCourier}
+              />
             )}
           </div>
         </div>
