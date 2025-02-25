@@ -1,6 +1,6 @@
 import { UserAddressResponse } from "@/types/address";
 import { Button, Modal, Radio } from "flowbite-react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 interface ChangeAddressModalProps {
   isChangeAddressModalOpen: boolean;
   setIsChangeAddressModalOpen: (value: boolean) => void;
@@ -23,6 +23,11 @@ const ChangeAddressModal: FC<ChangeAddressModalProps> = ({
     }
     setIsChangeAddressModalOpen(false);
   };
+  useEffect(() => {
+    if (defaultAddress) {
+      setChoosenAddress(defaultAddress);
+    }
+  }, [defaultAddress]);
   return (
     <Modal
       show={isChangeAddressModalOpen}
@@ -37,9 +42,8 @@ const ChangeAddressModal: FC<ChangeAddressModalProps> = ({
               className={`w-full border rounded-lg shadow-sm bg-white p-5 flex gap-5 items-center cursor-pointer ${
                 address === choosenAddress ? "ring-2 ring-blue-500" : ""
               }`}
-              onClick={() => setChoosenAddress(address)} // Click the whole div to select
+              onClick={() => setChoosenAddress(address)}
             >
-              {/* Prevent click from propagating from the Radio button */}
               <Radio
                 name="address"
                 onClick={(event) => event.stopPropagation()}
