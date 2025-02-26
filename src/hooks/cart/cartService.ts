@@ -16,6 +16,7 @@ const getAuthHeaders = (token: string | undefined) => {
 
 export const getCart = async (userId: number): Promise<{ cartItems: CartItem[] }> => {
   const response = await axios.get(`${API_URL}/${userId}`);
+  // const response = await axios.get(`http://localhost:8080/api/v1/cart/${userId}`);
   return response.data;
 };
 

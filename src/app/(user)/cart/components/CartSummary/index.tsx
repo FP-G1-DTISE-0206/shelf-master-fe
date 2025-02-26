@@ -1,17 +1,20 @@
 "use client";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 // import Link from "next/link";
 // import ChoosenProduct from "./ChoosenProduct";
 // import useCartStore from "@/store/cartStore";
-import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useCartQuery } from "@/hooks/cart/useCartQuery";
 import { useCartStore } from "@/store/cartStore";
 import ChoosenProduct from "../ChoosenProduct";
 import { CartItem } from "@/types/cart";
+import Link from "next/link";
 
 const CartSummary: FC = () => {
+  const { data: session } = useSession();
+  const token = session?.accessToken || "";
   const userId = 1; // Replace with dynamic user ID
-  const { data, isLoading } = useCartQuery(userId);
+  const { data, isLoading } = useCartQuery(token, userId);
   const { setCart, cartItems } = useCartStore();
 
   useEffect(() => {
@@ -21,6 +24,7 @@ const CartSummary: FC = () => {
   }, [data, setCart]);
 
   if (isLoading) return <p>Loading cart...</p>;
+
 
 
   return (
@@ -37,6 +41,13 @@ const CartSummary: FC = () => {
         </div>
 
         {/* Choosen Products */}
+        {/* {cartItems.length > 0 ? (
+          cartItems.map((item: CartItem) => (
+            <ChoosenProduct key={item.cartId} product={item} />
+          ))
+        ) : (
+          <p className="text-center text-gray-500">Your bag is empty.</p>
+        )} */}
         {cartItems.length > 0 ? (
           cartItems.map((item: CartItem) => (
             <ChoosenProduct key={item.cartId} product={item} />
