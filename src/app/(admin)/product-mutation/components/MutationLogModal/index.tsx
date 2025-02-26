@@ -5,7 +5,8 @@ import {
   Table, TableHead, Modal, TableRow, 
   TableBody, TableCell, TableHeadCell, 
 } from "flowbite-react";
-//import { DateTime } from 'luxon'
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 interface MutationLogModalProps {
   mutationId: number;
@@ -22,11 +23,12 @@ const MutationLogModal: FC<MutationLogModalProps> = ({
   const { 
     isLoading, error, logs
   } = useMutationLogs(session?.accessToken as string, mutationId)
-
-  /*const getFormattedDate = (date: Date): string => {
-    return DateTime.fromISO(date, { setZone: true })
-     .toFormat("EEEE, dd MMMM yyyy 'at' HH.mm '[UTC]'ZZ");
-  }*/
+  
+  const formatOffsetDateTime = (offsetDateTime: string): string => {
+    const date = new Date(offsetDateTime);
+    const zonedDate = toZonedTime(date, 'UTC');
+    return format(zonedDate, "EEEE, dd MMMM yyyy 'at' HH.mm 'UTC'X");
+  };
 
   return (
     <Modal show={isOpen} onClose={() => setOpen(false)}>
@@ -57,14 +59,14 @@ const MutationLogModal: FC<MutationLogModalProps> = ({
                 <TableCell className="text-center" colSpan={4}>{error.message}</TableCell>
               </TableRow>
             )}
-            {/*logs?.map((log) => (
+            {logs?.map((log) => (
               <TableRow key={log.id}>
                 <TableCell>{log.id}</TableCell>
                 <TableCell>{log.status}</TableCell>
-                <TableCell>{/*getFormattedDate(log.createdAt)/}</TableCell>
+                <TableCell>{formatOffsetDateTime(log.createdAt)}</TableCell>
                 <TableCell>{log.reason}</TableCell>
               </TableRow>
-            ))*/}
+            ))}
           </TableBody>
         </Table>
       </Modal.Body>

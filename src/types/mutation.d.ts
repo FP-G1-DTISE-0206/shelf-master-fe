@@ -47,6 +47,6 @@ export interface RejectionReasonRequest {
 export interface MutationLogResponse {
   id: number,
   status: string,
-  createdAt: Date,
+  createdAt: string,
   reason: string,
 }
