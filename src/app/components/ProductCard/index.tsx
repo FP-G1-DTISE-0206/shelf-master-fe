@@ -6,6 +6,12 @@ import { ProductResponse } from "@/types/product";
 
 interface ProductCardProps {
   product: ProductResponse;
+  id: number;
+  name: string;
+  price?: number;
+  // images?: string[];
+  images?: string;
+  discount?: string;
 }
 
 const ProductCard: FC<ProductCardProps> = ({
@@ -31,6 +37,9 @@ const ProductCard: FC<ProductCardProps> = ({
               <Image
                 src={product.image.imageUrl || "/images/kohceng-senam.jpg"}
                 alt={product.name || "Product Image"}
+                // src={images?.[0] || "/images/kohceng-senam.jpg"}
+                src={images || "/images/kohceng-senam.jpg"}
+                alt={name || "Product Image"}
                 width={500}
                 height={500}
                 className="object-cover rounded-2xl"

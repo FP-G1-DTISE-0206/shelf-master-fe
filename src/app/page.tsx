@@ -1,10 +1,13 @@
+'use client'
 import { FC } from "react";
 import Header from "@/app/components/Header";
 import HeroCard from "./components/HeroCard";
 import NewArrival from "./components/NewArrival";
 import Footer from "./components/Footer";
 
+
 const Home: FC = () => {
+  
   return (
     <>
       <div className="xl:mx-14 max-xl:mx-4 mt-8">

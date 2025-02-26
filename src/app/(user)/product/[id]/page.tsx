@@ -5,7 +5,7 @@ import ProductSuggestion from "@/app/components/ProductSuggestion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import ImageGallery from "@/app/components/ImageGallery";
-import useCartStore from "@/store/cartStore";
+// import useCartStore from "@/store/cartStore";
 import { CartItem } from "@/types/cartItem";
 import { useSession } from "next-auth/react";
 import useProductDetail from "@/hooks/product/useProductDetail";
@@ -42,9 +42,9 @@ const ProductPage: FC = () => {
       setTimeout(() => {
         console.log(
           "🛒 Updated Cart State:",
-          useCartStore.getState().cartItems
+          // useCartStore.getState().cartItems
         );
-        useCartStore.getState().sendCartToBackend();
+        // useCartStore.getState().sendCartToBackend();
       }, 100);
     }
   };

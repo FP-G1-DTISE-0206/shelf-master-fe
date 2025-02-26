@@ -177,17 +177,18 @@ const Header: FC = () => {
                 label={
                   <div className="relative">
                     <FontAwesomeIcon icon={faCartShopping} size="lg" />
-                    {totalItems > 0 && (
+                    {/* {totalItems > 0 && (
                       <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
                         {totalItems}
                       </span>
-                    )}
+                    )} */}
+                    {totalItems > 0 && <span className="bg-red-500 text-white rounded-full px-2 absolute -top-2 -right-2">{totalItems}</span>}
                   </div>
                 }
                 inline
                 arrowIcon={false}
               >
-                {cartItems.length > 0 ? (
+                {/* {cartItems.length > 0 ? (
                   cartItems.map((item: CartItem) => (
                     <DropdownItem key={item.id}>
                       <div className="flex gap-3 items-center">
@@ -214,13 +215,13 @@ const Header: FC = () => {
                       </div>
                     </DropdownItem>
                   ))
-                ) : (
+                ) : ( */}
                   <DropdownItem>
                     <p className="text-center text-gray-500">
                       Your cart is empty.
                     </p>
                   </DropdownItem>
-                )}
+                {/* )} */}
 
                 <Dropdown.Divider />
                 <DropdownItem>
@@ -228,7 +229,8 @@ const Header: FC = () => {
                     <span className="font-semibold">Total</span>
                     {/* ✅ Use totalAmount from backend instead of local calculation */}
                     <span className="font-semibold">
-                      Rp {totalAmount.toLocaleString("id-ID")}
+                      {/* Rp {totalAmount.toLocaleString("id-ID")} */}
+                      Rp 7.000
                     </span>
                   </div>
                 </DropdownItem>
