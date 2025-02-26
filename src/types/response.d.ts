@@ -1,4 +1,4 @@
 export interface ResponseWithPagination {
-  data: any;
+  data: ProductResponse | CategoryResponse;
   recordsFiltered: number;
 }

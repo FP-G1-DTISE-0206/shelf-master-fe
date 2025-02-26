@@ -35,7 +35,7 @@ const useCreateCategory = (accessToken: string) => {
     },
     onError: (error: any) => {
       console.error("Error:", error);
-      showToast("Error creating category", "error");
+      showToast(error.response.data.message, "error");
     },
   });
 

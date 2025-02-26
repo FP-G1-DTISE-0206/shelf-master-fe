@@ -29,7 +29,7 @@ const useDeleteProduct = (accessToken: string) => {
     },
     onError: (error: any) => {
       console.error("Error:", error);
-      showToast("Error deleting product", "error");
+      showToast(error.response.data.message, "error");
     },
   });
 

@@ -69,3 +69,8 @@ export interface Product {
   images: string[];
   description: string;
 }
+
+export interface AssignedWarehouse {
+  id: number;
+  name: string;
+}
