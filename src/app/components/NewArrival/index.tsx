@@ -44,7 +44,7 @@ const NewArrival: FC = () => {
             id={product.id}
           />
         ))}
-        {/* <p>My Product</p> */}
+        
       </div>
       ) : (
         !isLoading && <p className="text-center">No products available</p>

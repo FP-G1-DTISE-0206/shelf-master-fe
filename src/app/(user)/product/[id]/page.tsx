@@ -9,6 +9,17 @@ import ImageGallery from "@/app/components/ImageGallery";
 import { CartItem } from "@/types/cartItem";
 import { useSession } from "next-auth/react";
 import useProductDetail from "@/hooks/product/useProductDetail";
+import { useMutation } from "@tanstack/react-query";
+import { addToCart } from "@/hooks/cart/cartService";
+import { useCartStore } from "@/store/cartStore";
+
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  images: string[];
+}
 import { 
   Badge, 
 } from "flowbite-react";
@@ -51,12 +62,25 @@ const ProductPage: FC = () => {
 
   const { id } = useParams();
   const { data: session } = useSession();
+  const { addToCartLocal } = useCartStore();
 
   const { isLoading, errorProductDetail, product } = useProductDetail(session?.accessToken ?? "", id as string);
   console.log("Product Data: ", product);
   console.log("Product Image:  ", product?.images[0].imageUrl);
 
   const productImage = product?.images?.map((img) => img.imageUrl) ?? ['/images/kohceng-senam.jpg'];
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!session) throw new Error("User must be logged in to add items to cart.");
+      if (!product) throw new Error("Product data is not available."); 
+  
+      const userId = 1; 
+      const newItem = await addToCart(session.accessToken, userId, product.id, 1);
+      addToCartLocal(newItem); 
+    },
+  });
+  
 
 
   
@@ -112,6 +136,25 @@ const ProductPage: FC = () => {
             </div>
           </div>
 
+            {/* Buttons */}
+            <div className="my-4">
+              <div className="mb-2 flex gap-2">
+                <button
+                  // onClick={handleAddToCart}
+                  onClick={() => mutation.mutate()}
+                  className="bg-shelf-black flex-1 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending ? "Adding..." : "ADD TO CART"}
+                </button>
+                <button className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+                  <FontAwesomeIcon icon={faHeart} />
+                </button>
+              </div>
+              <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+                BUY IT NOW
+              </button>
+            </div>
           {/* Buttons */}
           <div className="my-4">
             <div className="mb-2 flex gap-2">

@@ -89,6 +89,7 @@ const ProductCard: FC<ProductCardProps> = ({
           </div>
         </div>
       </div>
+      
     </>
   );
 };

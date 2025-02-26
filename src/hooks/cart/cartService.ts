@@ -1,7 +1,18 @@
 import axios from "axios";
 import { CartItem } from "@/types/cart";
 
-const API_URL = "/api/v1/cart";
+const API_URL = "http://localhost:8080/api/v1/cart";
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1/cart";
+
+const getAuthHeaders = (token: string | undefined) => {
+  if(!token) throw new Error("User is not authenticated");
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+  };
+};
 
 export const getCart = async (userId: number): Promise<{ cartItems: CartItem[] }> => {
   const response = await axios.get(`${API_URL}/${userId}`);
@@ -9,11 +20,12 @@ export const getCart = async (userId: number): Promise<{ cartItems: CartItem[] }
 };
 
 export const addToCart = async (
+  token: string,
   userId: number,
   productId: number,
   quantity: number
 ): Promise<CartItem> => {
-  const response = await axios.post(API_URL, { userId, productId, quantity });
+  const response = await axios.post(API_URL, { userId, productId, quantity }, getAuthHeaders(token));
   return response.data;
 };
 
