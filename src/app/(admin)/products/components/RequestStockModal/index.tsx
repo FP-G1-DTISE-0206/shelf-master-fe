@@ -88,7 +88,7 @@ const RequestStockModal: FC<RequestStockModalProps> = ({
                   <Label htmlFor="quantity" className="font-medium">Quantity</Label>
                   <Field as={TextInput} id="quantity" name="quantity" placeholder="Enter quantity" />
                   <ErrorMessage
-                    name="name"
+                    name="quantity"
                     component="div"
                     className="text-red-500 text-sm"
                   />

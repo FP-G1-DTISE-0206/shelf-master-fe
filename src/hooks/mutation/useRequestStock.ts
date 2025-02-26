@@ -28,6 +28,7 @@ const useRequestStock = (accessToken: string) => {
     onSuccess: (data) => {
       showToast(`Mutation with ID: ${data} created successfully`, "success");
       router.push("/product-mutation");
+      router.refresh();
     },
     onError: (error: any) => {
       console.error("Error:", error);

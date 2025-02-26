@@ -19,10 +19,14 @@ const WarehouseSelect: FC<WarehouseSelectProps> = ({
   setWarehouse,
   isAllowedAll,
 }) => {
-  const [search, setSearch] = useState("");
-  const { error, warehouses, refetch } = useAssignedWarehouse(
+  const { error, warehouses, refetch, setSearch } = useAssignedWarehouse(
     session?.accessToken as string
   );
+
+  const warehouseOptions = [
+    ...(isAllowedAll && session?.user.roles.includes("SUPER_ADMIN") ? [{ label: "All", value: 0 }] : []),
+    ...(warehouses?.map((wh) => ({ label: wh.name, value: wh.id })) || []),
+  ];
 
   const isFirstLoad = useRef(true);
 
@@ -61,11 +65,6 @@ const WarehouseSelect: FC<WarehouseSelectProps> = ({
   if (error) {
     return <div>Can't fetch your assigned warehouse</div>;
   }
-
-  const warehouseOptions = [
-    ...(isAllowedAll && session?.user.roles.includes("SUPER_ADMIN") ? [{ label: "All", value: 0 }] : []),
-    ...(warehouses?.map((wh) => ({ label: wh.name, value: wh.id })) || []),
-  ];
 
   return (
     <AsyncSelect

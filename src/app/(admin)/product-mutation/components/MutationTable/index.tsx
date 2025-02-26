@@ -122,21 +122,22 @@ const MutationTable: FC = () => {
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>Loading . . .</TableCell>
+                <TableCell className="text-center" colSpan={8}>Loading . . .</TableCell>
               </TableRow>
             )}
             {!isLoading && mutations?.data.length === 0 && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>No Mutation found.</TableCell>
+                <TableCell className="text-center" colSpan={8}>No Mutation found.</TableCell>
               </TableRow>
             )}
             {!isLoading && error && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>{error.message}</TableCell>
+                <TableCell className="text-center" colSpan={8}>{error.message}</TableCell>
               </TableRow>
             )}
             {mutations?.data.map((mutation) => (
-              <MutationRow key={mutation.id} mutation={mutation} refetch={refetch} />
+              <MutationRow key={mutation.id} mutation={mutation} 
+                refetch={refetch} warehouse={warehouse} />
             ))}
           </TableBody>
         </Table>

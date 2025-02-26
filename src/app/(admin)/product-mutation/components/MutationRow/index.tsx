@@ -4,13 +4,16 @@ import {
   TableRow,
   TableCell
 } from "flowbite-react";
+import { AssignedWarehouse } from '@/types/product';
+import MutationAction from '../MutationAction';
 
 interface MutationRowProps {
   mutation: ProductMutationResponse;
   refetch: () => void;
+  warehouse: AssignedWarehouse;
 }
 
-enum MutationTypeEnum {
+export enum MutationTypeEnum {
   WAREHOUSE = "WAREHOUSE",
   VENDOR = "VENDOR",
   USER = "USER"
@@ -29,7 +32,8 @@ export const getMutationType = (originType: string, destinationType: string): st
 
 const MutationRow: FC<MutationRowProps> = ({
   mutation,
-  refetch
+  refetch,
+  warehouse
 }) => {
   return (
     <>
@@ -56,9 +60,7 @@ const MutationRow: FC<MutationRowProps> = ({
         <TableCell>
           {mutation.isApproved ? "Y" : "N"}
         </TableCell>
-        <TableCell>
-          {"action"}
-        </TableCell>
+        <MutationAction mutation={mutation} warehouse={warehouse} refetch={refetch} />
       </TableRow>
     </>
   )

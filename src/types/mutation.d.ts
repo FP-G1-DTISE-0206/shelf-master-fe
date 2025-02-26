@@ -39,3 +39,14 @@ export interface AddProductStockRequest {
   vendorId: number,
   quantity: number,
 }
+
+export interface RejectionReasonRequest {
+  reason: string;
+}
+
+export interface MutationLogResponse {
+  id: number,
+  status: string,
+  createdAt: Date,
+  reason: string,
+}

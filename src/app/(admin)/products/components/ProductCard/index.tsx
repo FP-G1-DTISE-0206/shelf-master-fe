@@ -14,6 +14,7 @@ import Link from "next/link";
 import { AssignedWarehouse } from '@/types/product';
 import AddStockModal from '../AddStockModal';
 import RequestStockModal from '../RequestStockModal';
+import { useToast } from "@/providers/ToastProvider";
 
 interface AdminProductCardProps {
   warehouse: AssignedWarehouse;
@@ -28,6 +29,7 @@ const AdminProductCard: FC<AdminProductCardProps> = ({
 }) => {
   const [ isAddModalOpen, setAddModalOpen ] = useState<boolean>(false);
   const [ isReqModalOpen, setReqModalOpen ] = useState<boolean>(false);
+  const { showToast } = useToast();
 
   const currencyFormatter = new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -36,6 +38,14 @@ const AdminProductCard: FC<AdminProductCardProps> = ({
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
   });
+
+  const handleUnselectedWarehouse = (modalType: string) => {
+    if (warehouse.id === 0) {
+      showToast("Please choose warehouse first", "error");
+      return;
+    }
+    modalType === "add" ? setAddModalOpen(true) : setReqModalOpen(true)
+  }
 
   return (
     <>
@@ -69,8 +79,8 @@ const AdminProductCard: FC<AdminProductCardProps> = ({
                     <DropdownItem as={Link} href={`/update-product/${product.id}`}>Update</DropdownItem>
                   )
                 }
-                <DropdownItem onClick={() => setAddModalOpen(true)}>Add Stock</DropdownItem>
-                <DropdownItem onClick={() => setReqModalOpen(true)}>Request Stock</DropdownItem>
+                <DropdownItem onClick={() => handleUnselectedWarehouse("add")}>Add Stock</DropdownItem>
+                <DropdownItem onClick={() => handleUnselectedWarehouse("req")}>Request Stock</DropdownItem>
               </Dropdown>
             </div>
           </div>
