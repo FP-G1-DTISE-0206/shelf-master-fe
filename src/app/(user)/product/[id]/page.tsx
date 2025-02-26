@@ -49,14 +49,54 @@ const ProductPage: FC = () => {
     }
   };
 
+  const { id } = useParams();
+  const { data: session } = useSession();
+
+  const { isLoading, errorProductDetail, product } = useProductDetail(session?.accessToken ?? "", id as string);
+  console.log("Product Data: ", product);
+  console.log("Product Image:  ", product?.images[0].imageUrl);
+
+  const productImage = product?.images?.map((img) => img.imageUrl) ?? ['/images/kohceng-senam.jpg'];
+
+
+  
   return (
     <>
+      {isLoading && <p className="text-center">Loading product details...</p>}
+      {errorProductDetail && <p className="text-center text-red-500">{errorProductDetail.message}</p>}
+
+      {!isLoading && !errorProductDetail && product && (
+      
+      <>
+        <div className="lg:grid lg:grid-cols-5 xl:grid-cols-4">
+          <div className="lg:col-span-3 xl:col-span-2 mb-6">
+            <ImageGallery images={productImage}/>
+          </div>
       {/* Image Gallery */}
       <div className="lg:grid lg:grid-cols-5 xl:grid-cols-4">
         <div className="lg:col-span-3 xl:col-span-2 mb-6">
           <ImageGallery images={product.images.map(image => image.imageUrl)} />
         </div>
 
+          
+          <div className="lg:col-span-2 xl:col-span-1">
+            <div>
+              <div className="px-4 py-2 bg-shelf-blue rounded-xl inline-block mb-2">
+                <p className="text-white text-[12px] font-semibold">
+                  New Release
+                </p>
+              </div>
+              <div className="mb-2">
+                <p className="text-shelf-black font-semibold text-xl">
+                  {product.name}
+                </p>
+              </div>
+              <div>
+                <p className="text-shelf-blue font-semibold text-2xl">
+                  Rp {product.price.toLocaleString("id-ID")}
+                </p>
+              </div>
+            </div>
         {/* Product Details */}
         <div className="lg:col-span-2 xl:col-span-1">
           <div> 
@@ -110,7 +150,8 @@ const ProductPage: FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </>
+      )}
 
       {/* Product Suggestion */}
       <ProductSuggestion category={
