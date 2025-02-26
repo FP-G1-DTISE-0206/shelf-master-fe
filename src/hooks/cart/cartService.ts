@@ -31,13 +31,14 @@ export const addToCart = async (
 };
 
 export const updateCartItem = async (
+  token: string,
   cartId: number,
   quantity: number
 ): Promise<CartItem> => {
-  const response = await axios.put(`${API_URL}/${cartId}`, { quantity });
+  const response = await axios.put(`${API_URL}/${cartId}`, { quantity }, getAuthHeaders(token));
   return response.data;
 };
 
-export const removeCartItem = async (userId: number, cartId: number): Promise<void> => {
-  await axios.delete(`${API_URL}/${userId}/${cartId}`);
+export const removeCartItem = async (token: string, userId: string, cartId: number) => {
+  await axios.delete(`${API_URL}/${userId}/${cartId}`, getAuthHeaders(token));
 };

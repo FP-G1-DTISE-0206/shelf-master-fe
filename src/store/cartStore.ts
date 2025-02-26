@@ -18,7 +18,9 @@ export const useCartStore = create<CartState>((set) => ({
 
   addToCartLocal: (item: CartItem) =>
     set((state) => {
-      const existingItem = state.cartItems.find((i) => i.productId === item.productId);
+      const existingItem = state.cartItems.find(
+        (i) => i.productId === item.productId
+      );
       if (existingItem) {
         return {
           cartItems: state.cartItems.map((i) =>
@@ -26,12 +28,12 @@ export const useCartStore = create<CartState>((set) => ({
               ? { ...i, quantity: i.quantity + item.quantity }
               : i
           ),
-          totalItems: state.totalItems, 
+          totalItems: state.totalItems,
         };
       } else {
         return {
           cartItems: [...state.cartItems, item],
-          totalItems: state.totalItems + 1, 
+          totalItems: state.totalItems + 1,
         };
       }
     }),
@@ -43,12 +45,19 @@ export const useCartStore = create<CartState>((set) => ({
       ),
     })),
 
-    removeCartItem: (cartId: number) =>
-      set((state) => {
-        const filteredCart = state.cartItems.filter((item) => item.cartId !== cartId);
-        return {
-          cartItems: filteredCart,
-          totalItems: filteredCart.length, 
-        };
-      }),
+
+  removeCartItem: (cartId: number) =>
+    set((state) => {
+      if (!state.cartItems.some((item) => item.cartId === cartId)) {
+        return state; // ✅ Avoid unnecessary state updates
+      }
+
+      const filteredCart = state.cartItems.filter(
+        (item) => item.cartId !== cartId
+      );
+      return {
+        cartItems: filteredCart,
+        totalItems: filteredCart.length,
+      };
+    }),
 }));

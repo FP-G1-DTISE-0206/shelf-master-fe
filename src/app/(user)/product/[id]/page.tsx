@@ -20,9 +20,7 @@ interface Product {
   price: number;
   images: string[];
 }
-import { 
-  Badge, 
-} from "flowbite-react";
+
 
 const ProductPage: FC = () => {
   const { id }: { id: string } = useParams() ?? { id: "" };
