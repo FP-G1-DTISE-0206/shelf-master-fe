@@ -1,10 +1,30 @@
-import { FC } from "react";
+"use client"
+import { FC, useEffect } from "react";
 import ProductCard from "../ProductCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useSession } from "next-auth/react";
+import useProductSuggestion from "@/hooks/product/useProductSuggestion";
 
+interface ProductSuggestionProps {
+  category: number[];
+}
 
-const ProductSuggestion: FC = () => {
+const ProductSuggestion: FC<ProductSuggestionProps> = ({
+  category,
+}) => {
+  const { data: session } = useSession();
+  const { 
+    products, error, isLoading, params, setParams,
+  } = useProductSuggestion(session?.accessToken as string);
+
+  useEffect(() => {
+    setParams({...params, category: category })
+  }, [])
+
+  if(error) return (<></>)
+  if(isLoading || !products || products?.data.length < 0) return (<></>)
+
   return(
     <>
       <div className="pt-7">
@@ -17,12 +37,9 @@ const ProductSuggestion: FC = () => {
         </div>
 
         <div className="pb-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 py-6 justify-center">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 py-6 justify-center">
+          {products.data.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div>
           <div className="flex gap-2 justify-center">
             <div className="w-8 h-1 bg-shelf-blue rounded"></div>
             <div className="w-8 h-1 bg-shelf-grey rounded"></div>
@@ -32,7 +49,6 @@ const ProductSuggestion: FC = () => {
         </div>
       </div>
     </>
-
   )
 }
 

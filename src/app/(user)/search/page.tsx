@@ -21,7 +21,7 @@ const SearchPage: FC = () => {
     isLoading: isProductLoading,
     products,
     totalData,
-  } = useProduct(accessToken);
+  } = useProduct(accessToken, { id: 0, name: "" });
 
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [filter, setfilter] = useState<string>("");

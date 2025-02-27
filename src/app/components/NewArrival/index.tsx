@@ -10,13 +10,7 @@ const NewArrival: FC = () => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 lg:gap-10 mx-auto">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            name={product.name}
-            price={product.price}
-            images={product.images}
-            discount={product.price > 100 ? "10% off" : undefined} // Optional dynamic discount logic
-            id={product.id}          />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </div>
