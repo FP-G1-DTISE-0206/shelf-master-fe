@@ -16,7 +16,7 @@ interface EmailFormProps {
   newEmail: string;
   password: string;
 }
-const ChangeUserNameSchema = Yup.object().shape({
+const ChangeEmailSchema = Yup.object().shape({
   newEmail: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
@@ -66,44 +66,6 @@ const ChangeEmailModal: FC<ChangeEmailModalProps> = ({
       setOpenModalEmail(false);
     }
   };
-  //   const handleLogout = async (): Promise<void> => {
-  //     if (!session) {
-  //       alert("You are not logged in.");
-  //       return;
-  //     }
-  //     try {
-  //       const { data } = await axios.post(
-  //         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`,
-  //         {
-  //           accessToken: session.accessToken,
-  //           refreshToken: session.refreshToken,
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${session.accessToken}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       if (data.success) {
-  //         showToast(data.message, "success");
-  //       } else {
-  //         showToast(data.message, "error");
-  //       }
-  //     } catch (error) {
-  //       if (axios.isAxiosError(error)) {
-  //         showToast(
-  //           error.response?.data.message || "Error during logout.",
-  //           "error"
-  //         );
-  //       } else {
-  //         showToast("An unexpected error occurred. Please try again.", "error");
-  //       }
-  //     } finally {
-  //       await signOut({ redirect: false });
-  //       router.push("/login");
-  //     }
-  //   };
   return (
     <>
       <Modal show={openModalEmail} onClose={() => setOpenModalEmail(false)}>
@@ -112,12 +74,12 @@ const ChangeEmailModal: FC<ChangeEmailModalProps> = ({
             newEmail: "",
             password: "",
           }}
-          validationSchema={ChangeUserNameSchema}
+          validationSchema={ChangeEmailSchema}
           onSubmit={handleChangeUsername}
         >
           {({ isSubmitting, handleSubmit, errors }) => (
             <Form>
-              <Modal.Header>Change Username</Modal.Header>
+              <Modal.Header>Change Email</Modal.Header>
               <Modal.Body>
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-col gap-2 justify-center items-center text-center">
