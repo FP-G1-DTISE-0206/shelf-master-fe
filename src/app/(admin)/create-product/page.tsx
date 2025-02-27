@@ -61,7 +61,7 @@ const CreateProduct: FC = () => {
 
   const handleDelete = async (
     imageUrl: string, 
-    setFieldValue: (field: string, value: any) => void, 
+    setFieldValue: (field: string, value: string[]) => void, 
     values: CreateProductRequest
   ) => {
     setLoading(true);

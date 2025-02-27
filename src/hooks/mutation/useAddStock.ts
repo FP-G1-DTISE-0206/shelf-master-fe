@@ -29,9 +29,15 @@ const useAddStock = (accessToken: string) => {
       showToast(`Stock added successfully`, "success");
       setRefetchData(true);
     },
-    onError: (error: any) => {
-      console.error("Error:", error);
-      showToast(error.response.data.message, "error");
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        showToast(error.message, "error");
+      } else if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response: { data: { message: string } } };
+        showToast(err.response.data.message, "error");
+      } else {
+        showToast("An unknown error occurred", "error");
+      }
     },
   });
 

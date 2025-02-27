@@ -26,10 +26,6 @@ const VendorSearchField: FC<VendorSearchFieldProps> = ({
     }
   };
 
-  if (error) {
-    return <div>Can't fetch warehouse</div>;
-  }
-
   const debouncedFetch = useCallback(
     debounce((inputValue: string, callback) => {
       setParams({ ...params, search: inputValue });
@@ -47,6 +43,11 @@ const VendorSearchField: FC<VendorSearchFieldProps> = ({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (error) {
+    return <div>Can&apos;t fetch warehouse</div>;
+  }
+  
   if (!mounted)
   return (
     <AsyncSelect

@@ -44,8 +44,12 @@ const AdminProductCard: FC<AdminProductCardProps> = ({
       showToast("Please choose warehouse first", "error");
       return;
     }
-    modalType === "add" ? setAddModalOpen(true) : setReqModalOpen(true)
-  }
+    if (modalType === "add") {
+      setAddModalOpen(true);
+    } else {
+      setReqModalOpen(true);
+    }
+  };  
 
   return (
     <>

@@ -2,11 +2,12 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSession } from "next-auth/react";
 import { Dispatch, FC, SetStateAction } from "react";
+import { CategoryResponse } from "@/types/category";
 
 interface CategoriesLineProps {
-  category: any;
+  category: CategoryResponse;
   setModalCategoryType: (page: string) => void;
-  setCategory: Dispatch<SetStateAction<any>>;
+  setCategory: Dispatch<SetStateAction<CategoryResponse>>;
   setIsModalCategoryOpen: (isModalCategoryOpen: boolean) => void;
   setIsDeletingCategory: (isDeletingCategory: boolean) => void;
 }

@@ -104,7 +104,7 @@ const UpdateProduct = () => {
 
   const handleDeleteImage = async (
       imageUrl: string, 
-      setFieldValue: (field: string, value: any) => void, 
+      setFieldValue: (field: string, value: string[]) => void, 
       values: UpdateProductRequest
     ) => {
       setLoading(true);

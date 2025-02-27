@@ -18,7 +18,7 @@ const WarehouseSearchField: FC<WarehouseSearchFieldProps> = ({
   excludeWarehouse
 }) => {
   const [mounted, setMounted] = useState(false);
-  const { params, setParams, isLoading, error, warehouses, refetch } = useWarehouses(
+  const { params, setParams, error, warehouses, refetch } = useWarehouses(
     session?.accessToken as string
   );
   
@@ -27,10 +27,6 @@ const WarehouseSearchField: FC<WarehouseSearchFieldProps> = ({
       form.setFieldValue(field.name, selectedOption.value);
     }
   };
-
-  if (error) {
-    return <div>Can't fetch warehouse</div>;
-  }
 
   const debouncedFetch = useCallback(
     debounce((inputValue: string, callback) => {
@@ -53,6 +49,11 @@ const WarehouseSearchField: FC<WarehouseSearchFieldProps> = ({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (error) {
+    return <div>Can&apos;t fetch warehouse</div>;
+  }
+
   if (!mounted)
   return (
     <AsyncSelect

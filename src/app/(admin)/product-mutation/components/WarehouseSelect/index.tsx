@@ -1,5 +1,5 @@
 "use client"
-import { FC, Dispatch, SetStateAction, useEffect, useRef, useState, useCallback } from "react";
+import { FC, Dispatch, SetStateAction, useEffect, useRef, useCallback } from "react";
 import AsyncSelect from "react-select/async";
 import useAssignedWarehouse from "@/hooks/mutation/useAssignedWarehouse";
 import { Session } from "next-auth";
@@ -63,7 +63,7 @@ const WarehouseSelect: FC<WarehouseSelectProps> = ({
   };
 
   if (error) {
-    return <div>Can't fetch your assigned warehouse</div>;
+    return <div>Can&apos;t fetch your assigned warehouse</div>;
   }
 
   return (
