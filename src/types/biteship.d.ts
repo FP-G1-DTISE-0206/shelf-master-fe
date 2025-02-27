@@ -23,15 +23,14 @@ export interface CourierResponse {
   message: string;
   code: number;
   origin: Origin;
-  stops: any[];
   destination: Destination;
   pricing: Pricing[];
 }
 
 export interface Origin {
-  location_id: any;
-  latitude: any;
-  longitude: any;
+  location_id: number;
+  latitude: number;
+  longitude: number;
   postal_code: number;
   country_name: string;
   country_code: string;
@@ -43,13 +42,13 @@ export interface Origin {
   administrative_division_level_3_type: string;
   administrative_division_level_4_name: string;
   administrative_division_level_4_type: string;
-  address: any;
+  address: string;
 }
 
 export interface Destination {
-  location_id: any;
-  latitude: any;
-  longitude: any;
+  location_id: number;
+  latitude: number;
+  longitude: number;
   postal_code: number;
   country_name: string;
   country_code: string;
@@ -61,7 +60,7 @@ export interface Destination {
   administrative_division_level_3_type: string;
   administrative_division_level_4_name: string;
   administrative_division_level_4_type: string;
-  address: any;
+  address: string;
 }
 
 export interface Pricing {

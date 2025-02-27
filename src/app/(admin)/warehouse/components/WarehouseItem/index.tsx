@@ -1,6 +1,5 @@
 "use state";
 import ConfirmationModal from "@/components/ConfirmationModal";
-import useWarehouses from "@/hooks/useWarehouse";
 import { useToast } from "@/providers/ToastProvider";
 import { WarehouseResponse } from "@/types/warehouse";
 import axios from "axios";

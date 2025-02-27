@@ -51,17 +51,23 @@ const ChangeAddressModal: FC<ChangeAddressModalProps> = ({
                 readOnly
               />
               <div>
-                <div className="flex justify-between gap-2">
+                <div className="flex justify-between items-start gap-4">
                   <div className="break-words">
-                    <div>{address.contactName}</div>
-                    <div>{address.contactNumber}</div>
+                    <div className="font-semibold text-lg">
+                      {address.contactName}
+                    </div>
+                    <div className="text-shelf-grey text-sm">
+                      {address.contactNumber}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  {address.district}, {address.city}, {address.province}.{" "}
-                  {address.postalCode}
+                <div className="mt-2 text-shelf-grey text-sm">
+                  <div>{address.address}</div>
+                  <div>
+                    {address.district}, {address.city}, {address.province}.{" "}
+                    {address.postalCode}
+                  </div>
                 </div>
-                <div>{address.address}</div>
               </div>
             </div>
           ))}
