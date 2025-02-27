@@ -27,7 +27,7 @@ const useUpdateProduct = (accessToken: string) => {
       updateProduct(accessToken, id, updateData),
     onSuccess: (data) => {
       showToast("Product updated successfully", "success");
-      router.push("/products/detail/" + data?.id );
+      router.push("/update-product/" + data?.id );
     },
     onError: (error: any) => {
       console.error("Error:", error);
