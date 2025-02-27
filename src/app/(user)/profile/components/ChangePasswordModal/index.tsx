@@ -1,7 +1,6 @@
 "use client";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { useToast } from "@/providers/ToastProvider";
-import { Admin } from "@/types/warehouse";
 import axios from "axios";
 import { Button, Modal, Spinner } from "flowbite-react";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";

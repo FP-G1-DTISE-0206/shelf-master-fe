@@ -84,25 +84,31 @@ const ShippingSection: FC = () => {
       <div className="p-4 border rounded-lg shadow-sm bg-white">
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Shipping Address</h2>
-          <div className="mt-2 p-3 border rounded-md bg-gray-50">
+          <div className="mt-2 p-4 border rounded-lg bg-gray-50 shadow-sm">
             {defaultAddress && (
               <>
-                <div className="flex justify-between gap-2">
+                <div className="flex justify-between items-start gap-4">
                   <div className="break-words">
-                    <div>{defaultAddress.contactName}</div>
-                    <div>{defaultAddress.contactNumber}</div>
+                    <div className="font-semibold text-lg">
+                      {defaultAddress.contactName}
+                    </div>
+                    <div className="text-shelf-grey text-sm">
+                      {defaultAddress.contactNumber}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  {defaultAddress.district}, {defaultAddress.city},{" "}
-                  {defaultAddress.province}. {defaultAddress.postalCode}
+                <div className="mt-2 text-shelf-grey text-sm">
+                  <div>{defaultAddress.address}</div>
+                  <div>
+                    {defaultAddress.district}, {defaultAddress.city},{" "}
+                    {defaultAddress.province}. {defaultAddress.postalCode}
+                  </div>
                 </div>
-                <div>{defaultAddress.address}</div>
               </>
             )}
             <button
               onClick={() => setIsChangeAddressModalOpen(true)}
-              className="mt-2 text-sm text-blue-600 hover:underline"
+              className="mt-3 text-sm text-blue-600 font-medium hover:underline"
             >
               Change Address
             </button>

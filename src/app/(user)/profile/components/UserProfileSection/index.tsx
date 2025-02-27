@@ -2,31 +2,40 @@
 import Image from "next/image";
 import ImageUploader from "@/app/(user)/profile/components/ImageUploader";
 import { ProfileResponse } from "@/types/profile";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Button, Modal } from "flowbite-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import ChangePasswordModal from "../ChangePasswordModal";
+import ProfileDetailsSection from "../ProfileDetailsSection";
+import useProfile from "@/hooks/useProfile";
+import CustomSpinner from "@/components/CustomSpinner";
 
-interface ProfileImageSectionProps {
-  profile: ProfileResponse;
-  refetch: () => void;
-}
+const UserProfileSection: FC = () => {
+  const { data: session } = useSession();
+  const { showToast } = useToast();
 
-const ProfileImageSection: FC<ProfileImageSectionProps> = ({
-  profile,
-  refetch,
-}) => {
+  const {
+    error: profileError,
+    isLoading: isProfileLoading,
+    profile,
+    refetch,
+  } = useProfile(session?.accessToken as string);
   const [openModalUpload, setOpenModalUpload] = useState(false);
   const [openModalPassword, setOpenModalPassword] = useState(false);
   const [isLoadingPassword, setIsLoadingPassword] = useState(false);
-  const [imageUrl, setImageUrl] = useState(profile.imageUrl);
-  const { data: session } = useSession();
-  const { showToast } = useToast();
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (profile) {
+      setImageUrl(profile?.imageUrl);
+    }
+  }, [profile]);
+  if (isProfileLoading) return <CustomSpinner />;
+  if (profileError) return <div>Error: {profileError.message}</div>;
   const handleSubmit = async () => {
     try {
       const { data } = await axios.put(
@@ -92,10 +101,14 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
         <div className="flex flex-col gap-5">
           <Image
             className="rounded-md max-lg:w-full aspect-square object-cover"
-            src={`${profile.imageUrl || "/images/default-profile.jpg"}`}
+            src={`${profile?.imageUrl || "/images/default-profile.jpg"}`}
             width={150}
             height={150}
             alt="User Profile"
+          />
+          <ProfileDetailsSection
+            profile={profile as ProfileResponse}
+            refetch={refetch}
           />
           <div className="flex gap-2 flex-col">
             <button
@@ -168,4 +181,4 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
   );
 };
 
-export default ProfileImageSection;
+export default UserProfileSection;
