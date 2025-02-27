@@ -41,6 +41,8 @@ const VendorSearchField: FC<VendorSearchFieldProps> = ({
     }, 500),
     [params, refetch, vendors]
   );
+  
+  const hasError = form.touched[field.name] && form.errors[field.name];
 
   useEffect(() => {
     setMounted(true);
@@ -63,8 +65,6 @@ const VendorSearchField: FC<VendorSearchFieldProps> = ({
       }}
     />
   );
-  
-  const hasError = form.touched[field.name] && form.errors[field.name];
 
   return (
     <>
