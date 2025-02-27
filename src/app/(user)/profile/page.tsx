@@ -1,41 +1,17 @@
-"use client";
 import { FC } from "react";
-import ProfileImageSection from "./components/ProfileImageSection";
-import useProfile from "@/hooks/useProfile";
-import { useSession } from "next-auth/react";
-import CustomSpinner from "@/components/CustomSpinner";
-import { ProfileResponse } from "@/types/profile";
-import ProfileDetailsSection from "./components/ProfileDetailsSection";
 import AddressSection from "./components/AddressSection";
+import UserProfileSection from "./components/UserProfileSection";
 
 const ProfilePage: FC = () => {
-  const { data: session } = useSession();
-  const {
-    error: profileError,
-    isLoading: isProfileLoading,
-    profile,
-    refetch,
-  } = useProfile(session?.accessToken as string);
-  if (isProfileLoading) return <CustomSpinner />;
-  if (profileError) return <div>Error: {profileError.message}</div>;
   return (
-    <div className="flex gap-5 md:gap-2 w-full max-md:flex-col">
-      <div className="flex flex-col gap-4 w-full md:mx-10">
-        <div className="text-4xl font-semibold text-shelf-black">
-          Your Profile
-        </div>
-        <div className="flex gap-5 max-lg:flex-col">
-          <ProfileImageSection
-            profile={profile as ProfileResponse}
-            refetch={refetch}
-          />
-          <ProfileDetailsSection
-            profile={profile as ProfileResponse}
-            refetch={refetch}
-          />
-        </div>
+    <div className="flex gap-5 md:gap-2 w-full flex-col">
+      <div className="text-4xl font-semibold text-shelf-black">
+        Your Profile
       </div>
-      <AddressSection />
+      <div className="flex max-lg:flex-col gap-4 w-full">
+        <UserProfileSection />
+        <AddressSection />
+      </div>
     </div>
   );
 };

@@ -19,7 +19,7 @@ const HeroCard: FC = () => {
             Adidas Boost
           </div>
           <div className="text-2xl max-xl:text-sm font-semibold">
-            Adidas introducing the new air boost for everyone's comfort
+            Adidas introducing the new air boost for everyone&apos;s comfort
           </div>
           <div>
             <button className="bg-shelf-blue text-white py-4 px-8 rounded-lg mt-4 text-sm">

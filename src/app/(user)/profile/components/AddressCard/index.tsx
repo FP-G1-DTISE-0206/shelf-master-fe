@@ -78,45 +78,58 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
     }
   };
   return (
-    <div
-      className={`border rounded-lg p-2 ${
-        address.isDefault ? "border-shelf-black" : "border-shelf-light-grey"
-      }`}
-    >
-      <div className="flex justify-between gap-2">
-        <div className="break-words">
-          <div>{address.contactName}</div>
-          <div>{address.contactNumber}</div>
-        </div>
-        <div className="flex gap-2 items-center">
-          {address.isDefault ? (
-            <Badge color="success" className="text-center">
-              Default
-            </Badge>
-          ) : (
-            <Badge
-              color="light"
-              className="text-center hover:cursor-pointer"
-              onClick={() => setIsModalDefaultOpen(true)}
+    <>
+      <div
+        className={`border rounded-lg p-4 shadow-sm ${
+          address.isDefault
+            ? "border-shelf-black bg-gray-100"
+            : "border-shelf-light-grey"
+        }`}
+      >
+        <div className="flex justify-between items-center gap-4">
+          <div className="break-words">
+            <div className="font-semibold text-lg">{address.contactName}</div>
+            <div className="text-shelf-grey">{address.contactNumber}</div>
+          </div>
+          <div className="flex items-center gap-3">
+            {address.isDefault ? (
+              <Badge color="success" className="px-3 py-1 rounded-full text-sm">
+                Default
+              </Badge>
+            ) : (
+              <Badge
+                color="light"
+                className="px-3 py-1 rounded-full text-sm hover:cursor-pointer"
+                onClick={() => setIsModalDefaultOpen(true)}
+              >
+                Set as Default
+              </Badge>
+            )}
+            <Link
+              href={`/profile/edit-address/${address.id}`}
+              className="hover:text-shelf-orange"
             >
-              Set as default
-            </Badge>
-          )}
-          <Link href={`/profile/edit-address/${address.id}`}>
-            <FontAwesomeIcon icon={faEdit} className="text-shelf-orange " />
-          </Link>
-          <FontAwesomeIcon
-            onClick={() => setIsModalDeleteOpen(true)}
-            icon={faTrash}
-            className="text-shelf-grey hover:cursor-pointer"
-          />
+              <FontAwesomeIcon
+                icon={faEdit}
+                className="text-shelf-orange text-lg"
+              />
+            </Link>
+            <FontAwesomeIcon
+              onClick={() => setIsModalDeleteOpen(true)}
+              icon={faTrash}
+              className="text-shelf-grey text-lg hover:text-red-500 cursor-pointer"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3 text-shelf-grey">
+          <div className="text-base">{address.address}</div>
+          <div className="text-sm">
+            {address.district}, {address.city}, {address.province}.{" "}
+            {address.postalCode}
+          </div>
         </div>
       </div>
-      <div>
-        {address.district}, {address.city}, {address.province}.{" "}
-        {address.postalCode}
-      </div>
-      <div>{address.address}</div>
       <ConfirmationModal
         isOpen={isModalDeleteOpen}
         onClose={() => setIsModalDeleteOpen(false)}
@@ -157,7 +170,7 @@ const AddressCard: FC<AddressCardProps> = ({ address, refetch }) => {
           </div>
         }
       />
-    </div>
+    </>
   );
 };
 export default AddressCard;

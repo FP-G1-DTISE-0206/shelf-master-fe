@@ -24,7 +24,7 @@ export interface Admin {
   id: number;
   email: string;
   userName: string;
-  imageUrl: any;
+  imageUrl: string;
   roles: AdminRole[];
 }
 

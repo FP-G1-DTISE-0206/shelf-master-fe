@@ -2,30 +2,40 @@
 import Image from "next/image";
 import ImageUploader from "@/app/(user)/profile/components/ImageUploader";
 import { ProfileResponse } from "@/types/profile";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Button, Modal } from "flowbite-react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import ChangePasswordModal from "../ChangePasswordModal";
+import ProfileDetailsSection from "../ProfileDetailsSection";
+import useProfile from "@/hooks/useProfile";
+import CustomSpinner from "@/components/CustomSpinner";
 
-interface ProfileImageSectionProps {
-  profile: ProfileResponse;
-  refetch: () => void;
-}
+const UserProfileSection: FC = () => {
+  const { data: session } = useSession();
+  const { showToast } = useToast();
 
-const ProfileImageSection: FC<ProfileImageSectionProps> = ({
-  profile,
-  refetch,
-}) => {
+  const {
+    error: profileError,
+    isLoading: isProfileLoading,
+    profile,
+    refetch,
+  } = useProfile(session?.accessToken as string);
   const [openModalUpload, setOpenModalUpload] = useState(false);
   const [openModalPassword, setOpenModalPassword] = useState(false);
   const [isLoadingPassword, setIsLoadingPassword] = useState(false);
-  const [imageUrl, setImageUrl] = useState(profile.imageUrl);
-  const { data: session } = useSession();
-  const { showToast } = useToast();
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (profile) {
+      setImageUrl(profile?.imageUrl);
+    }
+  }, [profile]);
+  if (isProfileLoading) return <CustomSpinner />;
+  if (profileError) return <div>Error: {profileError.message}</div>;
   const handleSubmit = async () => {
     try {
       const { data } = await axios.put(
@@ -91,10 +101,14 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
         <div className="flex flex-col gap-5">
           <Image
             className="rounded-md max-lg:w-full aspect-square object-cover"
-            src={`${profile.imageUrl || "/images/default-profile.jpg"}`}
+            src={`${profile?.imageUrl || "/images/default-profile.jpg"}`}
             width={150}
             height={150}
             alt="User Profile"
+          />
+          <ProfileDetailsSection
+            profile={profile as ProfileResponse}
+            refetch={refetch}
           />
           <div className="flex gap-2 flex-col">
             <button
@@ -112,41 +126,47 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
           </div>
         </div>
       </div>
+      <Modal show={openModalUpload} onClose={() => setOpenModalUpload(false)}>
+        <Modal.Header>Update profile picture</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <ImageUploader
+              setImageProfile={setImageUrl}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer className="flex justify-between bg-ghost-white">
+          <Button
+            color="light"
+            className="bg-white rounded-lg"
+            onClick={() => setOpenModalUpload(false)}
+          >
+            Decline
+          </Button>
+          <Button
+            color="warning"
+            className="rounded-lg text-white"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Accept
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {(session?.user.roles.includes("SUPER_ADMIN") ||
+        session?.user.roles.includes("WH_ADMIN")) && (
+        <>
+          <ChangePasswordModal
+            isChangePasswordModalOpen={openModalPassword}
+            setIsChangePasswordModalOpen={setOpenModalPassword}
+          />
+        </>
+      )}
       {session?.user.roles.includes("USER") && (
         <>
-          <Modal
-            show={openModalUpload}
-            onClose={() => setOpenModalUpload(false)}
-          >
-            <Modal.Header>Update profile picture</Modal.Header>
-            <Modal.Body>
-              <div className="space-y-6">
-                <ImageUploader
-                  setImageProfile={setImageUrl}
-                  loading={loading}
-                  setLoading={setLoading}
-                />
-              </div>
-            </Modal.Body>
-
-            <Modal.Footer className="flex justify-between bg-ghost-white">
-              <Button
-                color="light"
-                className="bg-white rounded-lg"
-                onClick={() => setOpenModalUpload(false)}
-              >
-                Decline
-              </Button>
-              <Button
-                color="warning"
-                className="rounded-lg text-white"
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                Accept
-              </Button>
-            </Modal.Footer>
-          </Modal>
           <ConfirmationModal
             isOpen={openModalPassword}
             onClose={() => setOpenModalPassword(false)}
@@ -161,4 +181,4 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
   );
 };
 
-export default ProfileImageSection;
+export default UserProfileSection;
