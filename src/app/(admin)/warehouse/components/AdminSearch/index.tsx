@@ -64,11 +64,10 @@ const AdminSearch: FC<SelectFieldProps> = ({
     }
   };
 
-  const handleChange = (newValue: MultiValue<any>) => {
-    const selectedAdminsArray = Array.from(newValue);
-    const uniqueAdmins = Array.from(
-      new Set(selectedAdminsArray.map((admin: Admin) => admin.id))
-    ).map((id) => selectedAdminsArray.find((admin: Admin) => admin.id === id));
+  const handleChange = (newValue: MultiValue<Admin>) => {
+    const uniqueAdmins = Array.from(new Set(newValue.map((admin) => admin.id)))
+      .map((id) => newValue.find((admin) => admin.id === id))
+      .filter((admin): admin is Admin => admin !== undefined);
 
     setSelectedAdmins(uniqueAdmins);
     form.setFieldValue(field.name, uniqueAdmins);

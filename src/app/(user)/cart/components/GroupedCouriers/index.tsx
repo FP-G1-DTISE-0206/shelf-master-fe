@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Pricing } from "@/types/biteship";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import { Radio } from "flowbite-react";
 
 type GroupedCouriersProps = {
   groupedCouriers: Record<string, Pricing[]>;
