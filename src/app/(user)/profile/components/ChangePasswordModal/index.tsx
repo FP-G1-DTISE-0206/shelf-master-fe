@@ -11,28 +11,29 @@ import * as Yup from "yup";
 interface ChangePasswordModalProps {
   isChangePasswordModalOpen: boolean;
   setIsChangePasswordModalOpen: (value: boolean) => void;
-  refetch: () => void;
-  admin: Admin;
 }
 interface ChangePasswordFormProps {
+  oldPassword: string;
   confirmPassword: string;
-  password: string;
+  newPassword: string;
 }
 
 const ValidationSchema = Yup.object().shape({
-  password: Yup.string()
+  oldPassword: Yup.string()
+    .min(2, "Too Short!")
+    .max(200, "Too Long!")
+    .required("Required"),
+  newPassword: Yup.string()
     .min(2, "Too Short!")
     .max(200, "Too Long!")
     .required("Required"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+    .oneOf([Yup.ref("newPassword"), undefined], "Passwords must match")
     .required("Required"),
 });
 const ChangePasswordModal: FC<ChangePasswordModalProps> = ({
   isChangePasswordModalOpen,
   setIsChangePasswordModalOpen,
-  refetch,
-  admin,
 }) => {
   const { data: session } = useSession();
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
@@ -43,7 +44,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({
   ) => {
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/change-password/${admin.id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/change-password`,
         {
           ...values,
         },
@@ -67,7 +68,6 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({
       }
     } finally {
       setIsChangePasswordModalOpen(false);
-      refetch();
     }
   };
   return (
@@ -77,7 +77,8 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({
     >
       <Formik
         initialValues={{
-          password: "",
+          oldPassword: "",
+          newPassword: "",
           confirmPassword: "",
         }}
         validationSchema={ValidationSchema}
@@ -85,26 +86,46 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({
       >
         {({ isSubmitting, handleSubmit, errors }) => (
           <Form>
-            <Modal.Header>Change password</Modal.Header>
+            <Modal.Header>Reset Password</Modal.Header>
             <Modal.Body>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2 justify-center items-center text-center">
                   <div className="w-full">
                     <label
                       className="block text-sm font-bold mb-2"
-                      htmlFor="password"
+                      htmlFor="oldPassword"
+                    >
+                      Old Password
+                    </label>
+                    <Field
+                      name="oldPassword"
+                      type="password"
+                      placeholder="Old Password"
+                      className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
+                      required
+                    />
+                    <ErrorMessage
+                      name="oldPassword"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <label
+                      className="block text-sm font-bold mb-2"
+                      htmlFor="newPassword"
                     >
                       Password
                     </label>
                     <Field
-                      name="password"
+                      name="newPassword"
                       type="password"
                       placeholder="Password"
                       className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
                       required
                     />
                     <ErrorMessage
-                      name="password"
+                      name="newPassword"
                       component="div"
                       className="text-red-500 text-sm"
                     />

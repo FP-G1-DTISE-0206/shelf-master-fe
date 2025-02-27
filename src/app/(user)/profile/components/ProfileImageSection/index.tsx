@@ -8,6 +8,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/providers/ToastProvider";
 import ConfirmationModal from "@/components/ConfirmationModal";
+import ChangePasswordModal from "../ChangePasswordModal";
 
 interface ProfileImageSectionProps {
   profile: ProfileResponse;
@@ -112,41 +113,47 @@ const ProfileImageSection: FC<ProfileImageSectionProps> = ({
           </div>
         </div>
       </div>
+      <Modal show={openModalUpload} onClose={() => setOpenModalUpload(false)}>
+        <Modal.Header>Update profile picture</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <ImageUploader
+              setImageProfile={setImageUrl}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer className="flex justify-between bg-ghost-white">
+          <Button
+            color="light"
+            className="bg-white rounded-lg"
+            onClick={() => setOpenModalUpload(false)}
+          >
+            Decline
+          </Button>
+          <Button
+            color="warning"
+            className="rounded-lg text-white"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            Accept
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {(session?.user.roles.includes("SUPER_ADMIN") ||
+        session?.user.roles.includes("WH_ADMIN")) && (
+        <>
+          <ChangePasswordModal
+            isChangePasswordModalOpen={openModalPassword}
+            setIsChangePasswordModalOpen={setOpenModalPassword}
+          />
+        </>
+      )}
       {session?.user.roles.includes("USER") && (
         <>
-          <Modal
-            show={openModalUpload}
-            onClose={() => setOpenModalUpload(false)}
-          >
-            <Modal.Header>Update profile picture</Modal.Header>
-            <Modal.Body>
-              <div className="space-y-6">
-                <ImageUploader
-                  setImageProfile={setImageUrl}
-                  loading={loading}
-                  setLoading={setLoading}
-                />
-              </div>
-            </Modal.Body>
-
-            <Modal.Footer className="flex justify-between bg-ghost-white">
-              <Button
-                color="light"
-                className="bg-white rounded-lg"
-                onClick={() => setOpenModalUpload(false)}
-              >
-                Decline
-              </Button>
-              <Button
-                color="warning"
-                className="rounded-lg text-white"
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                Accept
-              </Button>
-            </Modal.Footer>
-          </Modal>
           <ConfirmationModal
             isOpen={openModalPassword}
             onClose={() => setOpenModalPassword(false)}
