@@ -81,7 +81,7 @@ const ProductPage: FC = () => {
               >
                 ADD TO CART
               </button>
-              <button className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+              <button title="favorite" className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
                 <FontAwesomeIcon icon={faHeart} />
               </button>
             </div>
@@ -116,7 +116,7 @@ const ProductPage: FC = () => {
       <ProductSuggestion category={
         product.categories.length > 0 ?
         product.categories.map(c=>c.id) : []
-        } />
+        } exceptProductId={product.id} />
     </>
   );
 };
