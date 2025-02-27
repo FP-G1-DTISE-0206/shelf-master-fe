@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction } from 'react'
+import React, { FC, Dispatch, SetStateAction } from 'react'
 import { useSession } from "next-auth/react";
 import useMutationLogs from '@/hooks/mutation/useMutationLogs';
 import { 
@@ -38,34 +38,40 @@ const MutationLogModal: FC<MutationLogModalProps> = ({
       <Modal.Body>
         <Table hoverable className="min-w-max" id="mutation-log">
           <TableHead>
-            <TableHeadCell>ID</TableHeadCell>
             <TableHeadCell>Status</TableHeadCell>
             <TableHeadCell>Created At</TableHeadCell>
-            <TableHeadCell>Reason</TableHeadCell>
           </TableHead>
           <TableBody>
             {isLoading && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>Loading . . .</TableCell>
+                <TableCell className="text-center" colSpan={2}>Loading . . .</TableCell>
               </TableRow>
             )}
             {!isLoading && logs?.length === 0 && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>No Mutation found.</TableCell>
+                <TableCell className="text-center" colSpan={2}>No Mutation found.</TableCell>
               </TableRow>
             )}
             {!isLoading && error && (
               <TableRow>
-                <TableCell className="text-center" colSpan={4}>{error.message}</TableCell>
+                <TableCell className="text-center" colSpan={2}>{error.message}</TableCell>
               </TableRow>
             )}
-            {logs?.map((log) => (
-              <TableRow key={log.id}>
-                <TableCell>{log.id}</TableCell>
-                <TableCell>{log.status}</TableCell>
-                <TableCell>{formatOffsetDateTime(log.createdAt)}</TableCell>
-                <TableCell>{log.reason}</TableCell>
-              </TableRow>
+            {(logs ?? []).map((log) => (
+              <React.Fragment key={log.id}>
+                <TableRow>
+                  <TableCell>{log.status}</TableCell>
+                  <TableCell>{formatOffsetDateTime(log.createdAt)}</TableCell>
+                </TableRow>
+                {!!log.reason && (
+                  <TableRow>
+                    <TableCell className="text-wrap" colSpan={2}>
+                      <span className="font-bold">Rejection reason:</span>
+                      &nbsp;{log.reason}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
