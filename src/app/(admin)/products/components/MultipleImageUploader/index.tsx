@@ -3,7 +3,7 @@ import useUploadImage from "@/hooks/image/useUploadImage";
 import { FileInput } from "flowbite-react";
 
 interface ImageUploaderProps {
-  setFieldValue: (field: string, value: any) => void;
+  setFieldValue: (field: string, value: string[]) => void;
   urlImages: string[];
   setLoading: Dispatch<SetStateAction<boolean>>;
   loading: boolean;

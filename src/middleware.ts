@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 const PUBLIC_PATHS = [
   "/login",
   "/register",
-  "/search",
   "/product",
   "/setup-account",
   "/forgot-password",
@@ -17,16 +16,18 @@ const PROTECTED_PATHS = [
   "/profile",
   "/create-address",
   "/edit-address",
+  "/search",
+  "/change-password",
   "/products",
   "/order-list",
-  "/stock-mutation-form",
+  "/product-mutation",
   "/create-product",
   "/update-product",
   "/warehouse",
   "/user",
 ];
 const ROLE_PATHS = {
-  USER: ["/profile", "/cart", "/create-address", "/edit-address"],
+  USER: ["/profile", "/cart", "/create-address", "/edit-address", "/search"],
   WH_ADMIN: ["/profile", "/products", "/order-list", "/dashboard"],
   // Admin can access everything
   SUPER_ADMIN: ["*"],

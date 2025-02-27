@@ -23,7 +23,7 @@ const AdminDetailProduct = () => {
 
   return (
     <div className="container mx-auto px-4 w-full">
-      <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
+      <Breadcrumb className="px-5 py-3">
         <Breadcrumb.Item><Link href={"/products"}>Products</Link></Breadcrumb.Item>
         <Breadcrumb.Item>Detail</Breadcrumb.Item>
       </Breadcrumb>

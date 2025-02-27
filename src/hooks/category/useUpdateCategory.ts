@@ -28,14 +28,20 @@ const useUpdateCategory = (accessToken: string) => {
   } = useMutation({
     mutationFn: ({ id, updateData }: { id: string, updateData: UpdateCategoryRequest }) =>
       updateCategory(accessToken, id, updateData),
-    onSuccess: (data) => {
+    onSuccess: () => {
       showToast("Category updated successfully", "success");
       setIsModalCategoryOpen(false);
       setRefetchData(true);
     },
-    onError: (error: any) => {
-      console.error("Error:", error);
-      showToast("Error updating category", "error");
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        showToast(error.message, "error");
+      } else if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response: { data: { message: string } } };
+        showToast(err.response.data.message, "error");
+      } else {
+        showToast("An unknown error occurred", "error");
+      }
     },
   });
 

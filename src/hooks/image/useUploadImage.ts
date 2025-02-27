@@ -34,9 +34,15 @@ const useUploadImage = () => {
       setUploadedUrls((prev) => [...prev, ...newUploadedUrls]); 
 
       return newUploadedUrls; // Return the URLs for external use if needed
-    } catch (error: any) {
-      console.error("Error uploading images:", error.response?.data || error.message);
-      throw new Error(`Upload failed: ${error.response?.data?.message || error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = "Upload failed: An unknown error occurred";
+      if (error instanceof Error) {
+        errorMessage = `Upload failed: ${error.message}`;
+      } else if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        errorMessage = `Upload failed: ${err.response?.data?.message || "Unknown server error"}`;
+      }
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false); // Stop loading state
     }

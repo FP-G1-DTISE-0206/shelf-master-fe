@@ -29,6 +29,9 @@ const validationSchema = Yup.object({
     .required("Name is required"),
   price: Yup.number().moreThan(0, "Price must be greater than 0").required("Price is required"),
   weight: Yup.number().moreThan(0, "Weight must be greater than 0").required("Weight is required"),
+  images: Yup.array()
+    .of(Yup.string().url("Each image must be a valid URL"))
+    .min(1, "At least one image is required")
 });
 
 const CreateProduct: FC = () => {
@@ -58,7 +61,7 @@ const CreateProduct: FC = () => {
 
   const handleDelete = async (
     imageUrl: string, 
-    setFieldValue: (field: string, value: any) => void, 
+    setFieldValue: (field: string, value: string[]) => void, 
     values: CreateProductRequest
   ) => {
     setLoading(true);
@@ -84,7 +87,7 @@ const CreateProduct: FC = () => {
 
   return (
     <div className="container mx-auto px-4 w-full">
-      <Breadcrumb className="bg-gray-50 px-5 py-3 dark:bg-gray-800">
+      <Breadcrumb className="px-5 py-3">
         <Breadcrumb.Item><Link href={"/products"}>Products</Link></Breadcrumb.Item>
         <Breadcrumb.Item>Create</Breadcrumb.Item>
       </Breadcrumb>
@@ -136,7 +139,7 @@ const CreateProduct: FC = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="weight" className="font-medium">Weight</Label>
+                  <Label htmlFor="weight" className="font-medium">Weight{"(grams)"}</Label>
                   <Field as={TextInput} id="weight" name="weight" 
                     type="number" placeholder="Enter weight in grams" />
                   <ErrorMessage
@@ -203,15 +206,8 @@ const CreateProduct: FC = () => {
               </div>
               <div className="w-1/2 p-4 space-y-4">
                 <div>
-                  {
-                    loading && (
-                      <div className="w-full h-full z-10 bg-black bg-opacity-20 flex items-center">
-                        <CustomSpinner />
-                      </div>
-                    )
-                  }
                   <Label className="font-medium">Product Gallery</Label>
-                  <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
+                  <div className="border-dashed relative border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
                     {values.images.length > 0 ? (
                       <Carousel slide={false}>
                         {values.images.map((src, index) => (
@@ -241,12 +237,26 @@ const CreateProduct: FC = () => {
                       urlImages={values.images}
                       loading={loading}
                       setLoading={setLoading} />
+                    {
+                      loading && (
+                        <div className="w-full h-full absolute top-0 z-10 bg-black bg-opacity-20 flex items-center">
+                          <CustomSpinner />
+                        </div>
+                      )
+                    }
                   </div>
+                  <ErrorMessage
+                    name="images"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
                 </div>
-                <Button gradientDuoTone="purpleToPink" className="w-full mt-5"
-                  disabled={isSubmitting} type="submit">
-                  Create Product
-                </Button>
+                <div className="w-full flex justify-end">
+                  <Button className="mt-5"
+                    disabled={isSubmitting} type="submit">
+                    Create Product
+                  </Button>
+                </div>
               </div>
             </Form>
           )}

@@ -27,11 +27,17 @@ const useCreateProduct = (accessToken: string) => {
       createProduct(accessToken, creationData),
     onSuccess: (data) => {
       showToast(`Product '${data?.name}' created successfully`, "success");
-      router.push("/products/detail/" + data?.id );
+      router.push("/update-product/" + data?.id );
     },
-    onError: (error: any) => {
-      console.error("Error:", error);
-      showToast("Error creating product", "error");
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        showToast(error.message, "error");
+      } else if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response: { data: { message: string } } };
+        showToast(err.response.data.message, "error");
+      } else {
+        showToast("An unknown error occurred", "error");
+      }
     },
   });
 

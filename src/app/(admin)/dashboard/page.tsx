@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBoxOpen, faChartLine, faCalendarAlt, faFile } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { Card, Button } from "flowbite-react";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
