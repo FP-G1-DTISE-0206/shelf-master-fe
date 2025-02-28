@@ -45,7 +45,7 @@ const Cart: FC = () => {
         </div>
       </div>
 
-      <ProductSuggestion />
+      <ProductSuggestion category={[]} exceptProductId={null} />
     </>
   );
 };
