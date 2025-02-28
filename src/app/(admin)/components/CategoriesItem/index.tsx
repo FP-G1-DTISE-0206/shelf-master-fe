@@ -1,13 +1,13 @@
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSession } from "next-auth/react";
-import { Dispatch, FC, SetStateAction } from "react";
+import { FC } from "react";
 import { CategoryResponse } from "@/types/category";
 
 interface CategoriesLineProps {
   category: CategoryResponse;
   setModalCategoryType: (page: string) => void;
-  setCategory: Dispatch<SetStateAction<CategoryResponse>>;
+  setCategory: (page: CategoryResponse) => void;
   setIsModalCategoryOpen: (isModalCategoryOpen: boolean) => void;
   setIsDeletingCategory: (isDeletingCategory: boolean) => void;
 }
