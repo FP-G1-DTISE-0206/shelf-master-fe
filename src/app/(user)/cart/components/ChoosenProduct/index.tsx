@@ -1,42 +1,53 @@
 "use client";
 import { FC } from "react";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useCartStore } from "@/store/cartStore";
 import { updateCartItem, removeCartItem } from "@/hooks/cart/cartService";
 import { useSession } from "next-auth/react";
 import useProductDetail from "@/hooks/product/useProductDetail";
 import { CartItem } from "@/types/cart";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "flowbite-react";
+import { HiPlus, HiMinus, HiHeart, HiTrash } from "react-icons/hi";
 
 type Props = {
   product: CartItem;
 };
 
-
 const ChoosenProduct: FC<Props> = ({ product }) => {
   const { data: session } = useSession();
-  const { updateCartItem: updateLocal, removeCartItem: removeLocal } = useCartStore();
+  const { updateCartItem: updateLocal, removeCartItem: removeLocal } =
+    useCartStore();
 
-  const { product: productDetail, isLoading } = useProductDetail(
-    session?.accessToken ?? "" , product.productId.toString()
+  const { product: productDetail } = useProductDetail(
+    session?.accessToken ?? "",
+    product.productId.toString()
   );
 
-
-
   const formattedPrice = (productDetail?.price || 0) * product.quantity;
-
+  const productDetailFormatted = productDetail?.description
+    ? productDetail.description.length > 100
+      ? productDetail.description.slice(0, 100) + "..."
+      : productDetail.description
+    : "";
 
   const queryClient = useQueryClient();
   const updateQuantityMutation = useMutation({
     mutationFn: async (newQuantity: number) => {
       if (!session?.accessToken) throw new Error("User must be logged in.");
-      console.log(`Updating cart item [CartID: ${product.cartId}] to Quantity: ${newQuantity}`);
-      return await updateCartItem(session.accessToken, product.cartId, newQuantity);
+      console.log(
+        `Updating cart item [CartID: ${product.cartId}] to Quantity: ${newQuantity}`
+      );
+      return await updateCartItem(
+        session.accessToken,
+        product.cartId,
+        newQuantity
+      );
     },
     onMutate: async (newQuantity: number) => {
-      console.log(`Mutating... Setting Quantity to ${newQuantity} (Optimistic UI Update)`);
+      console.log(
+        `Mutating... Setting Quantity to ${newQuantity} (Optimistic UI Update)`
+      );
       await queryClient.cancelQueries({ queryKey: ["cart"] });
 
       const previousCart = queryClient.getQueryData(["cart"]);
@@ -61,12 +72,16 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
     },
   });
 
-  
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!session?.accessToken || !session.user.id) throw new Error("User must be logged in.");
+      if (!session?.accessToken || !session.user.id)
+        throw new Error("User must be logged in.");
       console.log(`Deleting cart item [CartID: ${product.cartId}]`);
-      await removeCartItem(session.accessToken, session.user.id, product.cartId);
+      await removeCartItem(
+        session.accessToken,
+        session.user.id,
+        product.cartId
+      );
     },
     onSuccess: async () => {
       console.log(`Cart item [CartID: ${product.cartId}] deleted successfully`);
@@ -81,7 +96,10 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
         <div className="col-span-2">
           <div className="hero-card-container relative rounded-2xl w-full h-full overflow-hidden">
             <Image
-              src={productDetail?.images[0]?.imageUrl || '/images/kohceng-senam.jpg'}
+              src={
+                productDetail?.images[0]?.imageUrl ||
+                "/images/kohceng-senam.jpg"
+              }
               alt={productDetail?.name || "Product Image"}
               width={500}
               height={500}
@@ -90,40 +108,50 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
           </div>
         </div>
         <div className="col-span-2">
-          <h4 className="font-bold md:text-xl text-base">{productDetail?.name}</h4>
-          <p className="md:text-base text-[12px]">{productDetail?.description}</p>
-          <p className="md:text-base text-[12px] mt-2">Weight : {productDetail?.weight}</p>
-          <p className="md:text-base text-[12px] mt-2">Qty : {product.quantity}</p>
-          
+          <h4 className="font-bold md:text-xl text-base">
+            {productDetail?.name}
+          </h4>
+          <p className="md:text-base text-[12px]">{productDetailFormatted}</p>
+          <p className="md:text-base text-[12px] mt-2">
+            Weight : {productDetail?.weight}
+          </p>
+          <p className="md:text-base text-[12px] mt-2">
+            Qty : {product.quantity}
+          </p>
 
           {/* Quantity Selector */}
           <div className="flex items-center space-x-2 mt-2">
-            <button
-              onClick={() => updateQuantityMutation.mutate(product.quantity - 1)}
-              className="bg-gray-200 hover:bg-gray-300 px-3 py-1 text-sm md:text-base lg:text-lg rounded-md"
-            >
-              -
-            </button>
-            <p className="text-sm md:text-base lg:text-lg">{product.quantity}</p>
-            <button
-              onClick={() => updateQuantityMutation.mutate(product.quantity + 1)}
-              className="bg-gray-200 hover:bg-gray-300 px-3 py-1 text-sm md:text-base lg:text-lg rounded-md"
-            >
-              +
-            </button>
+            <Button size="xs" className="bg-shelf-light-grey" onClick={() =>
+                updateQuantityMutation.mutate(product.quantity - 1)
+              } >
+              <HiMinus  className="text-base h-6 text-shelf-black" />
+            </Button>
+            <p className="text-sm md:text-base lg:text-lg">
+              {product.quantity}
+            </p>
+            <Button size="xs" className="bg-shelf-light-grey" onClick={() =>
+                updateQuantityMutation.mutate(product.quantity + 1)
+              }>
+              <HiPlus  className="text-base h-6 text-shelf-black" />
+            </Button>
+            
           </div>
 
           {/* Icons Section */}
           <div className="flex space-x-3 md:space-x-4 text-sm md:text-lg lg:text-xl mt-3">
-            <FontAwesomeIcon
-              icon={faHeart}
-              className="cursor-pointer text-gray-500 hover:text-gray-700"
-            />
-            <FontAwesomeIcon
-              icon={faTrash}
+            
+            <Button size="xs" color="gray" className="border-0 ">
+              <HiHeart  className="text-2xl h-6 text-shelf-grey hover:text-red-600" />
+            </Button>
+            
+            <Button 
+              size="xs" 
+              color="gray" 
+              className="border-0 " 
               onClick={() => deleteMutation.mutate()}
-              className="cursor-pointer text-red-500 hover:text-red-700 transition"
-            />
+            >
+              <HiTrash  className="text-2xl h-6 text-shelf-grey hover:text-red-600" />
+            </Button>
           </div>
         </div>
         <div className="col-span-1">

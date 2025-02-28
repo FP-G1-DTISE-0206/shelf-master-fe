@@ -14,17 +14,8 @@ import axios from "axios";
 import Link from "next/link";
 import { Dropdown, DropdownItem, TextInput } from "flowbite-react";
 import Image from "next/image";
-
-// import { useCartStore } from "@/store/cartStore";
 import { useCartQuery } from "@/hooks/cart/useCartQuery";
-import { CartItem } from "@/types/cart";
 import CartItemDropdown from "./components/CartItemDropdown";
-
-type Props = {
-  product: CartItem;
-};
-import useCartStore from "@/store/cartStore";
-import { CartItem } from "@/types/cartItem";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
 import debounce from "lodash.debounce";
 
@@ -60,18 +51,13 @@ const Header: FC = () => {
     }
   }, [filter]);
 
-  const cartItems = useCartStore((state) => state.cartItems);
-  const totalItems = useCartStore((state) => state.totalItems);
-  const totalAmount = useCartStore((state) => state.totalAmount);
-
   const { data: cartData, isFetching } = useCartQuery(
     session?.accessToken ?? "",
     Number(session?.user?.id ?? 0)
   );
 
   const totalQuantity = cartData?.totalQuantity ?? 0;
-  const totalPrice = cartData?.totalPrice ?? 0;
-  const cartItems = cartData?.cartItems ?? [];
+  const totalPrice = cartData?.totalPrice?.toLocaleString("id-ID") ?? 0;
 
   const handleLogout = async (): Promise<void> => {
     if (!session) {
@@ -114,7 +100,7 @@ const Header: FC = () => {
 
   return (
     <>
-      <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center fixed right-0 left-0 z-50">
+      <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center mt-8">
         <Link href="/">
           <img
             src="/images/shelfmaster-medium.jpeg"
@@ -220,10 +206,7 @@ const Header: FC = () => {
                 <Dropdown.Divider />
                 <DropdownItem>
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total</span>
-                    <span className="font-semibold">
-                      Rp {cartData?.totalPrice?.toLocaleString("id-ID") ?? "0"}
-                    </span>
+                    <span className="font-semibold">{`Total Price : Rp ${totalPrice}`}</span>
                   </div>
                 </DropdownItem>
                 <DropdownItem>

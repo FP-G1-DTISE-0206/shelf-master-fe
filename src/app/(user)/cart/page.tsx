@@ -1,6 +1,5 @@
 "use client"
 import { FC } from "react";
-import Link from "next/link";
 import CartSummary from "@/app/(user)/cart/components/CartSummary";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 

@@ -1,32 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { CartItem } from "@/types/cart";
+
 import { getCart, addToCart, updateCartItem, removeCartItem } from "./cartService";
 import { useEffect } from "react";
 
-const API_URL = "http://localhost:8080/api/v1"
-
-
-const getAuthHeaders = (token: string | undefined) => {
-  if (!token) throw new Error("User is not authenticated");
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  };
-};
-const fetchCart = async (
-  token: string, 
-  userId: number
-): Promise<{ 
-  cartItems: CartItem[];
-  totalQuantity: number;
-  totalPrice: number;
-}> => {
-  const response = await axios.get(`${API_URL}/cart/${userId}`, getAuthHeaders(token));
-  return response.data;
-};
 
 export const useCartQuery = (token: string, userId: number) => {
   const queryClient = useQueryClient();

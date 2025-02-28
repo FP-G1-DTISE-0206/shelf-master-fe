@@ -12,8 +12,9 @@ interface Props {
 
 const CartItemDropdown: FC<Props> = ({ item }) => {
   const { data: session } = useSession();
+  const accessToken = session?.accessToken ?? "";
   const { product, isLoading } = useProductDetail(
-    session?.accessToken ?? "",
+    accessToken,
     item.productId.toString()
   );
 

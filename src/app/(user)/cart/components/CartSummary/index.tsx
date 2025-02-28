@@ -8,22 +8,25 @@ import ChoosenProduct from "../ChoosenProduct";
 import { CartItem } from "@/types/cart";
 import Link from "next/link";
 
+
 const CartSummary: FC = () => {
   const { data: session } = useSession();
-  const token = session?.accessToken || "";
+  const accessToken = session?.accessToken ?? "";
   const userId = 1; // Replace with dynamic user ID
-  const { data, isLoading } = useCartQuery(token, userId);
+  const { data: cartData, isLoading } = useCartQuery(accessToken, userId);
   const { setCart, cartItems } = useCartStore();
 
+
+  const totalPrice = cartData?.totalPrice?.toLocaleString("id-ID") ?? 0;
+  const totalQuantity = cartData?.totalQuantity ?? 0;
+
   useEffect(() => {
-    if (data) {
-      setCart(data.cartItems);
+    if (cartData) {
+      setCart(cartData.cartItems);
     }
-  }, [data, setCart]);
+  }, [cartData, setCart]);
 
   if (isLoading) return <p>Loading cart...</p>;
-
-
 
   return (
     <div className="lg:grid lg:grid-cols-3 lg:gap-x-12">
@@ -49,21 +52,19 @@ const CartSummary: FC = () => {
       </div>
 
       {/* Order Summary Section */}
-      {/* <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3">
+      <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3">
         <h3 className="text-xl font-semibold lg:text-[32px]">Order Summary</h3>
         <div className="w-full mx-auto mt-2">
           <table className="w-full">
             <tbody>
               <tr className="lg:text-xl">
-                <td className="py-2">{totalItems} ITEM(S)</td>
-              
-                <td className="text-right py-2">
-                  Rp {totalAmount.toLocaleString("id-ID")}
-                </td>
+                <td className="py-2">{totalQuantity} ITEM(S)</td>
+
+                <td className="text-right py-2">{`Rp ${totalPrice}`}</td>
               </tr>
               <tr className="lg:text-xl">
                 <td className="py-2">Delivery</td>
-                <td className="text-right py-2">Rp 6,999</td>
+                <td className="text-right py-2">Rp 6.999</td>
               </tr>
               <tr className="lg:text-xl">
                 <td className="py-2">Sales Tax</td>
@@ -71,15 +72,11 @@ const CartSummary: FC = () => {
               </tr>
               <tr className="font-bold lg:text-2xl">
                 <td className="py-2">Total</td>
-                <td className="text-right py-2">
-                  Rp {(totalAmount + 6999).toLocaleString("id-ID")}
-                
-                </td>
+                <td className="text-right py-2">{`Rp ${((cartData?.totalPrice ?? 0) + 6999).toLocaleString("id-ID")}`}</td>
               </tr>
             </tbody>
           </table>
 
-          
           <Link href="/checkout">
             <button className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
               CHECKOUT
@@ -92,7 +89,7 @@ const CartSummary: FC = () => {
             </Link>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
