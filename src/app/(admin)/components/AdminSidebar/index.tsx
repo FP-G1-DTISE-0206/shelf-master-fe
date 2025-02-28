@@ -17,6 +17,7 @@ import { cn } from "@/utils";
 import AdminHeader from "../AdminHeader";
 import CategoriesControl from "../CategoriesControl";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
+import { useSession } from "next-auth/react";
 
 interface NestedLayoutProps {
   children: React.ReactNode;
@@ -26,13 +27,14 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
   const isFirstRender = useRef(true);
   const pathName = usePathname();
   const page = pathName.split("/")[1];
+  const { data: session } = useSession();
   const { openMenus, setOpenMenus, isOpen, setIsOpen } = useSidebarAdminStore();
   const toggleMenu = (menu: string) => {
     const newOpenMenus = { ...openMenus, [menu]: !openMenus[menu] };
     setOpenMenus(newOpenMenus);
   };
   useEffect(() => {
-    if (page === "warehouse" || page === "user") {
+    if (page === "warehouse" || page === "user" || page === "promotion") {
       toggleMenu("management");
     }
   }, [page]);
@@ -74,7 +76,10 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
                   alt="Logo"
                   className="w-full"
                 />
-                <div onClick={() => setIsOpen(false)} className="cursor-pointer">
+                <div
+                  onClick={() => setIsOpen(false)}
+                  className="cursor-pointer"
+                >
                   <FontAwesomeIcon
                     icon={faTimes}
                     className="text-gray-600 hover:text-gray-800 w-5 h-5"
@@ -103,36 +108,46 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
               >
                 Product Mutation
               </Sidebar.Item>
-              <Sidebar.Item
-                onClick={() => toggleMenu("management")}
-                icon={() => <FontAwesomeIcon icon={faListCheck} />}
-                className="px-5 py-3 rounded-lg flex items-center text-gray-600 hover:text-blue-500 hover:bg-blue-100"
-              >
-                <div className="flex justify-between items-center w-full cursor-pointer">
-                  <span>Management</span>
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    className={`transition-transform ${
-                      openMenus["management"] ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </Sidebar.Item>
-              {openMenus["management"] && (
-                <div className="pl-6 flex flex-col gap-2">
+              {session?.user.roles.includes("SUPER_ADMIN") && (
+                <>
                   <Sidebar.Item
-                    href="/warehouse"
-                    className={SidebarItemStyle("warehouse")}
+                    onClick={() => toggleMenu("management")}
+                    icon={() => <FontAwesomeIcon icon={faListCheck} />}
+                    className="px-5 py-3 rounded-lg flex items-center text-gray-600 hover:text-blue-500 hover:bg-blue-100"
                   >
-                    Warehouse
+                    <div className="flex justify-between items-center w-full cursor-pointer">
+                      <span>Management</span>
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        className={`transition-transform ${
+                          openMenus["management"] ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
                   </Sidebar.Item>
-                  <Sidebar.Item
-                    href="/user"
-                    className={SidebarItemStyle("user")}
-                  >
-                    User
-                  </Sidebar.Item>
-                </div>
+                  {openMenus["management"] && (
+                    <div className="pl-6 flex flex-col gap-2">
+                      <Sidebar.Item
+                        href="/warehouse"
+                        className={SidebarItemStyle("warehouse")}
+                      >
+                        Warehouse
+                      </Sidebar.Item>
+                      <Sidebar.Item
+                        href="/user"
+                        className={SidebarItemStyle("user")}
+                      >
+                        User
+                      </Sidebar.Item>
+                      <Sidebar.Item
+                        href="/promotion"
+                        className={SidebarItemStyle("promotion")}
+                      >
+                        Promotion
+                      </Sidebar.Item>
+                    </div>
+                  )}
+                </>
               )}
             </Sidebar.ItemGroup>
             {pathName === "/products" && <CategoriesControl />}

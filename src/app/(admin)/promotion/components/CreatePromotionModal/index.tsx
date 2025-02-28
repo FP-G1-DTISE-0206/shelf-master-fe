@@ -7,48 +7,41 @@ import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { useSession } from "next-auth/react";
 import { FC, useState } from "react";
 import * as Yup from "yup";
+import ImageUploader from "../ImageUploader";
 
-interface CreateAdminModalProps {
-  openModalCreateAdmin: boolean;
-  setOpenModalCreateAdmin: (value: boolean) => void;
+interface CreatePromotionModalProps {
+  openModalCreatePromotion: boolean;
+  setOpenModalCreatePromotion: (value: boolean) => void;
   refetch: () => void;
 }
-interface CreateAdminFormProps {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  userName: string;
+interface CreatePromotionFormProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  productUrl: string;
 }
 
 const ValidationSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Required"),
-  password: Yup.string()
-    .min(2, "Too Short!")
-    .max(200, "Too Long!")
-    .required("Required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "Passwords must match")
-    .required("Required"),
-  userName: Yup.string()
-    .min(2, "Too Short!")
-    .max(200, "Too Long!")
-    .required("Required"),
+  title: Yup.string().required("Title is required"),
+  description: Yup.string().required("Description is required"),
+  imageUrl: Yup.string().required("Image is required"),
 });
-const CreateAdminModal: FC<CreateAdminModalProps> = ({
-  openModalCreateAdmin,
-  setOpenModalCreateAdmin,
+const CreatePromotionModal: FC<CreatePromotionModalProps> = ({
+  openModalCreatePromotion,
+  setOpenModalCreatePromotion,
   refetch,
 }) => {
   const { data: session } = useSession();
   const { showToast } = useToast();
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (
-    values: CreateAdminFormProps,
-    formikHelpers: FormikHelpers<CreateAdminFormProps>
+    values: CreatePromotionFormProps,
+    formikHelpers: FormikHelpers<CreatePromotionFormProps>
   ) => {
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/register`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/promotion`,
         {
           ...values,
         },
@@ -71,47 +64,47 @@ const CreateAdminModal: FC<CreateAdminModalProps> = ({
         showToast("An unexpected error occurred. Please try again.", "error");
       }
     } finally {
-      setOpenModalCreateAdmin(false);
+      setOpenModalCreatePromotion(false);
       refetch();
     }
   };
   return (
     <Modal
-      show={openModalCreateAdmin}
-      onClose={() => setOpenModalCreateAdmin(false)}
+      show={openModalCreatePromotion}
+      onClose={() => setOpenModalCreatePromotion(false)}
     >
       <Formik
         initialValues={{
-          email: "",
-          password: "",
-          confirmPassword: "",
-          userName: "",
+          title: "",
+          description: "",
+          imageUrl: "",
+          productUrl: "",
         }}
         validationSchema={ValidationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting, handleSubmit, errors }) => (
+        {({ isSubmitting, handleSubmit, errors, setValues, values }) => (
           <Form>
-            <Modal.Header>Create new admin</Modal.Header>
+            <Modal.Header>Create new promotion</Modal.Header>
             <Modal.Body>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2 justify-center items-center text-center">
                   <div className="w-full">
                     <label
                       className="block text-sm font-bold mb-2"
-                      htmlFor="userName"
+                      htmlFor="title"
                     >
-                      Username
+                      Title
                     </label>
                     <Field
-                      name="userName"
+                      name="title"
                       type="text"
-                      placeholder="Username"
+                      placeholder="Title"
                       className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
                       required
                     />
                     <ErrorMessage
-                      name="userName"
+                      name="title"
                       component="div"
                       className="text-red-500 text-sm"
                     />
@@ -119,59 +112,49 @@ const CreateAdminModal: FC<CreateAdminModalProps> = ({
                   <div className="w-full">
                     <label
                       className="block text-sm font-bold mb-2"
-                      htmlFor="email"
+                      htmlFor="description"
                     >
-                      email
+                      Description
                     </label>
                     <Field
-                      name="email"
-                      type="email"
-                      placeholder="Email"
+                      as="textarea"
+                      name="description"
+                      placeholder="Description"
                       className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
-                      required
+                      rows={3}
                     />
                     <ErrorMessage
-                      name="email"
+                      name="description"
                       component="div"
                       className="text-red-500 text-sm"
                     />
                   </div>
                   <div className="w-full">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="password"
-                    >
-                      Password
-                    </label>
                     <Field
-                      name="password"
-                      type="password"
-                      placeholder="Password"
-                      className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
-                      required
-                    />
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="text-red-500 text-sm"
+                      name="imageUrl"
+                      component={ImageUploader}
+                      values={values}
+                      setValues={setValues}
+                      loading={loading}
+                      setLoading={setLoading}
                     />
                   </div>
                   <div className="w-full">
                     <label
                       className="block text-sm font-bold mb-2"
-                      htmlFor="confirmPassword"
+                      htmlFor="productUrl"
                     >
-                      Confirm Password
+                      Product Url
                     </label>
                     <Field
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Confirm Password"
+                      name="productUrl"
+                      type="text"
+                      placeholder="Product Url"
                       className="shadow appearance-none rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-full"
                       required
                     />
                     <ErrorMessage
-                      name="confirmPassword"
+                      name="productUrl"
                       component="div"
                       className="text-red-500 text-sm"
                     />
@@ -183,7 +166,7 @@ const CreateAdminModal: FC<CreateAdminModalProps> = ({
               <Button
                 color="light"
                 className="rounded-lg border"
-                onClick={() => setOpenModalCreateAdmin(false)}
+                onClick={() => setOpenModalCreatePromotion(false)}
               >
                 Decline
               </Button>
@@ -210,4 +193,4 @@ const CreateAdminModal: FC<CreateAdminModalProps> = ({
     </Modal>
   );
 };
-export default CreateAdminModal;
+export default CreatePromotionModal;

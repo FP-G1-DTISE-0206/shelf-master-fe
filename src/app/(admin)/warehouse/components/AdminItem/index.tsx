@@ -8,11 +8,11 @@ import { useSession } from "next-auth/react";
 import { FC, useState } from "react";
 import ChangePasswordModal from "../ChangePasswordModal";
 
-interface WarehouseItemProps {
+interface AdminItemProps {
   admin: Admin;
   refetch: () => void;
 }
-const AdminItem: FC<WarehouseItemProps> = ({ admin, refetch }) => {
+const AdminItem: FC<AdminItemProps> = ({ admin, refetch }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
@@ -88,12 +88,12 @@ const AdminItem: FC<WarehouseItemProps> = ({ admin, refetch }) => {
         }}
         title="Confirm Deletion"
         message={
-          <>
+          <div className="flex flex-col gap-2">
             <div>Are you sure you want to delete this Admin?</div>
             <div className="bg-shelf-light-grey text-center p-2 rounded-lg">
               <div>{admin.email}</div>
             </div>
-          </>
+          </div>
         }
       />
     </>
