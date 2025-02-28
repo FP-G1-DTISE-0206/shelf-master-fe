@@ -1,9 +1,21 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import axios from "axios";
 import { FileInput } from "flowbite-react";
+import { FieldProps } from "formik";
 
-interface ImageUploaderProps {
-  setImageProfile: Dispatch<SetStateAction<string>>;
+interface PromotionFormProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  productUrl: string;
+}
+interface ImageUploaderProps extends FieldProps {
+  values: PromotionFormProps;
+  setValues: (
+    values:
+      | PromotionFormProps
+      | ((prev: PromotionFormProps) => PromotionFormProps)
+  ) => void;
   setLoading: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
 }
@@ -29,21 +41,22 @@ const uploadToBuilder = async (file: File): Promise<string> => {
   }
 };
 const ImageUploader: FC<ImageUploaderProps> = ({
-  setImageProfile,
+  values,
+  setValues,
   setLoading,
   loading,
+  field,
+  form,
 }) => {
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     if (file.size > MAX_SIZE) {
-      alert("File size must be less than 1MB.");
+      alert("File size must be less than 5MB.");
       return;
     }
 
@@ -51,8 +64,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
 
     try {
       const url = await uploadToBuilder(file);
-      setUploadedImageUrl(url);
-      setImageProfile(url);
+      setValues((prev: PromotionFormProps) => ({ ...prev, imageUrl: url }));
     } catch (error) {
       console.error(error);
       alert("Failed to upload image.");
@@ -60,23 +72,34 @@ const ImageUploader: FC<ImageUploaderProps> = ({
       setLoading(false);
     }
   };
+  const hasError = form.touched[field.name] && form.errors[field.name];
 
   return (
     <div>
-      <FileInput accept="image/*" onChange={handleFileChange} />
+      <FileInput
+        accept="image/*"
+        onChange={handleFileChange}
+        onBlur={() => form.setFieldTouched(field.name, true)}
+      />
       <p className="w-full text-gray-500 text-sm mt-2 text-center">
         Jpg, Jpeg, gif, png are allowed. Max 1MB.
       </p>
       {loading && <p>Uploading...</p>}
-      {uploadedImageUrl && (
+      {values.imageUrl && (
         <div>
           <p>Uploaded Image:</p>
           <img
-            src={uploadedImageUrl}
+            className="mx-auto"
+            src={values.imageUrl}
             alt="Uploaded"
             style={{ width: "200px" }}
           />
         </div>
+      )}
+      {hasError && (
+        <p className="text-red-500 text-sm mt-1">
+          {form.errors[field.name] as string}
+        </p>
       )}
     </div>
   );

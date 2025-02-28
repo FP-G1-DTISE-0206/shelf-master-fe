@@ -25,6 +25,7 @@ const PROTECTED_PATHS = [
   "/update-product",
   "/warehouse",
   "/user",
+  "/promotion",
 ];
 const ROLE_PATHS = {
   USER: ["/profile", "/cart", "/create-address", "/edit-address", "/search"],

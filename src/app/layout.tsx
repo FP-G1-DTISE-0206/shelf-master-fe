@@ -8,7 +8,6 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import ClientProvider from "@/providers/ClientProvider";
 
-
 config.autoAddCss = false;
 
 const rubik = Rubik({
@@ -19,10 +18,6 @@ const rubik = Rubik({
 
 export const metadata: Metadata = {
   title: "ShelfMaster",
-  description: "ShelfMaster",
-  icons: {
-    icon: "/images/shelfmaster_icon.ico",
-  },
 };
 
 export default async function RootLayout({
