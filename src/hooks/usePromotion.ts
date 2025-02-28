@@ -50,4 +50,31 @@ const usePromotion = (accessToken: string) => {
   };
 };
 
+const fetchSimplePromotion = async (): Promise<PromotionResponse[]> => {
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/promotion/simple`
+  );
+  return data.data as PromotionResponse[];
+};
+
+export const useSimplePromotion = () => {
+  const {
+    isLoading,
+    error,
+    data: promotion,
+    refetch,
+  } = useQuery({
+    queryKey: ["fetchSimplePromotion"],
+    queryFn: async () => fetchSimplePromotion(),
+    staleTime: 60 * 1000,
+    gcTime: 60 * 1000,
+  });
+  return {
+    isLoading,
+    error,
+    promotion,
+    refetch,
+  };
+};
+
 export default usePromotion;

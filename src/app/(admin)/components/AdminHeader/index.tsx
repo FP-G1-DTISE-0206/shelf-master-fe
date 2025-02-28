@@ -66,8 +66,12 @@ const AdminHeader: FC<NestedLayoutProps> = ({ isOpen, setIsOpen }) => {
               <FontAwesomeIcon icon={faBars} />
             </div>
           )}
-          <Link href="/dashboard">
-            <h1 className="font-semibold md:text-xl">ShelfMaster</h1>
+          <Link href="/">
+            <img
+              src="/images/shelfmaster-medium.jpeg"
+              alt="Logo"
+              className="w-auto h-10"
+            />
           </Link>
           {session && (
             <>

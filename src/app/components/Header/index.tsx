@@ -30,11 +30,12 @@ const Header: FC = () => {
 
   const handleFilter = useCallback(
     debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-      if(window.location.pathname !== "/search") {
-        router.push("/search?filter="+e.target.value);
+      if (window.location.pathname !== "/search") {
+        router.push("/search?filter=" + e.target.value);
       }
       setSearch(e.target.value);
-    }, 500), [setSearch]
+    }, 500),
+    [setSearch]
   );
 
   useEffect(() => {
@@ -42,7 +43,11 @@ const Header: FC = () => {
       searchInputRef.current.value = filter;
       const params = new URLSearchParams(window.location.search);
       params.delete("filter");
-      window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}?${params.toString()}`
+      );
     }
   }, [filter]);
 
@@ -93,18 +98,25 @@ const Header: FC = () => {
     <>
       <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
         <Link href="/">
-          <h1 className="font-extrabold text-xl">ShelfMaster</h1>
+          <img
+            src="/images/shelfmaster-medium.jpeg"
+            alt="Logo"
+            className="w-auto h-10"
+          />
         </Link>
         <div className="flex xl:gap-10 max-xl:gap-2 items-center">
           <div className="relative">
-            <FontAwesomeIcon 
-              icon={faSearch} 
+            <FontAwesomeIcon
+              icon={faSearch}
               className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 z-10"
             />
-            <TextInput ref={searchInputRef} onChange={(e)=>{
-              handleFilter(e);
-            }}
-              className="pl-10" placeholder="Search..."
+            <TextInput
+              ref={searchInputRef}
+              onChange={(e) => {
+                handleFilter(e);
+              }}
+              className="pl-10"
+              placeholder="Search..."
             />
           </div>
           {!session && (

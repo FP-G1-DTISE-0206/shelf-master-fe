@@ -18,6 +18,7 @@ import AdminHeader from "../AdminHeader";
 import CategoriesControl from "../CategoriesControl";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface NestedLayoutProps {
   children: React.ReactNode;
@@ -71,11 +72,13 @@ const AdminSidebar: FC<NestedLayoutProps> = ({ children }) => {
           <Sidebar.Items>
             <Sidebar.ItemGroup>
               <div className="flex items-center justify-between p-4 border-b">
-                <img
-                  src="/images/shelfmaster-medium.jpeg"
-                  alt="Logo"
-                  className="w-full"
-                />
+                <Link href={"/"}>
+                  <img
+                    src="/images/shelfmaster-medium.jpeg"
+                    alt="Logo"
+                    className="w-full"
+                  />
+                </Link>
                 <div
                   onClick={() => setIsOpen(false)}
                   className="cursor-pointer"

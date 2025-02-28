@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import axios from "axios";
 import { FileInput } from "flowbite-react";
 import { FieldProps } from "formik";
@@ -54,9 +54,9 @@ const ImageUploader: FC<ImageUploaderProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     if (file.size > MAX_SIZE) {
-      alert("File size must be less than 1MB.");
+      alert("File size must be less than 5MB.");
       return;
     }
 
