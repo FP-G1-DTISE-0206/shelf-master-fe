@@ -16,7 +16,7 @@ interface Product {
 const NewArrival: FC = () => {
   const { data: session } = useSession();
   const { isLoading, error, products } = useProduct(session?.accessToken ?? "");
-  console.log("Product Data:", products);
+  // console.log("Product Data:", products);
 
   
   return (

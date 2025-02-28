@@ -14,6 +14,15 @@ import axios from "axios";
 import Link from "next/link";
 import { Dropdown, DropdownItem, TextInput } from "flowbite-react";
 import Image from "next/image";
+
+// import { useCartStore } from "@/store/cartStore";
+import { useCartQuery } from "@/hooks/cart/useCartQuery";
+import { CartItem } from "@/types/cart";
+import CartItemDropdown from "./components/CartItemDropdown";
+
+type Props = {
+  product: CartItem;
+};
 import useCartStore from "@/store/cartStore";
 import { CartItem } from "@/types/cartItem";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
@@ -54,6 +63,15 @@ const Header: FC = () => {
   const cartItems = useCartStore((state) => state.cartItems);
   const totalItems = useCartStore((state) => state.totalItems);
   const totalAmount = useCartStore((state) => state.totalAmount);
+
+  const { data: cartData, isFetching } = useCartQuery(
+    session?.accessToken ?? "",
+    Number(session?.user?.id ?? 0)
+  );
+
+  const totalQuantity = cartData?.totalQuantity ?? 0;
+  const totalPrice = cartData?.totalPrice ?? 0;
+  const cartItems = cartData?.cartItems ?? [];
 
   const handleLogout = async (): Promise<void> => {
     if (!session) {
@@ -96,7 +114,7 @@ const Header: FC = () => {
 
   return (
     <>
-      <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
+      <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center fixed right-0 left-0 z-50">
         <Link href="/">
           <img
             src="/images/shelfmaster-medium.jpeg"
@@ -153,7 +171,7 @@ const Header: FC = () => {
                     <div className="flex flex-col justify-center max-sm:hidden">
                       <div>{session.user.email}</div>
                       <div className="text-slate-gray text-xs">
-                        {session.user.roles[0]}
+                        <p>{session.user.roles[0]}</p>
                       </div>
                     </div>
                   </div>
@@ -177,60 +195,34 @@ const Header: FC = () => {
                 label={
                   <div className="relative">
                     <FontAwesomeIcon icon={faCartShopping} size="lg" />
-                    {/* {totalItems > 0 && (
-                      <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
-                        {totalItems}
+                    {totalQuantity > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                        {isFetching ? "..." : totalQuantity}
                       </span>
-                    )} */}
-                    {totalItems > 0 && <span className="bg-red-500 text-white rounded-full px-2 absolute -top-2 -right-2">{totalItems}</span>}
+                    )}
                   </div>
                 }
                 inline
                 arrowIcon={false}
               >
-                {/* {cartItems.length > 0 ? (
-                  cartItems.map((item: CartItem) => (
-                    <DropdownItem key={item.id}>
-                      <div className="flex gap-3 items-center">
-                        <Image
-                          src={
-                            item.images[0] || "/images/default-placeholder.jpg"
-                          }
-                          alt={item.name}
-                          width={40}
-                          height={40}
-                          className="rounded-md"
-                        />
-                        <div>
-                          <p className="font-semibold text-left ">
-                            {item.name.length > 40
-                              ? item.name.substring(0, 40) + "..."
-                              : item.name}
-                          </p>
-                          <p className="text-sm text-gray-600 text-left">
-                            {item.quantity} pc(s) - Rp{" "}
-                            {item.price.toLocaleString("id-ID")}
-                          </p>
-                        </div>
-                      </div>
-                    </DropdownItem>
+                {(cartData?.cartItems?.length ?? 0) > 0 ? (
+                  cartData?.cartItems?.map((item) => (
+                    <CartItemDropdown key={item.cartId} item={item} />
                   ))
-                ) : ( */}
+                ) : (
                   <DropdownItem>
                     <p className="text-center text-gray-500">
                       Your cart is empty.
                     </p>
                   </DropdownItem>
-                {/* )} */}
+                )}
 
                 <Dropdown.Divider />
                 <DropdownItem>
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total</span>
-                    {/* ✅ Use totalAmount from backend instead of local calculation */}
                     <span className="font-semibold">
-                      {/* Rp {totalAmount.toLocaleString("id-ID")} */}
-                      Rp 7.000
+                      Rp {cartData?.totalPrice?.toLocaleString("id-ID") ?? "0"}
                     </span>
                   </div>
                 </DropdownItem>

@@ -3,14 +3,12 @@ import { FC } from "react";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faTrash } from "@fortawesome/free-solid-svg-icons";
-// import { CartItem } from "@/types/cartItem";
-// import useCartStore from "@/store/cartStore";
 import { useCartStore } from "@/store/cartStore";
 import { updateCartItem, removeCartItem } from "@/hooks/cart/cartService";
 import { useSession } from "next-auth/react";
 import useProductDetail from "@/hooks/product/useProductDetail";
 import { CartItem } from "@/types/cart";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   product: CartItem;
@@ -25,34 +23,58 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
     session?.accessToken ?? "" , product.productId.toString()
   );
 
-  // const handleUpdateQuantity = async (newQuantity: number) => {
-  //   await updateCartItem(product.cartId, newQuantity);
-  //   updateLocal(product.cartId, newQuantity); 
-  // };
+
 
   const formattedPrice = (productDetail?.price || 0) * product.quantity;
-  // (productDetail?.price * product.quantity).toLocaleString("id-ID")
-  
+
+
+  const queryClient = useQueryClient();
   const updateQuantityMutation = useMutation({
     mutationFn: async (newQuantity: number) => {
       if (!session?.accessToken) throw new Error("User must be logged in.");
-      return await updateCartItem(session.accessToken, product.cartId, newQuantity); // ✅ Pass token
+      console.log(`Updating cart item [CartID: ${product.cartId}] to Quantity: ${newQuantity}`);
+      return await updateCartItem(session.accessToken, product.cartId, newQuantity);
     },
-    onSuccess: (updatedItem) => {
+    onMutate: async (newQuantity: number) => {
+      console.log(`Mutating... Setting Quantity to ${newQuantity} (Optimistic UI Update)`);
+      await queryClient.cancelQueries({ queryKey: ["cart"] });
+
+      const previousCart = queryClient.getQueryData(["cart"]);
+
+      updateLocal(product.cartId, newQuantity);
+
+      return { previousCart };
+    },
+    onError: (err, newQuantity, context) => {
+      console.error("Failed to update cart item:", err);
+      if (context?.previousCart) {
+        queryClient.setQueryData(["cart"], context.previousCart);
+      }
+    },
+    onSuccess: async (updatedItem) => {
+      console.log(`Update Success! New Quantity: ${updatedItem.quantity}`);
       updateLocal(updatedItem.cartId, updatedItem.quantity);
     },
+    onSettled: async () => {
+      console.log("Refetching cart data to sync...");
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
   });
-  
 
+  
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (!session?.accessToken || !session.user.id) throw new Error("User must be logged in.");
+      console.log(`Deleting cart item [CartID: ${product.cartId}]`);
       await removeCartItem(session.accessToken, session.user.id, product.cartId);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      console.log(`Cart item [CartID: ${product.cartId}] deleted successfully`);
       removeLocal(product.cartId);
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
+
   return (
     <>
       <div className="grid lg:grid-cols-5 grid-cols-2 gap-4 lg:mb-8 mb-4 lg:border-none lg:p-0 border-2 border-opacity-30 border-shelf-grey rounded-2xl p-8">

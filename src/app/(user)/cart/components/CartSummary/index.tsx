@@ -1,8 +1,6 @@
 "use client";
 import { FC, useEffect } from "react";
-// import Link from "next/link";
-// import ChoosenProduct from "./ChoosenProduct";
-// import useCartStore from "@/store/cartStore";
+
 import { useSession } from "next-auth/react";
 import { useCartQuery } from "@/hooks/cart/useCartQuery";
 import { useCartStore } from "@/store/cartStore";
@@ -41,13 +39,6 @@ const CartSummary: FC = () => {
         </div>
 
         {/* Choosen Products */}
-        {/* {cartItems.length > 0 ? (
-          cartItems.map((item: CartItem) => (
-            <ChoosenProduct key={item.cartId} product={item} />
-          ))
-        ) : (
-          <p className="text-center text-gray-500">Your bag is empty.</p>
-        )} */}
         {cartItems.length > 0 ? (
           cartItems.map((item: CartItem) => (
             <ChoosenProduct key={item.cartId} product={item} />

@@ -9,10 +9,9 @@ import ImageGallery from "@/app/components/ImageGallery";
 import { CartItem } from "@/types/cartItem";
 import { useSession } from "next-auth/react";
 import useProductDetail from "@/hooks/product/useProductDetail";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart } from "@/hooks/cart/cartService";
 import { useCartStore } from "@/store/cartStore";
-
 
 interface Product {
   id: number;
@@ -61,31 +60,94 @@ const ProductPage: FC = () => {
   const { id } = useParams();
   const { data: session } = useSession();
   const { addToCartLocal } = useCartStore();
+  const queryClient = useQueryClient();
 
-  const { isLoading, errorProductDetail, product } = useProductDetail(session?.accessToken ?? "", id as string);
-  console.log("Product Data: ", product);
-  console.log("Product Image:  ", product?.images[0].imageUrl);
+  const { isLoading, errorProductDetail, product } = useProductDetail(
+    session?.accessToken ?? "",
+    id as string
+  );
 
-  const productImage = product?.images?.map((img) => img.imageUrl) ?? ['/images/kohceng-senam.jpg'];
+  const productImage = product?.images?.map((img) => img.imageUrl) ?? [
+    "/images/kohceng-senam.jpg",
+  ];
 
   const mutation = useMutation({
     mutationFn: async () => {
-      if (!session) throw new Error("User must be logged in to add items to cart.");
-      if (!product) throw new Error("Product data is not available."); 
-  
-      const userId = 1; 
-      const newItem = await addToCart(session.accessToken, userId, product.id, 1);
-      addToCartLocal(newItem); 
+      if (!session)
+        throw new Error("User must be logged in to add items to cart.");
+      if (!product) throw new Error("Product data is not available.");
+
+      const userId = Number(session.user.id);
+      const newItem = await addToCart(
+        session.accessToken,
+        userId,
+        product.id,
+        1
+      );
+      return newItem;
+    },
+    onSuccess: (newItem) => {
+      addToCartLocal(newItem);
+      queryClient.invalidateQueries({ queryKey: ["cart", session?.user?.id] });
+      console.log("Item added to cart:", newItem);
     },
   });
-  
-
 
   
+  const addToCartMutation = useMutation({
+    mutationFn: async () => {
+      if (!session) throw new Error("User must be logged in to add items to cart.");
+      if (!product) throw new Error("Product data is not available.");
+      
+      console.log(`Adding Product ID: ${product.id} to Cart`);
+
+      const userId = Number(session.user.id);
+      return await addToCart(session.accessToken, userId, product.id, 1);
+    },
+    onMutate: async () => {
+      console.log("Optimistically updating cart UI...");
+
+      
+      await queryClient.cancelQueries({ queryKey: ["cart"] });
+
+      const previousCart = queryClient.getQueryData(["cart"]);
+
+      
+      addToCartLocal({
+        cartId: Math.random(), // Temporary ID
+        productId: product?.id || 0,
+        productName: product?.name || "",
+        quantity: 1,
+        price: product?.price || 0,
+        image: productImage[0] || "/images/kohceng-senam.jpg",
+        isProcessed: false,
+        updatedAt: new Date().toISOString(),
+      });
+
+      return { previousCart };
+    },
+    onError: (err, _, context) => {
+      console.error("Failed to add item:", err);
+      if (context?.previousCart) {
+        queryClient.setQueryData(["cart"], context.previousCart);
+      }
+    },
+    onSuccess: async (newItem) => {
+      console.log(`Successfully added to cart:`, newItem);
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onSettled: async () => {
+      console.log("Refetching cart data to sync...");
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+
   return (
     <>
       {isLoading && <p className="text-center">Loading product details...</p>}
-      {errorProductDetail && <p className="text-center text-red-500">{errorProductDetail.message}</p>}
+      {errorProductDetail && (
+        <p className="text-center text-red-500">{errorProductDetail.message}</p>
+      )}
 
       {!isLoading && !errorProductDetail && product && (
       
@@ -134,42 +196,24 @@ const ProductPage: FC = () => {
             </div>
           </div>
 
-            {/* Buttons */}
-            <div className="my-4">
-              <div className="mb-2 flex gap-2">
-                <button
-                  // onClick={handleAddToCart}
-                  onClick={() => mutation.mutate()}
-                  className="bg-shelf-black flex-1 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
-                  disabled={mutation.isPending}
-                >
-                  {mutation.isPending ? "Adding..." : "ADD TO CART"}
-                </button>
-                <button className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-                  <FontAwesomeIcon icon={faHeart} />
+              {/* Buttons */}
+              <div className="my-4">
+                <div className="mb-2 flex gap-2">
+                  <button
+                    onClick={() => addToCartMutation.mutate()}
+                    className="bg-shelf-black flex-1 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
+                    disabled={mutation.isPending}
+                  >
+                    {mutation.isPending ? "Adding..." : "ADD TO CART"}
+                  </button>
+                  <button className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+                    <FontAwesomeIcon icon={faHeart} />
+                  </button>
+                </div>
+                <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
+                  BUY IT NOW
                 </button>
               </div>
-              <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-                BUY IT NOW
-              </button>
-            </div>
-          {/* Buttons */}
-          <div className="my-4">
-            <div className="mb-2 flex gap-2">
-              <button
-                onClick={handleAddToCart}
-                className="bg-shelf-black flex-1 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
-              >
-                ADD TO CART
-              </button>
-              <button title="favorite" className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-                <FontAwesomeIcon icon={faHeart} />
-              </button>
-            </div>
-            <button className="bg-shelf-blue xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
-              BUY IT NOW
-            </button>
-          </div>
 
           {/* Product Description */}
           <div>

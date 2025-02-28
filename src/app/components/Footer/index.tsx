@@ -16,10 +16,10 @@ const Footer: FC = () => {
           <div className="grid max-xl:grid-cols-1 grid-cols-2 px-16 py-12">
             <div>
               <div className="max-lg:text-3xl text-5xl font-semibold mb-2">
-                Join our KiksPlus Club & get 15% off
+                <h3>Join our KiksPlus Club & get 15% off</h3>
               </div>
               <div className="max-lg:text-base text-xl font-semibold mb-6">
-                Sign up for free! Join the community.
+                <h4>Sign up for free! Join the community.</h4>
               </div>
               <div className="mb-8 flex max-sm:flex-col gap-1">
                 <div className="sm:w-3/4">
@@ -36,7 +36,7 @@ const Footer: FC = () => {
             </div>
             <div className="flex justify-center items-center">
               <div className="text-shelf-white font-extrabold max-sm:text-3xl max-lg:text-5xl text-8xl">
-                ShelfMaster
+                <h2>ShelfMaster</h2>
               </div>
             </div>
           </div>

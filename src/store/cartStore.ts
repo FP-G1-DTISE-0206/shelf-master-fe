@@ -49,7 +49,7 @@ export const useCartStore = create<CartState>((set) => ({
   removeCartItem: (cartId: number) =>
     set((state) => {
       if (!state.cartItems.some((item) => item.cartId === cartId)) {
-        return state; // ✅ Avoid unnecessary state updates
+        return state; 
       }
 
       const filteredCart = state.cartItems.filter(
