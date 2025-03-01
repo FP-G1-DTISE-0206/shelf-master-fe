@@ -67,7 +67,7 @@ const AdminHeader: FC<NestedLayoutProps> = ({ isOpen, setIsOpen }) => {
             </div>
           )}
           <Link href="/">
-            <img
+            <Image
               src="/images/shelfmaster-medium.jpeg"
               alt="Logo"
               className="w-auto h-10"

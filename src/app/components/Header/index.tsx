@@ -102,7 +102,7 @@ const Header: FC = () => {
     <>
       <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center mt-8">
         <Link href="/">
-          <img
+          <Image
             src="/images/shelfmaster-medium.jpeg"
             alt="Logo"
             className="w-auto h-10"
