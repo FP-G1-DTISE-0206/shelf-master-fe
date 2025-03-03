@@ -18,15 +18,15 @@ export interface SalesInfoCardResponse {
 export interface SalesReportRequest {
   productId: number | null;
   categoryId: number | null;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   warehouseId: number | null;
 }
 
 export interface StockReportRequest {
   productId: number | null;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   warehouseId: number | null;
 }
 
@@ -52,4 +52,5 @@ export interface StockReportResponse {
   requesterName: string;
   processorName: string;
   remark: string;
+  processedAt: string;
 }

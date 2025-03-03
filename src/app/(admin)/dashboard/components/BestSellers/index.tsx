@@ -3,6 +3,7 @@ import { Card, Button } from "flowbite-react";
 import { Session } from "next-auth";
 import { AssignedWarehouse } from "@/types/product";
 import useBestSellers from '@/hooks/report/useBestSellers';
+import Link from 'next/link';
 
 interface BestSellersProps {
   session: Session | null;
@@ -46,7 +47,8 @@ const BestSellers: FC<BestSellersProps> = ({
             </li>
           ))}
         </ul>
-        <Button className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4">
+        <Button as={Link} href="/report"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4">
           Report
         </Button>
       </Card>
