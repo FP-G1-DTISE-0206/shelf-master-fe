@@ -16,8 +16,8 @@ const getAuthHeaders = (token: string | undefined) => {
 
 export const getCart = async (token: string, userId: number): Promise<{ cartItems: CartItem[]; totalQuantity: number; totalPrice: number; }> => {
   const response = await axios.get(`${API_URL}/${userId}`, getAuthHeaders(token));
-  console.log("Cart API Response: ", response.data);
-  return response.data;
+  console.log("Cart API Response: ", response.data.data);
+  return response.data.data;
 };
 
 export const addToCart = async (
