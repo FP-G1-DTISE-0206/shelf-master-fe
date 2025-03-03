@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/file-saver": "^2.0.7",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -48,7 +48,7 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
             </Button>
           ))}
         </Button.Group>
-        <div className="bg-blue-100 rounded-lg">
+        <div className="rounded-lg">
           <Card className="max-w-lg mx-auto">
             <h2 className="text-xl font-semibold text-gray-800">{type} Sales</h2>
             <ResponsiveContainer width="100%" height={300}>

@@ -1,13 +1,17 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Session } from "next-auth";
-import { AssignedWarehouse } from "@/types/product";
+import { AssignedWarehouse, ProductResponse } from "@/types/product";
+import { CategoryResponse } from '@/types/category';
 import SalesReportTable from '../SalesReportTable';
 import useSalesReport from '@/hooks/report/useSalesReport';
 import { useToast } from "@/providers/ToastProvider";
+import ProductSelect from '../ProductSelect';
+import CategorySelect from '../CategorySelect';
 import {
   Datepicker,
   Pagination,
-  Label
+  Label,
+  Button
 } from "flowbite-react";
 
 interface SalesReportProps {
@@ -19,8 +23,12 @@ const SalesReport: FC<SalesReportProps> = ({
   session,
   warehouse,
 }) => {
+  const [ product, setProduct ] = useState<ProductResponse>({
+    id: 0, name:"All Product", price: 0, quantity: 0, image: { id: 0, imageUrl: ""}
+  })
+  const [ category, setCategory ] = useState<CategoryResponse>({ id: 0, name:"All Category", })
   const { 
-    setParams, params, isLoading, error, reports 
+    setParams, params, isLoading, error, reports, downloadReport, 
   } = useSalesReport(session?.accessToken as string)
   const { showToast } = useToast();
 
@@ -53,8 +61,10 @@ const SalesReport: FC<SalesReportProps> = ({
       const diffInTime = new Date(newDate).getTime() - new Date(params.startDate).getTime();
       const diffInDays = diffInTime / (1000 * 60 * 60 * 24);
       if(diffInDays > 31) {
+        showToast(`Range date can't be more than 31 days`, "error");
         return;
       } else if(diffInDays < 0) {
+        showToast(`Range date can't be less than 1 days`, "error");
         return;
       }
       setParams({ ...params, startDate:  newDate});
@@ -68,15 +78,54 @@ const SalesReport: FC<SalesReportProps> = ({
       setParams({ ...params, warehouseId: null })
     }
   }, [warehouse])
+  
+  useEffect(() => {
+    if(product.id != 0) {
+      setParams({ ...params, productId: product.id })
+    } else {
+      setParams({ ...params, productId: null })
+    }
+  }, [product])
+  
+  useEffect(() => {
+    if(category.id != 0) {
+      setParams({ ...params, categoryId: category.id })
+    } else {
+      setParams({ ...params, categoryId: null })
+    }
+  }, [category])
+
+  const handleDownload = () => {
+    if(reports && reports?.data.length > 0) {
+      downloadReport({ creationData: params })
+    } else {
+      showToast("Can't download empty report", "error");
+    }
+  }
 
   return (
     <>
       <div className="flex justify-between max-lg:flex-col max-lg:items-start">
-        <div className="flex gap-2 items-center max-md:flex-col max-md:items-start mb-2">
-          <Label htmlFor="from" className="font-medium">From: </Label>
-          <Datepicker name="from" value={new Date(params.startDate)} onChange={(e)=>onStartDateChange(e)} />
-          <Label htmlFor="to" className="font-medium">To: </Label>
-          <Datepicker name="to" value={new Date(params.endDate)} onChange={(e)=>onEndDateChange(e)} />
+        <div className="flex flex-wrap gap-2 items-center max-md:flex-col max-md:items-start mb-2">
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="from" className="font-medium">From: </Label>
+            <Datepicker name="from" className="max-w-44"
+              value={new Date(params.startDate)} onChange={(e)=>onStartDateChange(e)} />
+          </div>
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="to" className="font-medium">To: </Label>
+            <Datepicker name="to" className="max-w-44"
+              value={new Date(params.endDate)} onChange={(e)=>onEndDateChange(e)} />
+          </div>
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="product" className="font-medium">Product: </Label>
+            <ProductSelect session={session} product={product} setProduct={setProduct} />
+          </div>
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="category" className="font-medium">Category: </Label>
+            <CategorySelect session={session} category={category} setCategory={setCategory} />
+          </div>
+          <Button onClick={handleDownload}>Download</Button>
         </div>
       </div>
       <div className="overflow-x-auto">
