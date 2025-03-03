@@ -14,8 +14,8 @@ import axios from "axios";
 import Link from "next/link";
 import { Dropdown, DropdownItem, TextInput } from "flowbite-react";
 import Image from "next/image";
-import useCartStore from "@/store/cartStore";
-import { CartItem } from "@/types/cartItem";
+import { useCartQuery } from "@/hooks/cart/useCartQuery";
+import CartItemDropdown from "./components/CartItemDropdown";
 import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
 import debounce from "lodash.debounce";
 
