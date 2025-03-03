@@ -24,6 +24,7 @@ const CartSummary: FC = () => {
     if (cartData) {
       setCart(cartData.cartItems);
     }
+    console.log("Cart Data All:", cartData?.cartItems);
   }, [cartData, setCart]);
 
   if (isLoading) return <p>Loading cart...</p>;

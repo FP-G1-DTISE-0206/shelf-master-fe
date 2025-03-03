@@ -17,7 +17,7 @@ const Cart: FC = () => {
         </p>
       </div>
       
-      <div className="lg:grid lg:grid-cols-3 lg:gap-x-12">
+      {/* <div className="lg:grid lg:grid-cols-3 lg:gap-x-12"> */}
         {/* <div className="w-full h-auto rounded-2xl bg-shelf-white lg:w-[100%] mb-6 p-4 lg:p-6 lg:col-span-2">
           <div className="lg:pb-10">
             <h3 className="text-xl lg:text-3xl lg:pb-2 font-semibold">
@@ -35,12 +35,12 @@ const Cart: FC = () => {
           ) : (
             <p className="text-center text-gray-500">Your bag is empty.</p>
           )}
-        </div> */}
-        <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3 space-y-10">
-          <ShippingSection />
+          </div> */}
+        {/* <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3 space-y-10"> */}
           <CartSummary />
-        </div>
-      </div>
+          <ShippingSection />
+        {/* </div> */}
+      {/* </div> */}
 
       <ProductSuggestion category={[]} exceptProductId={null} />
     </>

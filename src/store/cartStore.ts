@@ -16,6 +16,7 @@ export const useCartStore = create<CartState>((set) => ({
 
   setCart: (cartItems) => set({ cartItems, totalItems: cartItems.length }),
 
+
   addToCartLocal: (item: CartItem) =>
     set((state) => {
       const existingItem = state.cartItems.find(

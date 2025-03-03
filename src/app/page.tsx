@@ -5,6 +5,8 @@ import HeroCard from "./components/HeroCard";
 import NewArrival from "./components/NewArrival";
 import Footer from "./components/Footer";
 
+
+
 const Home: FC = () => {
   return (
     <>
