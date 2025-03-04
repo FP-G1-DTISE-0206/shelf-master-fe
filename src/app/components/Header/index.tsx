@@ -52,8 +52,7 @@ const Header: FC = () => {
   }, [filter]);
 
   const { data: cartData, isFetching } = useCartQuery(
-    session?.accessToken ?? "",
-    Number(session?.user?.id ?? 0)
+    session?.accessToken ?? ""
   );
 
   const totalQuantity = cartData?.totalQuantity ?? 0;
@@ -157,7 +156,7 @@ const Header: FC = () => {
                     <div className="flex flex-col justify-center max-sm:hidden">
                       <div>{session.user.email}</div>
                       <div className="text-slate-gray text-xs">
-                      <p>{session.user.roles[0]}</p>
+                        <p>{session.user.roles[0]}</p>
                       </div>
                     </div>
                   </div>
@@ -191,7 +190,7 @@ const Header: FC = () => {
                 inline
                 arrowIcon={false}
               >
-                  {(cartData?.cartItems?.length ?? 0) > 0 ? (
+                {(cartData?.cartItems?.length ?? 0) > 0 ? (
                   cartData?.cartItems?.map((item) => (
                     <CartItemDropdown key={item.cartId} item={item} />
                   ))

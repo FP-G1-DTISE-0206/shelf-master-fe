@@ -4,12 +4,12 @@ import { useState } from "react";
 import { usePaymentStore } from "@/store/paymentStore";
 import { useSession } from "next-auth/react";
 import PaymentButton from "@/app/(user)/payment/components/PaymentButton";
-import useCartStore from "@/store/cartStore";
+// import useCartStore from "@/store/cartStore";
 
 export default function PaymentPage() {
   const { snapToken, setSnapToken } = usePaymentStore();
   const { data: session } = useSession();
-  const totalPrice = useCartStore((state) => state.getTotalPrice());
+  // const totalPrice = useCartStore((state) => state.getTotalPrice());
   const [loading, setLoading] = useState(false);
 
   const fetchToken = async () => {
@@ -18,10 +18,10 @@ export default function PaymentPage() {
       return;
     }
 
-    if (totalPrice <= 0) {
-      console.warn("Total price is 0, cannot create a payment.");
-      return;
-    }
+    // if (totalPrice <= 0) {
+    //   console.warn("Total price is 0, cannot create a payment.");
+    //   return;
+    // }
 
     try {
       setLoading(true);
@@ -33,7 +33,7 @@ export default function PaymentPage() {
         },
         body: JSON.stringify({
           orderId: `ORDER-${Date.now()}`,
-          amount: totalPrice,
+          // amount: totalPrice,
         }),
       });
 
