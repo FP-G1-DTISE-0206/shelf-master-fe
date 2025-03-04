@@ -49,7 +49,7 @@ const SalesCards: FC<SalesCardsProps> = ({
               {
                 card.percentage == null 
                 ? (<span className="text-green-500 font-bold">100% ↑</span>)
-                : card.percentage <= 0 
+                : card.percentage >= 0 
                 ? (<span className="text-green-500 font-bold">{card.percentage}% ↑</span>)
                 : (<span className="text-red-500 font-bold">{card.percentage}% ↓</span>)
               }
