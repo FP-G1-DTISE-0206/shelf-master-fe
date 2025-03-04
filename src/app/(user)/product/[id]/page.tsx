@@ -32,12 +32,7 @@ const ProductPage: FC = () => {
         throw new Error("User must be logged in to add items to cart.");
       if (!product) throw new Error("Product data is not available.");
 
-      const userId = Number(session.user.id);
-      const newItem = await addToCart(
-        session.accessToken,
-        product.id,
-        1
-      );
+      const newItem = await addToCart(session.accessToken, product.id, 1);
       return newItem;
     },
     onSuccess: (newItem) => {
@@ -77,7 +72,7 @@ const ProductPage: FC = () => {
         queryClient.setQueryData(["cart"], context.previousCart);
       }
     },
-    onSuccess: async (newItem) => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onSettled: async () => {

@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 import ShippingSection from "./components/ShippingSection";
 import { useCartStore } from "@/store/cartStore";
@@ -12,7 +12,8 @@ import Link from "next/link";
 const Cart: FC = () => {
   const { data: session } = useSession();
   const accessToken = session?.accessToken ?? "";
-  const { data: cartData, isLoading: isCartLoading } = useCartQuery(accessToken);
+  const { data: cartData, isLoading: isCartLoading } =
+    useCartQuery(accessToken);
   const { setCart, cartItems } = useCartStore();
 
   const totalPrice = cartData?.totalPrice?.toLocaleString("id-ID") ?? 0;
@@ -24,7 +25,7 @@ const Cart: FC = () => {
     }
   }, [cartData, setCart]);
 
-  if ( isCartLoading) return <p>Loading...</p>;
+  if (isCartLoading) return <p>Loading...</p>;
 
   return (
     <>
