@@ -4,12 +4,12 @@ import { useState } from "react";
 import { usePaymentStore } from "@/store/paymentStore";
 import { useSession } from "next-auth/react";
 import PaymentButton from "@/app/(user)/payment/components/PaymentButton";
-import useCartStore from "@/store/cartStore";
+//import useCartStore from "@/store/cartStore";
 
 const CheckoutPage = () => {
   const { snapToken, setSnapToken } = usePaymentStore();
   const { data: session } = useSession();
-  const totalAmount = useCartStore((state) => state.totalAmount);
+  //const totalAmount = useCartStore((state) => state.totalAmount);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,11 +20,11 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (totalAmount <= 0) {
+    /*if (totalAmount <= 0) {
       console.warn("⚠️ Total amount is 0. Cannot proceed with payment.");
       setError("Your cart is empty.");
       return;
-    }
+    }*/
 
     try {
       setLoading(true);
@@ -38,7 +38,7 @@ const CheckoutPage = () => {
         },
         body: JSON.stringify({
           orderId: `ORDER-${Date.now()}`,
-          totalAmount: totalAmount,
+          //totalAmount: totalAmount,
         }),
       });
 
@@ -68,7 +68,7 @@ const CheckoutPage = () => {
       <p className="text-lg mb-2">
         Total:{" "}
         <span className="font-semibold">
-          Rp {totalAmount.toLocaleString("id-ID")}
+          Rp {/*totalAmount.toLocaleString("id-ID")*/}
         </span>
       </p>
 
