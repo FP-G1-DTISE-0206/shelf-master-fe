@@ -1,5 +1,5 @@
 "use client"
-import { FC, Dispatch, SetStateAction, useEffect, useRef, useCallback } from "react";
+import { FC, Dispatch, SetStateAction, useCallback } from "react";
 import AsyncSelect from "react-select/async";
 import useSelectProduct from "@/hooks/product/useSelectProduct";
 import { Session } from "next-auth";

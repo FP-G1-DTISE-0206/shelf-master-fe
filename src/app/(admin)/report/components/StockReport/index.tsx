@@ -36,7 +36,7 @@ const StockReport: FC<StockReportProps> = ({
   const onStartDateChange = (date: Date | null) => {
     if (date != null) {
       const offset = date.getTimezoneOffset() * 60000;
-      let newDate = new Date(date.getTime() - offset).toISOString().split("T")[0];
+      const newDate = new Date(date.getTime() - offset).toISOString().split("T")[0];
       const diffInTime = new Date(params.endDate).getTime() - new Date(newDate).getTime();
       const diffInDays = diffInTime / (1000 * 60 * 60 * 24);
       console.log(diffInDays)
@@ -54,7 +54,7 @@ const StockReport: FC<StockReportProps> = ({
   const onEndDateChange = (date: Date | null) => {
     if (date != null) {
       const offset = date.getTimezoneOffset() * 60000;
-      let newDate = new Date(date.getTime() - offset).toISOString().split("T")[0];
+      const newDate = new Date(date.getTime() - offset).toISOString().split("T")[0];
       const diffInTime = new Date(newDate).getTime() - new Date(params.startDate).getTime();
       const diffInDays = diffInTime / (1000 * 60 * 60 * 24);
       if(diffInDays > 31) {

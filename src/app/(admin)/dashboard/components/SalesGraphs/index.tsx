@@ -17,14 +17,7 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
 }) => {
   const [ type, setType ] = useState<string>("Monthly")
   const { params, setParams, graph } = useMonthGraph(session?.accessToken as string)
-  const { yearParams, setYearParams, yearGraph } = useYearGraph(session?.accessToken as string)
-  const data = [
-    { name: "Jan", value: 40 },
-    { name: "Feb", value: 55 },
-    { name: "Mar", value: 30 },
-    { name: "Apr", value: 75 },
-    { name: "May", value: 50 },
-  ];
+  const { setYearParams, yearGraph } = useYearGraph(session?.accessToken as string)
   
   useEffect(() => {
     setParams({ ...params, warehouseId: warehouse.id })
