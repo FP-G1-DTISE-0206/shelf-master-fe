@@ -21,11 +21,10 @@ export const getCart = async (token: string): Promise<{ cartItems: CartItem[]; t
 
 export const addToCart = async (
   token: string,
-  userId: number,
   productId: number,
   quantity: number
 ): Promise<CartItem> => {
-  const response = await axios.post(API_URL, { userId, productId, quantity }, getAuthHeaders(token));
+  const response = await axios.post(API_URL, { productId, quantity }, getAuthHeaders(token));
   return response.data;
 };
 
