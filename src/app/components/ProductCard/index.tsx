@@ -2,15 +2,13 @@
 import { FC } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ProductResponse } from "@/types/product";
+import { ProductResponse} from "@/types/product";
 
 interface ProductCardProps {
   product: ProductResponse;
 }
 
-const ProductCard: FC<ProductCardProps> = ({
-  product,
-}) => {
+const ProductCard: FC<ProductCardProps> = ({ product }) => {
   const router = useRouter();
 
   const formatPrice = (price?: number): string => {
@@ -29,7 +27,7 @@ const ProductCard: FC<ProductCardProps> = ({
         <div className="product-image-container border-8 border-shelf-white rounded-3xl ">
           <div className="hero-card-container relative rounded-2xl w-full h-full overflow-hidden">
               <Image
-                src={product.image.imageUrl || "/images/kohceng-senam.jpg"}
+                src={product.image.imageUrl}
                 alt={product.name || "Product Image"}
                 width={500}
                 height={500}
@@ -38,8 +36,8 @@ const ProductCard: FC<ProductCardProps> = ({
           </div>
         </div>
         <div className="product-information-container">
-          <div className="product-information-title my-2">
-            <h3 className="font-semibold xl:text-2xl text-base text-shelf-black truncate">
+        <div className="product-information-title my-2">
+            <h3 className="font-semibold xl:text-2xl text-base text-center text-shelf-black truncate">
               {product.name}
             </h3>
           </div>

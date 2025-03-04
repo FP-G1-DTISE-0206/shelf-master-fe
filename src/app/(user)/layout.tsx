@@ -1,5 +1,5 @@
 'use client'
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 interface NestedLayoutProps {
@@ -7,7 +7,7 @@ interface NestedLayoutProps {
 }
 const UserLayout: FC<NestedLayoutProps> = ({ children }) => {
 
-  const [snapLoaded, setSnapLoaded] = useState(false);
+  // const [snapLoaded, setSnapLoaded] = useState(false);
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
