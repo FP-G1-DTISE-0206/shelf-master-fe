@@ -1,8 +1,11 @@
+'use client'
 import { FC } from "react";
 import Header from "@/app/components/Header";
 import HeroCard from "./components/HeroCard";
 import NewArrival from "./components/NewArrival";
 import Footer from "./components/Footer";
+
+
 
 const Home: FC = () => {
   return (
@@ -11,7 +14,7 @@ const Home: FC = () => {
         <Header />
         <div className="flex flex-col gap-6 mt-6">
           <div className="xl:text-9xl max-xl:text-6xl font-black text-center">
-            SHOP <span className="text-shelf-blue">SMART</span>
+          <h1>SHOP <span className="text-shelf-blue">SMART</span></h1>
           </div>
           <HeroCard />
         </div>
