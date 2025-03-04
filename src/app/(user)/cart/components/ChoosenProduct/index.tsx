@@ -35,9 +35,6 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
   const updateQuantityMutation = useMutation({
     mutationFn: async (newQuantity: number) => {
       if (!session?.accessToken) throw new Error("User must be logged in.");
-      console.log(
-        `Updating cart item [CartID: ${product.cartId}] to Quantity: ${newQuantity}`
-      );
       return await updateCartItem(
         session.accessToken,
         product.cartId,
@@ -45,9 +42,6 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
       );
     },
     onMutate: async (newQuantity: number) => {
-      console.log(
-        `Mutating... Setting Quantity to ${newQuantity} (Optimistic UI Update)`
-      );
       await queryClient.cancelQueries({ queryKey: ["cart"] });
 
       const previousCart = queryClient.getQueryData(["cart"]);
@@ -57,17 +51,14 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
       return { previousCart };
     },
     onError: (err, newQuantity, context) => {
-      console.error("Failed to update cart item:", err);
       if (context?.previousCart) {
         queryClient.setQueryData(["cart"], context.previousCart);
       }
     },
     onSuccess: async (updatedItem) => {
-      console.log(`Update Success! New Quantity: ${updatedItem.quantity}`);
       updateLocal(updatedItem.cartId, updatedItem.quantity);
     },
     onSettled: async () => {
-      console.log("Refetching cart data to sync...");
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
@@ -76,7 +67,6 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
     mutationFn: async () => {
       if (!session?.accessToken || !session.user.id)
         throw new Error("User must be logged in.");
-      console.log(`Deleting cart item [CartID: ${product.cartId}]`);
       await removeCartItem(
         session.accessToken,
         session.user.id,
@@ -84,7 +74,6 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
       );
     },
     onSuccess: async () => {
-      console.log(`Cart item [CartID: ${product.cartId}] deleted successfully`);
       removeLocal(product.cartId);
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
     },

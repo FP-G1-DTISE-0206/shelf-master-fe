@@ -48,7 +48,7 @@ const ProductPage: FC = () => {
     onSuccess: (newItem) => {
       addToCartLocal(newItem);
       queryClient.invalidateQueries({ queryKey: ["cart", session?.user?.id] });
-      console.log("Item added to cart:", newItem);
+    
     },
   });
 
@@ -58,13 +58,13 @@ const ProductPage: FC = () => {
         throw new Error("User must be logged in to add items to cart.");
       if (!product) throw new Error("Product data is not available.");
 
-      console.log(`Adding Product ID: ${product.id} to Cart`);
+  
 
       const userId = Number(session.user.id);
       return await addToCart(session.accessToken, userId, product.id, 1);
     },
     onMutate: async () => {
-      console.log("Optimistically updating cart UI...");
+    
 
       await queryClient.cancelQueries({ queryKey: ["cart"] });
 
@@ -90,11 +90,11 @@ const ProductPage: FC = () => {
       }
     },
     onSuccess: async (newItem) => {
-      console.log(`Successfully added to cart:`, newItem);
+    
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onSettled: async () => {
-      console.log("Refetching cart data to sync...");
+    
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });

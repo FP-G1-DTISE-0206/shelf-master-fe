@@ -14,9 +14,8 @@ const getAuthHeaders = (token: string | undefined) => {
 };
 
 
-export const getCart = async (token: string, userId: number): Promise<{ cartItems: CartItem[]; totalQuantity: number; totalPrice: number; }> => {
-  const response = await axios.get(`${API_URL}/${userId}`, getAuthHeaders(token));
-  console.log("Cart API Response: ", response.data.data);
+export const getCart = async (token: string): Promise<{ cartItems: CartItem[]; totalQuantity: number; totalPrice: number; }> => {
+  const response = await axios.get(`${API_URL}`, getAuthHeaders(token));
   return response.data.data;
 };
 
@@ -40,5 +39,5 @@ export const updateCartItem = async (
 };
 
 export const removeCartItem = async (token: string, userId: string, cartId: number) => {
-  await axios.delete(`${API_URL}/${userId}/${cartId}`, getAuthHeaders(token));
+  await axios.delete(`${API_URL}/${cartId}`, getAuthHeaders(token));
 };

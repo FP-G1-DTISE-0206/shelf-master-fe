@@ -14,7 +14,7 @@ const NewArrival: FC = () => {
     products,
   } = useProduct(accessToken, warehouse);
 
-  console.log("Product Data:", products);
+
   const myProduct = products?.map((product) => {
     return {
       id: product.id,
@@ -23,7 +23,7 @@ const NewArrival: FC = () => {
       image: product.image,
     };
   });
-  console.log("My Product:", myProduct);
+
   return (
     <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
       <div className="max-xl:text-2xl text-7xl font-semibold text-center md:text-left">

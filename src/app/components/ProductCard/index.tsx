@@ -33,13 +33,6 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
                 height={500}
                 className="object-cover rounded-2xl"
               />
-              {/* {discount && (
-              <div className="product-status bg-shelf-blue w-auto h-auto flex items-center justify-center rounded-tl-2xl rounded-br-2xl absolute top-0">
-                <p className="text-shelf-white text-[12px] px-4 py-2 font-semibold">
-                  {discount}
-                </p>
-              </div>
-            )} */}
           </div>
         </div>
         <div className="product-information-container">

@@ -12,8 +12,7 @@ import Link from "next/link";
 const CartSummary: FC = () => {
   const { data: session } = useSession();
   const accessToken = session?.accessToken ?? "";
-  const userId = 1; // Replace with dynamic user ID
-  const { data: cartData, isLoading } = useCartQuery(accessToken, userId);
+  const { data: cartData, isLoading } = useCartQuery(accessToken);
   const { setCart, cartItems } = useCartStore();
 
 
