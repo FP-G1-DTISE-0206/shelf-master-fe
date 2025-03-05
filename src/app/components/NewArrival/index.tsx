@@ -16,20 +16,14 @@ const NewArrival: FC = () => {
 
   return (
     <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
-      <div className="max-xl:text-2xl text-7xl font-semibold text-center md:text-left">
-        <p>Dont miss out new drops</p>
-      </div>
-
-      {/* Show loading state */}
       {isProductLoading && <p className="text-center">Loading products...</p>}
 
-      {/* Show error message */}
       {productError && (
         <p className="text-center text-red-500">{productError.message}</p>
       )}
 
       {!isProductLoading && !productError && products?.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 lg:gap-10 mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
           {products.map(({ id, name, price, image }) => (
             <ProductCard
               key={id}
@@ -42,7 +36,6 @@ const NewArrival: FC = () => {
               }}
             />
           ))}
-          {/* <p>My Product</p> */}
         </div>
       ) : (
         !isProductLoading && (

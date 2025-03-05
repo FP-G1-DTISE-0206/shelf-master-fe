@@ -101,13 +101,15 @@ const Header: FC = () => {
     <>
       <div className="flex justify-between rounded-xl bg-shelf-white p-4 items-center">
         <Link href="/">
-          <img
+          <Image
             src="/images/shelfmaster-medium.jpeg"
             alt="Logo"
+            width={100}
+            height={40}
             className="w-auto h-10"
           />
         </Link>
-        <div className="flex xl:gap-10 max-xl:gap-2 items-center">
+        <div className="flex xl:gap-10 max-xl:gap-2 items-center lg:px-4">
           <div className="relative">
             <FontAwesomeIcon
               icon={faSearch}
@@ -134,7 +136,6 @@ const Header: FC = () => {
           )}
           {session && (
             <>
-              {/* <FontAwesomeIcon icon={faUser} /> */}
               <Dropdown
                 label={<FontAwesomeIcon icon={faUser} />}
                 inline
@@ -175,48 +176,49 @@ const Header: FC = () => {
                 )}
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </Dropdown>
+              {session.user.roles.includes("USER") && (
+                <Dropdown
+                  label={
+                    <div className="relative">
+                      <FontAwesomeIcon icon={faCartShopping} size="lg" />
+                      {totalQuantity > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                          {isFetching ? "..." : totalQuantity}
+                        </span>
+                      )}
+                    </div>
+                  }
+                  inline
+                  arrowIcon={false}
+                >
+                  {(cartData?.cartItems?.length ?? 0) > 0 ? (
+                    cartData?.cartItems?.map((item) => (
+                      <CartItemDropdown key={item.cartId} item={item} />
+                    ))
+                  ) : (
+                    <DropdownItem>
+                      <p className="text-center text-gray-500">
+                        Your cart is empty.
+                      </p>
+                    </DropdownItem>
+                  )}
 
-              <Dropdown
-                label={
-                  <div className="relative">
-                    <FontAwesomeIcon icon={faCartShopping} size="lg" />
-                    {totalQuantity > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
-                        {isFetching ? "..." : totalQuantity}
-                      </span>
-                    )}
-                  </div>
-                }
-                inline
-                arrowIcon={false}
-              >
-                {(cartData?.cartItems?.length ?? 0) > 0 ? (
-                  cartData?.cartItems?.map((item) => (
-                    <CartItemDropdown key={item.cartId} item={item} />
-                  ))
-                ) : (
+                  <Dropdown.Divider />
                   <DropdownItem>
-                    <p className="text-center text-gray-500">
-                      Your cart is empty.
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold">{`Total Price : Rp ${totalPrice}`}</span>
+                    </div>
                   </DropdownItem>
-                )}
-
-                <Dropdown.Divider />
-                <DropdownItem>
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">{`Total Price : Rp ${totalPrice}`}</span>
-                  </div>
-                </DropdownItem>
-                <DropdownItem>
-                  <Link
-                    href="/cart"
-                    className="block w-full text-center text-blue-500"
-                  >
-                    Checkout <FontAwesomeIcon icon={faArrowRight} />
-                  </Link>
-                </DropdownItem>
-              </Dropdown>
+                  <DropdownItem>
+                    <Link
+                      href="/cart"
+                      className="block w-full text-center text-blue-500"
+                    >
+                      Checkout <FontAwesomeIcon icon={faArrowRight} />
+                    </Link>
+                  </DropdownItem>
+                </Dropdown>
+              )}
             </>
           )}
         </div>

@@ -48,7 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         try {
           await jwtVerify(data.accessToken, secret);
-          console.log("Token verified!", data.accessToken);
+          // console.log("Token verified!", data.accessToken);
         } catch (err) {
           console.error("JWT verification failed:", err);
           return null;
@@ -93,8 +93,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
       return session;
     },
-    async jwt({ token, user, account }) {
-      console.log("IN JWT CALLBACK: ", user, account);
+    async jwt({ token, user }) {
+      // console.log("IN JWT CALLBACK: ", user, account);
 
       if (user) {
         token = {
@@ -127,7 +127,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async signIn({ user, account }) {
-      console.log("IN SIGNIN CALLBACK: ", user, account);
+      // console.log("IN SIGNIN CALLBACK: ", user, account);
 
       if (account?.provider === "google") {
         // Exchange Google token for backend JWT
@@ -156,7 +156,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         try {
           await jwtVerify(data.accessToken, secret);
-          console.log("Token verified!", data.accessToken);
+          // console.log("Token verified!", data.accessToken);
         } catch (err) {
           console.error("JWT verification failed:", err);
           return false;
@@ -185,7 +185,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 });
 
 const refreshToken = async (refreshToken: string) => {
-  console.log("Refreshing token...");
+  // console.log("Refreshing token...");
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh`;
   const response = await fetch(url, {
     method: "POST",
@@ -209,7 +209,7 @@ const refreshToken = async (refreshToken: string) => {
 
   try {
     await jwtVerify(data.accessToken, secret);
-    console.log("Refreshed token verified!", data.accessToken);
+    // console.log("Refreshed token verified!", data.accessToken);
   } catch (err) {
     console.error("JWT verification failed:", err);
     return null;

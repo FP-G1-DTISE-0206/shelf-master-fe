@@ -10,6 +10,7 @@ import { addToCart } from "@/hooks/cart/cartService";
 import { useCartStore } from "@/store/cartStore";
 import { Badge, Button } from "flowbite-react";
 import { HiShoppingCart, HiHeart } from "react-icons/hi";
+import CustomSpinner from "@/components/CustomSpinner";
 
 const ProductPage: FC = () => {
   const { id }: { id: string } = useParams() ?? { id: "" };
@@ -82,97 +83,68 @@ const ProductPage: FC = () => {
 
   return (
     <>
-      {isLoading && <p className="text-center">Loading product details...</p>}
+      {isLoading && <CustomSpinner />}
       {errorProductDetail && (
         <p className="text-center text-red-500">{errorProductDetail.message}</p>
       )}
 
       {!isLoading && !errorProductDetail && product && (
         <>
-          <div className="lg:grid lg:grid-cols-5 lg:gap-4 xl:grid-cols-3 ">
-            {/* Image Gallery */}
-            <div className="lg:col-span-3 xl:col-span-2 xl:w-[85%] mb-6 ">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 xl:grid-cols-3">
+            <div className="lg:col-span-3 xl:col-span-2 xl:w-[85%] mb-6 flex justify-center">
               <ImageGallery
                 images={product.images.map((image) => image.imageUrl)}
               />
             </div>
-
-            {/* Product Details */}
-            <div className="lg:col-span-2 xl:col-span-1  ">
-              {/* Product Name */}
+            <div className="lg:col-span-2 xl:col-span-1 flex flex-col gap-2">
               <div>
-                <div className="px-4 py-2 bg-shelf-blue rounded-xl inline-block mb-2">
-                  <p className="text-white text-[12px] font-semibold">
-                    New Release
-                  </p>
-                </div>
-                <div className="mb-2">
-                  <p className="text-shelf-black font-semibold text-xl">
-                    {product.name}
-                  </p>
-                </div>
-
-                <p className="text-shelf-blue font-semibold text-2xl">
+                <h1 className="text-shelf-black font-bold text-2xl mt-3">
+                  {product.name}
+                </h1>
+                <p className="text-shelf-blue font-bold text-3xl mt-2">
                   Rp {product.price.toLocaleString("id-ID")}
                 </p>
               </div>
-
-              {/* Buttons */}
-              <div className="my-4">
-                <div className="mb-2 flex gap-2">
-                  <Button
-                    color="dark"
-                    onClick={() => addToCartMutation.mutate()}
-                    disabled={mutation.isPending}
-                    className="py-1 w-full"
-                  >
-                    <HiShoppingCart className="mr-2 h-5 w-5" />
-                    {mutation.isPending ? "Adding..." : "ADD TO CART"}
-                  </Button>
-
-                  <Button color="dark" className="py-1 w-1/4">
-                    <HiHeart className="w-full text-xl" />
-                  </Button>
-                </div>
-                <Button className="py-1 w-full bg-shelf-blue">
-                  BUY IT NOW
+              <div>
+                <Button
+                  color="dark"
+                  onClick={() => addToCartMutation.mutate()}
+                  disabled={mutation.isPending}
+                  className="flex-1 py-2 text-base font-medium w-full"
+                >
+                  <HiShoppingCart className="mr-2 h-5 w-5" />
+                  {mutation.isPending ? "Adding..." : "ADD TO CART"}
                 </Button>
               </div>
-
-              {/* Product Description */}
-              <div>
-                <h2 className="text-2xl font-bold mb-4">About the Product</h2>
-                <div className="text-gray-700 space-y-2">
-                  <p className="text-lg font-semibold">{product.sku}</p>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {product.categories.map((category, idx) => {
-                      return (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold">About the Product</h2>
+                <p className="text-gray-700 font-semibold text-lg">
+                  {product.sku}
+                </p>
+                {product.categories.length > 0 && (
+                  <div className="flex gap-2 flex-wrap">
+                    {product.categories.map(
+                      (category, idx) =>
                         category && (
                           <Badge
                             key={idx}
                             color="info"
-                            className="relative inline-block pr-5"
+                            className="px-3 py-1 text-sm font-medium"
                           >
                             {category.name}
                           </Badge>
                         )
-                      );
-                    })}
+                    )}
                   </div>
-                  <p>{product.description}</p>
-                </div>
+                )}
+                <p className="text-gray-600">{product.description}</p>
               </div>
             </div>
           </div>
         </>
       )}
 
-      {/* Product Suggestion */}
       <ProductSuggestion category={[]} exceptProductId={null} />
-      {/* <ProductSuggestion category={
-        product.categories.length > 0 ?
-        product.categories.map(c=>c.id) : []
-        } exceptProductId={product.id} /> */}
     </>
   );
 };

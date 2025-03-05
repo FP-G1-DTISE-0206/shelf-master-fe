@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
   "/setup-account",
   "/forgot-password",
   "/setup-password",
+  "/search",
 ];
 const PROTECTED_PATHS = [
   "/dashboard",
@@ -16,8 +17,6 @@ const PROTECTED_PATHS = [
   "/profile",
   "/create-address",
   "/edit-address",
-  "/search",
-  "/change-password",
   "/products",
   "/order-list",
   "/product-mutation",
@@ -28,10 +27,33 @@ const PROTECTED_PATHS = [
   "/promotion",
 ];
 const ROLE_PATHS = {
-  USER: ["/profile", "/cart", "/create-address", "/edit-address", "/search"],
-  WH_ADMIN: ["/profile", "/products", "/order-list", "/dashboard"],
-  // Admin can access everything
-  SUPER_ADMIN: ["*"],
+  USER: [
+    "/profile",
+    "/cart",
+    "/create-address",
+    "/edit-address",
+    "/search",
+    "/cart",
+  ],
+  WH_ADMIN: [
+    "/profile",
+    "/products",
+    "/order-list",
+    "/dashboard",
+    "/product-mutation",
+  ],
+  SUPER_ADMIN: [
+    "/profile",
+    "/products",
+    "/order-list",
+    "/dashboard",
+    "/product-mutation",
+    "/create-product",
+    "/update-product",
+    "/warehouse",
+    "/user",
+    "/promotion",
+  ],
 };
 
 async function getSession() {
@@ -47,9 +69,9 @@ function isProtectedPath(pathname: string) {
 }
 
 function hasRequiredRole(userRoles: string[], pathname: string) {
-  if (userRoles.includes("SUPER_ADMIN")) {
-    return true;
-  }
+  // if (userRoles.includes("SUPER_ADMIN")) {
+  //   return true;
+  // }
   for (const [role, paths] of Object.entries(ROLE_PATHS)) {
     if (
       paths.some((path) => pathname.startsWith(path)) &&

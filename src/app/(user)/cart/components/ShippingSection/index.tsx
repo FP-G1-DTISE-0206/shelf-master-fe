@@ -8,19 +8,7 @@ import { useFindClosest } from "@/hooks/useWarehouse";
 import useCourier from "@/hooks/useCourier";
 import { Pricing } from "@/types/biteship";
 import GroupedCouriers from "../GroupedCouriers";
-
-const dummyItems = [
-  {
-    name: "Shoes",
-    description: "Black colored size 45",
-    value: 199000,
-    length: 30,
-    width: 15,
-    height: 20,
-    weight: 200,
-    quantity: 2,
-  },
-];
+import { useCartQuery } from "@/hooks/cart/useCartQuery";
 
 const ShippingSection: FC = () => {
   const { data: session } = useSession();
@@ -39,6 +27,7 @@ const ShippingSection: FC = () => {
     useState(false);
   const [choosenCourier, setChoosenCourier] = useState<Pricing | null>(null);
 
+  const { data: cartData } = useCartQuery(session?.accessToken as string);
   useEffect(() => {
     if (userAddress?.length) {
       const defaultAddr = userAddress.find((address) => address.isDefault);
@@ -53,7 +42,7 @@ const ShippingSection: FC = () => {
   }, [defaultAddress, setUserAddressId]);
 
   useEffect(() => {
-    if (closestWarehouse && defaultAddress) {
+    if (closestWarehouse && defaultAddress && cartData) {
       setRequest((prev) => ({
         ...prev,
         origin_area_id: closestWarehouse.areaId,
@@ -62,10 +51,22 @@ const ShippingSection: FC = () => {
         origin_longitude: closestWarehouse.longitude,
         destination_latitude: defaultAddress.latitude,
         destination_longitude: defaultAddress.longitude,
-        items: dummyItems,
+        items: cartData.cartItems.map((item) => {
+          return {
+            name: item.productName,
+            description: item.productName,
+            value: item.price,
+            length: null,
+            width: null,
+            height: null,
+            weight: 200,
+            quantity: item.quantity,
+          };
+        }),
       }));
     }
-  }, [closestWarehouse, defaultAddress, setRequest]);
+    console.log(cartData);
+  }, [closestWarehouse, defaultAddress, setRequest, cartData]);
 
   if (isLoading) return <CustomSpinner />;
   if (error) return <p className="text-red-500">{error.message}</p>;
@@ -85,7 +86,7 @@ const ShippingSection: FC = () => {
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Shipping Address</h2>
           <div className="mt-2 p-4 border rounded-lg bg-gray-50 shadow-sm">
-            {defaultAddress && (
+            {defaultAddress ? (
               <>
                 <div className="flex justify-between items-start gap-4">
                   <div className="break-words">
@@ -105,6 +106,8 @@ const ShippingSection: FC = () => {
                   </div>
                 </div>
               </>
+            ) : (
+              <div>No default address found.</div>
             )}
             <button
               onClick={() => setIsChangeAddressModalOpen(true)}
@@ -117,13 +120,15 @@ const ShippingSection: FC = () => {
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Closest Warehouse</h2>
           <div className="mt-2 p-3 border rounded-md bg-gray-50">
-            {closestWarehouse && (
+            {closestWarehouse ? (
               <>
                 <div>
                   {closestWarehouse.district}, {closestWarehouse.city},{" "}
                   {closestWarehouse.province}. {closestWarehouse.postalCode}
                 </div>
               </>
+            ) : (
+              <div>No warehouse found.</div>
             )}
           </div>
         </div>
@@ -138,6 +143,9 @@ const ShippingSection: FC = () => {
                 choosenCourier={choosenCourier}
                 setChoosenCourier={setChoosenCourier}
               />
+            )}
+            {!groupedCouriers && !isCourierLoading && (
+              <div>Can&apos;t find courier rates.</div>
             )}
           </div>
         </div>

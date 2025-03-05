@@ -11,6 +11,7 @@ const HeroCard: FC = () => {
 
   if (isLoading) return <CustomSpinner />;
   if (error) return <>{error}</>;
+  if (promotion?.length === 0) return null;
   return (
     <div className="w-full h-[720px] rounded-3xl border-2 overflow-hidden">
       <Carousel slideInterval={5000} pauseOnHover draggable={false}>

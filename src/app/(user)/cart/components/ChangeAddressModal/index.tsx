@@ -36,6 +36,7 @@ const ChangeAddressModal: FC<ChangeAddressModalProps> = ({
       <Modal.Header>Change shipping address</Modal.Header>
       <Modal.Body>
         <div className="flex flex-col gap-2">
+          {userAddress.length === 0 && <div>No addresses found.</div>}
           {userAddress.map((address) => (
             <div
               key={address.id}

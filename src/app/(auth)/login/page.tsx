@@ -33,7 +33,6 @@ const LoginPage: FC = () => {
   ) => {
     setError(null);
     try {
-      console.log(values);
       const result = await signIn("credentials", {
         redirect: false,
         email: values.email,
@@ -53,9 +52,8 @@ const LoginPage: FC = () => {
         formikHelpers.resetForm();
         router.refresh();
       }
-      console.log("stil running");
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
+      showToast("An unexpected error occurred:" + error, "error");
       setError("An unexpected error occurred. Please try again.");
     } finally {
     }

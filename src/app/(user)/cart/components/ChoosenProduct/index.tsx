@@ -8,7 +8,8 @@ import useProductDetail from "@/hooks/product/useProductDetail";
 import { CartItem } from "@/types/cart";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "flowbite-react";
-import { HiPlus, HiMinus, HiHeart, HiTrash } from "react-icons/hi";
+import { HiPlus, HiMinus, HiTrash } from "react-icons/hi";
+import Link from "next/link";
 
 type Props = {
   product: CartItem;
@@ -81,72 +82,76 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
 
   return (
     <>
-      <div className="grid lg:grid-cols-5 grid-cols-2 gap-4 lg:mb-8 mb-4 lg:border-none lg:p-0 border-2 border-opacity-30 border-shelf-grey rounded-2xl p-8">
-        <div className="col-span-2">
-          <div className="hero-card-container relative rounded-2xl w-full h-full overflow-hidden">
+      <div className="grid lg:grid-cols-5 grid-cols-1 gap-4 p-6 border-2 border-opacity-30 border-shelf-grey rounded-2xl shadow-md">
+        <div className="lg:col-span-1 flex items-center justify-center">
+          <div className="relative w-32 h-32 rounded-xl overflow-hidden">
             <Image
               src={
                 productDetail?.images[0]?.imageUrl ||
                 "/images/kohceng-senam.jpg"
               }
               alt={productDetail?.name || "Product Image"}
-              width={500}
-              height={500}
-              className="object-cover rounded-2xl"
+              width={128}
+              height={128}
+              className="object-cover"
             />
           </div>
         </div>
-        <div className="col-span-2">
-          <h4 className="font-bold md:text-xl text-base">
-            {productDetail?.name}
-          </h4>
-          <p className="md:text-base text-[12px]">{productDetailFormatted}</p>
-          <p className="md:text-base text-[12px] mt-2">
-            Weight : {productDetail?.weight}
-          </p>
-          <p className="md:text-base text-[12px] mt-2">
-            Qty : {product.quantity}
-          </p>
 
-          {/* Quantity Selector */}
-          <div className="flex items-center space-x-2 mt-2">
-            <Button size="xs" className="bg-shelf-light-grey" onClick={() =>
-                updateQuantityMutation.mutate(product.quantity - 1)
-              } >
-              <HiMinus  className="text-base h-6 text-shelf-black" />
-            </Button>
-            <p className="text-sm md:text-base lg:text-lg">
-              {product.quantity}
+        <div className="lg:col-span-4 flex flex-col justify-between w-full">
+          <div className="flex justify-between items-center">
+            <Link href={`/product/${productDetail?.id}`}>
+              <h4 className="font-bold text-lg md:text-xl">
+                {productDetail?.name}
+              </h4>
+            </Link>
+            <p className="font-bold text-shelf-blue text-lg md:text-xl">
+              Rp. {formattedPrice.toLocaleString("id-ID")}
             </p>
-            <Button size="xs" className="bg-shelf-light-grey" onClick={() =>
-                updateQuantityMutation.mutate(product.quantity + 1)
-              }>
-              <HiPlus  className="text-base h-6 text-shelf-black" />
-            </Button>
-            
           </div>
 
-          {/* Icons Section */}
-          <div className="flex space-x-3 md:space-x-4 text-sm md:text-lg lg:text-xl mt-3">
-            
-            <Button size="xs" color="gray" className="border-0 ">
-              <HiHeart  className="text-2xl h-6 text-shelf-grey hover:text-red-600" />
-            </Button>
-            
-            <Button 
-              size="xs" 
-              color="gray" 
-              className="border-0 " 
-              onClick={() => deleteMutation.mutate()}
-            >
-              <HiTrash  className="text-2xl h-6 text-shelf-grey hover:text-red-600" />
-            </Button>
-          </div>
-        </div>
-        <div className="col-span-1">
-          <p className="font-bold text-shelf-blue text-lg lg:text-right">
-            Rp. {formattedPrice.toLocaleString("id-ID")}
+          <p className="text-sm md:text-base text-gray-600">
+            {productDetailFormatted}
           </p>
+          <p className="text-sm md:text-base mt-1">
+            Weight: {productDetail?.weight}
+          </p>
+          <p className="text-sm md:text-base mt-1">Qty: {product.quantity}</p>
+
+          <div className="flex justify-between">
+            <div className="flex items-center space-x-3 mt-3">
+              <Button
+                size="sm"
+                color="warning"
+                onClick={() =>
+                  updateQuantityMutation.mutate(product.quantity - 1)
+                }
+              >
+                <HiMinus className="text-lg text-shelf-black" />
+              </Button>
+              <span className="text-base md:text-lg font-medium">
+                {product.quantity}
+              </span>
+              <Button
+                size="sm"
+                color="warning"
+                onClick={() =>
+                  updateQuantityMutation.mutate(product.quantity + 1)
+                }
+              >
+                <HiPlus className="text-lg text-shelf-black" />
+              </Button>
+            </div>
+            <div className="flex items-center space-x-3 mt-3">
+              <Button
+                size="sm"
+                color="light"
+                onClick={() => deleteMutation.mutate()}
+              >
+                <HiTrash className="text-lg text-shelf-grey" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </>

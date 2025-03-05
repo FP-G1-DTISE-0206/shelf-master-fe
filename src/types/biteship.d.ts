@@ -99,9 +99,9 @@ export interface Item {
   name: string;
   description: string;
   value: number;
-  length: number;
-  width: number;
-  height: number;
+  length: number | null;
+  width: number | null;
+  height: number | null;
   weight: number;
   quantity: number;
 }

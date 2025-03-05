@@ -58,7 +58,9 @@ const GroupedCouriers: React.FC<GroupedCouriersProps> = ({
                     />
                     {row.courier_service_name}
                   </div>
-                  <div className="text-sm font-medium">{row.price}</div>
+                  <div className="text-sm font-medium">
+                    Rp. {row.price.toLocaleString("id-ID")}
+                  </div>
                 </div>
               ))}
             </div>

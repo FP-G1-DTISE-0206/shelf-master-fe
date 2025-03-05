@@ -1,56 +1,48 @@
 "use client";
 import { FC } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ProductResponse} from "@/types/product";
+import { ProductResponse } from "@/types/product";
+import Link from "next/link";
 
 interface ProductCardProps {
   product: ProductResponse;
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {
-  const router = useRouter();
-
   const formatPrice = (price?: number): string => {
     if (typeof price !== "number" || isNaN(price)) {
       return "Rp 0";
     }
     return `Rp ${price.toLocaleString("id-ID")}`;
   };
-
-  const handleViewProduct = () => {
-    router.push(`/product/${product.id}`);
-  };
   return (
     <>
-      <div className="product-card-container w-full">
-        <div className="product-image-container border-8 border-shelf-white rounded-3xl ">
-          <div className="hero-card-container relative rounded-2xl w-full h-full overflow-hidden">
-              <Image
-                src={product.image.imageUrl}
-                alt={product.name || "Product Image"}
-                width={500}
-                height={500}
-                className="object-cover rounded-2xl"
-              />
+      <div className="w-full flex flex-col items-center">
+        <div className="border-4 border-shelf-white rounded-2xl p-2 shadow-md">
+          <div className="relative w-full max-w-[160px] sm:max-w-[180px] md:max-w-[200px] aspect-square rounded-xl overflow-hidden flex items-center justify-center">
+            <Image
+              src={product.image.imageUrl}
+              alt={product.name || "Product Image"}
+              width={200}
+              height={200}
+              className="w-full h-full object-cover object-center rounded-xl"
+            />
           </div>
         </div>
-        <div className="product-information-container">
-        <div className="product-information-title my-2">
-            <h3 className="font-semibold xl:text-2xl text-base text-center text-shelf-black truncate">
-              {product.name}
-            </h3>
-          </div>
-          <div className="view-product-button">
-            <button
-              onClick={handleViewProduct}
-              className="bg-shelf-black xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
-            >
-              VIEW PRODUCT <br />
-              <span className="text-shelf-orange">{formatPrice(product.price)}</span>
-            </button>
-          </div>
-        </div>
+
+        <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-xl text-center text-shelf-black mt-3 truncate w-full">
+          {product.name}
+        </h3>
+
+        <Link
+          href={`/product/${product.id}`}
+          className="mt-2 bg-shelf-black px-6 py-3 w-full max-w-[200px] rounded-lg text-center text-shelf-white font-medium text-sm md:text-base transition-all hover:bg-shelf-orange"
+        >
+          VIEW PRODUCT <br />
+          <span className="text-shelf-orange font-semibold">
+            {formatPrice(product.price)}
+          </span>
+        </Link>
       </div>
     </>
   );

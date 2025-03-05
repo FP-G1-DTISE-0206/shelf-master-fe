@@ -21,7 +21,6 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
   return (
     <>
       <div className="rounded-lg max-w-xl mx-auto lg:mx-0">
-        {/* Main Image Container with Fixed Aspect Ratio */}
         <div className="relative w-full h-80 overflow-hidden lg:w-[full] md:h-[480px]">
           <div className="hero-card-container relative w-fit rounded-2xl h-full overflow-hidden">
             <Image
@@ -32,10 +31,6 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
               className="object-cover"
             />
           </div>
-
-          
-
-          {/* <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2"> */}
           <div className="absolute bottom-2 left-1/2 transform -translate-x-[80%] flex space-x-2">
             {images.map((_, index) => (
               <span
@@ -49,7 +44,6 @@ const ImageGallery: FC<ImageGalleryProps> = ({ images }) => {
           </div>
         </div>
 
-        {/* Thumbnails */}
         <div className="flex space-x-4 mt-4">
           {images.map((image, index) => (
             <div
