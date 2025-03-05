@@ -46,14 +46,19 @@ const SalesCards: FC<SalesCardsProps> = ({
               <FontAwesomeIcon icon={faBoxOpen} className="text-blue-500 text-2xl w-5" />
             </div>
             <p className="text-sm text-gray-500 mt-2">
-              {
-                card.percentage == null 
-                ? (<span className="text-green-500 font-bold">100% ↑</span>)
-                : card.percentage >= 0 
-                ? (<span className="text-green-500 font-bold">{card.percentage}% ↑</span>)
-                : (<span className="text-red-500 font-bold">{card.percentage}% ↓</span>)
-              }
-              <span>&nbsp;Compared to Last&nbsp;{index == 0 ? "Week" : index == 1 ? "Month" : "Year"}</span>
+              { (card.percentage == null || card.percentage >= 100) && (
+                <span className="text-green-500 font-bold">100% ↑</span>
+              )}
+              { card.percentage != null && card.percentage >= 0 && card.percentage < 100 && (
+                <span className="text-green-500 font-bold">{card.percentage?.toFixed(2) ?? "0.00"}% ↑</span>
+              )}
+              { card.percentage != null && card.percentage < 0 && card.percentage >= -100 && (
+                <span className="text-red-500 font-bold">{card.percentage?.toFixed(2) ?? "0.00"}% ↓</span>
+              )}
+              { card.percentage != null && card.percentage < -100 && (
+                <span className="text-red-500 font-bold">-100% ↓</span>
+              )}
+              <span>&nbsp;Compared to Last&nbsp;{index === 0 ? "Week" : index === 1 ? "Month" : "Year"}</span>
             </p>
           </Card>
         ))}
