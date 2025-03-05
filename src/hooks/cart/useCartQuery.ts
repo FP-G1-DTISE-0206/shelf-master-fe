@@ -1,8 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getCart, addToCart, updateCartItem, removeCartItem } from "./cartService";
+import {
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeCartItem,
+} from "./cartService";
 import { useEffect } from "react";
-
 
 export const useCartQuery = (token: string) => {
   const queryClient = useQueryClient();
@@ -10,7 +14,7 @@ export const useCartQuery = (token: string) => {
   const cartQuery = useQuery({
     queryKey: ["cart"],
     queryFn: async () => {
-      if (!token ) {
+      if (!token) {
         console.warn("No token or userId provided. Skipping cart fetch.");
         return { cartItems: [], totalQuantity: 0, totalPrice: 0 };
       }
@@ -30,13 +34,12 @@ export const useCartQuery = (token: string) => {
   return cartQuery;
 };
 
-
 export const useCartMutations = (token: string, userId: number) => {
   const queryClient = useQueryClient();
 
   const addMutation = useMutation({
     mutationFn: (data: { productId: number; quantity: number }) =>
-      addToCart(token, userId, data.productId, data.quantity),
+      addToCart(token, data.productId, data.quantity),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["cart"], exact: false });
     },
@@ -51,7 +54,8 @@ export const useCartMutations = (token: string, userId: number) => {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (cartId: number) => removeCartItem(token, userId.toString(), cartId),
+    mutationFn: (cartId: number) =>
+      removeCartItem(token, userId.toString(), cartId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["cart"], exact: false });
     },
