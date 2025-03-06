@@ -1,38 +1,38 @@
-"use client";
+// "use client";
 
-import { useEffect } from "react";
-import { usePaymentStore } from "@/store/paymentStore";
+// import { useEffect } from "react";
+// import { usePaymentStore } from "@/store/paymentStore";
 
-// Define global `snap` type properly
-declare global {
-  interface Window {
-    snap?: {
-      embed: (token: string, options: { embedId: string }) => void;
-      pay: (token: string, options?: Record<string, unknown>) => void;
-    };
-  }
-}
+// // Define global `snap` type properly
+// declare global {
+//   interface Window {
+//     snap?: {
+//       embed: (token: string, options: { embedId: string }) => void;
+//       pay: (token: string, options?: Record<string, unknown>) => void;
+//     };
+//   }
+// }
 
-export default function PaymentButton() {
-  const { snapToken } = usePaymentStore();
+// export default function PaymentButton() {
+//   const { snapToken } = usePaymentStore();
 
-  useEffect(() => {
-    if (snapToken && typeof window !== "undefined" && window.snap) {
-      console.log("Embedding Snap.js with token:", snapToken);
-      window.snap.embed(snapToken, { embedId: "snap-container" });
-    }
-  }, [snapToken]);
+//   useEffect(() => {
+//     if (snapToken && typeof window !== "undefined" && window.snap) {
+//       console.log("Embedding Snap.js with token:", snapToken);
+//       window.snap.embed(snapToken, { embedId: "snap-container" });
+//     }
+//   }, [snapToken]);
 
-  return (
-    <div>
-      {!snapToken ? (
-        <p className="text-gray-500">Waiting for payment token...</p>
-      ) : (
-        <div id="snap-container" className="h-[600px]"></div>
-      )}
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       {!snapToken ? (
+//         <p className="text-gray-500">Waiting for payment token...</p>
+//       ) : (
+//         <div id="snap-container" className="h-[600px]"></div>
+//       )}
+//     </div>
+//   );
+// }
 
 // "use client";
 
