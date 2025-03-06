@@ -4,24 +4,20 @@ import { useParams } from "next/navigation";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 import ImageGallery from "@/app/components/ImageGallery";
 import { useSession } from "next-auth/react";
-import useProductDetail from "@/hooks/product/useProductDetail";
+import useSimpleProductDetail from "@/hooks/product/useSimpleProductDetail";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart } from "@/hooks/cart/cartService";
 import { useCartStore } from "@/store/cartStore";
 import { Badge, Button } from "flowbite-react";
-import { HiShoppingCart, HiHeart } from "react-icons/hi";
+import { HiShoppingCart } from "react-icons/hi";
 import CustomSpinner from "@/components/CustomSpinner";
 
 const ProductPage: FC = () => {
   const { id }: { id: string } = useParams() ?? { id: "" };
   const { data: session } = useSession();
-  const accessToken = session?.accessToken ?? "";
   const { addToCartLocal } = useCartStore();
   const queryClient = useQueryClient();
-  const { product, isLoading, errorProductDetail } = useProductDetail(
-    accessToken,
-    id
-  );
+  const { product, isLoading, errorProductDetail } = useSimpleProductDetail(id);
 
   const productImage = product?.images?.map((img) => img.imageUrl) ?? [
     "/images/kohceng-senam.jpg",
