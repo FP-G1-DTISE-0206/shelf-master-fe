@@ -10,7 +10,11 @@ import { Pricing } from "@/types/biteship";
 import GroupedCouriers from "../GroupedCouriers";
 import { useCartQuery } from "@/hooks/cart/useCartQuery";
 
-const ShippingSection: FC = () => {
+interface ShippingSectionProps {
+  setShippingCost: (cost:number) => void;
+}
+
+const ShippingSection: FC<ShippingSectionProps> = ({setShippingCost}) => {
   const { data: session } = useSession();
   const { error, isLoading, userAddress } = useUserAddress(
     session?.accessToken as string
@@ -67,6 +71,12 @@ const ShippingSection: FC = () => {
     }
     console.log(cartData);
   }, [closestWarehouse, defaultAddress, setRequest, cartData]);
+
+  useEffect(() => {
+    if (choosenCourier) {
+      setShippingCost(choosenCourier.price);
+    }
+  }, [choosenCourier, setShippingCost]);
 
   if (isLoading) return <CustomSpinner />;
   if (error) return <p className="text-red-500">{error.message}</p>;

@@ -1,7 +1,8 @@
 import axios from "axios";
 import { CartItem } from "@/types/cart";
 
-const API_URL = "http://localhost:8080/api/v1/cart";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart`;
+
 
 const getAuthHeaders = (token: string | undefined) => {
   if(!token) throw new Error("User is not authenticated");
@@ -37,6 +38,6 @@ export const updateCartItem = async (
   return response.data;
 };
 
-export const removeCartItem = async (token: string, userId: string, cartId: number) => {
+export const removeCartItem = async (token: string, cartId: number) => {
   await axios.delete(`${API_URL}/${cartId}`, getAuthHeaders(token));
 };

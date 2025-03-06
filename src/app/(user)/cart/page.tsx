@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 import ShippingSection from "./components/ShippingSection";
 import { useCartStore } from "@/store/cartStore";
@@ -17,7 +17,10 @@ const Cart: FC = () => {
     useCartQuery(accessToken);
   const { setCart, cartItems } = useCartStore();
 
-  const totalPrice = cartData?.totalPrice?.toLocaleString("id-ID") ?? 0;
+  const [shippingCost, setShippingCost ] = useState<number>(0);
+
+  const totalPrice = cartData?.totalPrice ?? 0;
+  const formattedTotalPrice = (totalPrice + shippingCost).toLocaleString("id-ID");
   const totalQuantity = cartData?.totalQuantity ?? 0;
 
   useEffect(() => {
@@ -51,7 +54,7 @@ const Cart: FC = () => {
           </div>
         </div>
         <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3 space-y-10">
-          <ShippingSection />
+          <ShippingSection setShippingCost={setShippingCost}/>
           <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3">
             <h3 className="text-xl font-semibold lg:text-[32px]">
               Order Summary
@@ -62,11 +65,11 @@ const Cart: FC = () => {
                   <tr className="lg:text-xl">
                     <td className="py-2">{totalQuantity} ITEM(S)</td>
 
-                    <td className="text-right py-2">{`Rp ${totalPrice}`}</td>
+                    <td className="text-right py-2">{`Rp ${totalPrice.toLocaleString("id-ID")}`}</td>
                   </tr>
                   <tr className="lg:text-xl">
                     <td className="py-2">Delivery</td>
-                    <td className="text-right py-2">Rp 6.999</td>
+                    <td className="text-right py-2">{`Rp ${shippingCost.toLocaleString("id-ID")}`}</td>
                   </tr>
                   <tr className="lg:text-xl">
                     <td className="py-2">Sales Tax</td>
@@ -74,9 +77,7 @@ const Cart: FC = () => {
                   </tr>
                   <tr className="font-bold lg:text-2xl">
                     <td className="py-2">Total</td>
-                    <td className="text-right py-2">{`Rp ${(
-                      (cartData?.totalPrice ?? 0) + 6999
-                    ).toLocaleString("id-ID")}`}</td>
+                    <td className="text-right py-2">{`Rp ${formattedTotalPrice}`}</td>
                   </tr>
                 </tbody>
               </table>
