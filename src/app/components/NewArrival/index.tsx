@@ -1,18 +1,13 @@
 import { FC } from "react";
 import ProductCard from "../ProductCard";
-import { useSession } from "next-auth/react";
-import useProduct from "@/hooks/product/useProduct";
+import useSimpleProduct from "@/hooks/product/useSimpleProduct";
 
 const NewArrival: FC = () => {
-  const warehouse = { id: 0, name: "All" };
-  const { data: session } = useSession();
-  const accessToken = session?.accessToken ?? "";
-
   const {
     error: productError,
     isLoading: isProductLoading,
     products,
-  } = useProduct(accessToken, warehouse);
+  } = useSimpleProduct();
 
   return (
     <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
