@@ -36,7 +36,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
 
         <Link
           href={`/product/${product.id}`}
-          className="mt-2 bg-shelf-black px-6 py-3 w-full max-w-[200px] rounded-lg text-center text-shelf-white font-medium text-sm md:text-base transition-all hover:bg-shelf-orange"
+          className="mt-2 bg-shelf-black px-6 py-3 w-full max-w-[200px] rounded-lg text-center text-shelf-white font-medium text-sm md:text-base transition-all hover:bg-shelf-grey"
         >
           VIEW PRODUCT <br />
           <span className="text-shelf-orange font-semibold">
