@@ -105,7 +105,7 @@ const ProductPage: FC = () => {
                 <Button
                   color="dark"
                   onClick={() => addToCartMutation.mutate()}
-                  disabled={mutation.isPending}
+                  disabled={!session || mutation.isPending}
                   className="flex-1 py-2 text-base font-medium w-full"
                 >
                   <HiShoppingCart className="mr-2 h-5 w-5" />
