@@ -1,15 +1,7 @@
-import {
-  FC,
-  Dispatch,
-  SetStateAction,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
-import { Button, Checkbox, Label, Select, TextInput } from "flowbite-react";
+import { FC, Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Button, Checkbox, Label, Select } from "flowbite-react";
 import { SimpleProductReq } from "@/hooks/product/useSimpleProduct";
 import useSimpleCategory from "@/hooks/category/useSimpleCategory";
-import debounce from "lodash.debounce";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -24,14 +16,7 @@ const FilterComponent: FC<FilterComponentProps> = ({
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [filter, setfilter] = useState<string>("");
-  const { params, setParams, categories } = useSimpleCategory();
-
-  // const handleCategorySearch = useCallback(
-  //   debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-  //     setParams({ ...params, search: e.target.value });
-  //   }, 500),
-  //   []
-  // );
+  const { categories } = useSimpleCategory();
 
   const handleCheckboxChange = (
     categoryId: number,
