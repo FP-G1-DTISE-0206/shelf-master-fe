@@ -125,6 +125,7 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
                 onClick={() =>
                   updateQuantityMutation.mutate(product.quantity - 1)
                 }
+                disabled={product.quantity <= 1}
               >
                 <HiMinus className="text-lg text-shelf-black" />
               </Button>
