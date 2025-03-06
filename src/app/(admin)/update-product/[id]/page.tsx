@@ -1,17 +1,16 @@
 "use client"
 import Link from "next/link";
-import { useState, useCallback, useRef } from "react";
+import { FC, useEffect, useState } from "react";
 import { cn } from "@/utils";
 import { 
-  Card, TextInput, Textarea, Button, Badge, Carousel, 
-  Breadcrumb, Label, Dropdown, 
+  Card, TextInput, Textarea, Button, 
+  Badge, Carousel, Breadcrumb, Label, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { UpdateProductRequest } from "@/types/product";
-import useProductCategory from "@/hooks/category/useProductCategory";
 import useUpdateProduct from "@/hooks/product/useUpdateProduct";
 import useDeleteProduct from "@/hooks/product/useDeleteProduct";
 import useProductDetail from "@/hooks/product/useProductDetail";
@@ -19,10 +18,10 @@ import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 import { useParams } from "next/navigation";
 import CustomSpinner from "@/components/CustomSpinner";
-import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import MultipleImageUploader from "../../products/components/MultipleImageUploader";
-import debounce from "lodash.debounce";
+import { CategoryResponse } from "@/types/category";
+import CategorySearchField from "../../components/CategorySearchField";
 
 const validationSchema = Yup.object({
   sku: Yup.string()
@@ -36,27 +35,19 @@ const validationSchema = Yup.object({
     .min(1, "At least one image is required")
 });
 
-const UpdateProduct = () => {
+const UpdateProduct: FC = () => {
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const [transactionType, setTransactionType] = useState<string>("");
   const { id }: { id: string } = useParams() ?? { id: "" };
   const { data: session } = useSession();
-  const { setSearch } = useSearchPaginationStore();
   const accessToken = session?.accessToken ?? "";
-  const { categories } = useProductCategory(accessToken);
   const { 
     product, isLoading, errorProductDetail, 
   } = useProductDetail(accessToken, id);
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
   const { updateProduct } = useUpdateProduct(accessToken);
   const { deleteProduct } = useDeleteProduct(accessToken);
   const [loading, setLoading] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFilter = useCallback(
-    debounce((value: string) => {
-      setSearch(value);
-    }, 700), [setSearch]
-  );
 
   if (errorProductDetail) return <div>Error: {errorProductDetail.message}</div>;
   if (isLoading) return <div><CustomSpinner /></div>;
@@ -118,6 +109,12 @@ const UpdateProduct = () => {
     }
   };
 
+  useEffect(()=>{
+    if(product.categories) {
+      setCategories(product.categories)
+    }
+  },[product])
+
   return (
     <div className="container mx-auto px-4 w-full">
       <Breadcrumb className="px-5 py-3">
@@ -167,7 +164,7 @@ const UpdateProduct = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="weight" className="font-medium">Weight{"(grams)"}</Label>
+                  <Label htmlFor="weight" className="font-medium">Weight{" (grams)"}</Label>
                   <Field as={TextInput} id="weight" name="weight" 
                     type="number" placeholder="Enter weight in grams" />
                   <ErrorMessage
@@ -177,38 +174,28 @@ const UpdateProduct = () => {
                   />
                 </div>
                 <div className="w-full relative">
-                  <Label htmlFor="category" className="font-medium">Category</Label>
-                  <TextInput id="category" name="category" type="text" autoComplete="off"
-                    ref={searchInputRef} 
-                    placeholder="Enter category" onChange={(e) => handleFilter(e.target.value)} />
-                  <div className="absolute right-2 bottom-3">
-                    <Dropdown label={<FontAwesomeIcon icon={faSearch} />} inline arrowIcon={false}>
-                      {categories?.length > 0 ? categories.map((option, idx) => (
-                        <Dropdown.Item key={idx} onClick={() => {
-                          if (!values.categories.includes(option.id)) {
-                            setFieldValue("categories", [...values.categories, option.id]);
-                          }
-                          searchInputRef.current!.value = "";
-                          setSearch("");
-                        }}>
-                          {option.name}
-                        </Dropdown.Item>
-                      )) : <Dropdown.Item disabled>No categories found</Dropdown.Item>}
-                    </Dropdown>
-                  </div>
+                  <Label htmlFor="categories" className="font-medium">Category</Label>
+                  <Field component={CategorySearchField} id="categories" name="categories" 
+                    session={session} type="text" placeholder="Search category" 
+                    selectedCategories={categories} setSelectedCategories={setCategories} />
                 </div>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {values.categories.map((categoryId, idx) => {
-                    const category = categories.find(c => c.id === categoryId);
-                    return category && (
-                      <Badge key={idx} color="info" className="relative inline-block pr-5">
-                        {category.name}
-                        <div className="absolute -top-2 -right-0 px-1 font-bold rounded-lg bg-black cursor-pointer"
-                          onClick={() => setFieldValue("categories", values.categories.filter(id => id !== categoryId))}
-                        >
-                          <FontAwesomeIcon icon={faMinus} color="red" />
-                        </div>
-                      </Badge>
+                  {categories?.map((category) => {
+                    return (
+                      category && (
+                        <Badge key={category.id} color="info" className="relative inline-block pr-5">
+                          {category.name}
+                          <div
+                            className="absolute -top-2 -right-0 px-1 font-bold rounded-lg bg-black cursor-pointer"
+                            onClick={() => {
+                              setCategories(categories.filter((c) => c.id !== category.id))
+                              setFieldValue( "categories", categories);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faMinus} color="red" />
+                          </div>
+                        </Badge>
+                      )
                     );
                   })}
                 </div>
@@ -222,7 +209,7 @@ const UpdateProduct = () => {
                         {values.images.map((src, index) => (
                           <div key={index} className="relative w-full aspect-[9/6]">
                             <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
-                            <Button
+                            <button title="delete image" type="button" 
                               onClick={() => handleDeleteImage(src, setFieldValue, values)}
                               className={cn(
                                 'absolute top-2 right-16', 
@@ -231,7 +218,7 @@ const UpdateProduct = () => {
                               )}
                             >
                               <FontAwesomeIcon icon={faTrash} color="red" />
-                            </Button>
+                            </button>
                           </div>
                         ))}
                       </Carousel>

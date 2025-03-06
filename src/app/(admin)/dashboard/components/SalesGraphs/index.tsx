@@ -30,27 +30,36 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
         <h2 className="text-lg font-bold mb-4">Sale Graph</h2>
         <Button.Group className="flex flex-wrap gap-4 mb-4">
           {["Weekly", "Monthly"].map((tab, idx) => (
-            <Button
+            <button type="button"
               key={idx}
               onClick={()=>setType(tab)}
-              className={`px-4 py-2 rounded-lg ${
-                tab === "Weekly" ? "bg-black text-white" : "bg-gray-600"
+              className={`px-4 py-2 rounded-lg hover:bg-black ${
+                tab === "Weekly" ? "bg-shelf-blue text-white" : "bg-gray-600 text-gray-400"
               }`}
             >
               {tab}
-            </Button>
+            </button>
           ))}
         </Button.Group>
         <div className="rounded-lg">
           <Card className="max-w-lg mx-auto">
-            <h2 className="text-xl font-semibold text-gray-800">{type} Sales</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              {type} Sales
+            </h2>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={type == "Weekly" ? graph : yearGraph}>
-                <XAxis dataKey="x" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="y" fill="#3b82f6" />
-              </BarChart>
+              { (type === "Weekly" ? (graph && graph?.length > 0) 
+                : (yearGraph && yearGraph.length > 0)) ? (
+                <BarChart data={type === "Weekly" ? graph : yearGraph}>
+                  <XAxis dataKey="x" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="y" fill="#3b82f6" />
+                </BarChart>
+              ) : (
+                <div className="flex justify-center items-center h-full text-gray-500">
+                  No data available
+                </div>
+              )}
             </ResponsiveContainer>
           </Card>
         </div>

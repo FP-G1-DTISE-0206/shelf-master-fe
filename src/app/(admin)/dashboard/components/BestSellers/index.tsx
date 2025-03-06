@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { Card, Button } from "flowbite-react";
+import { Card, Spinner } from "flowbite-react";
 import { Session } from "next-auth";
 import { AssignedWarehouse } from "@/types/product";
 import useBestSellers from '@/hooks/report/useBestSellers';
@@ -14,7 +14,7 @@ const BestSellers: FC<BestSellersProps> = ({
   session,
   warehouse,
 }) => {
-  const {params, setParams, populars} = useBestSellers(session?.accessToken as string)
+  const {isLoading, error, params, setParams, populars} = useBestSellers(session?.accessToken as string)
   useEffect(() => {
     setParams({ ...params, warehouseId: warehouse.id })
   }, [warehouse])
@@ -32,7 +32,9 @@ const BestSellers: FC<BestSellersProps> = ({
       <Card className="w-full md:w-1/3">
         <h2 className="text-lg font-bold mb-4">Best Sellers</h2>
         <ul className="min-h-72">
-          {populars?.map((product) => (
+          {isLoading && (<><Spinner/></>)}
+          {!isLoading && error && (<>{error.message}</>)}
+          {!isLoading && populars?.map((product) => (
             <li key={product.id} className="flex justify-between items-center mb-3">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-gray-200 rounded-lg mr-4"></div>
@@ -47,10 +49,12 @@ const BestSellers: FC<BestSellersProps> = ({
             </li>
           ))}
         </ul>
-        <Button as={Link} href="/report"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4">
-          Report
-        </Button>
+        <Link href={"/report"}>
+          <button type="button" 
+            className="bg-shelf-blue w-full text-white py-2 px-5 rounded-lg">
+            Report
+          </button>
+        </Link>
       </Card>
     </>
   )

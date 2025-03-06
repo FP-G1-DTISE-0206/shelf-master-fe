@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
-import { Card } from "flowbite-react";
+import { Card, Spinner } from "flowbite-react";
 import { Session } from "next-auth";
 import { AssignedWarehouse } from "@/types/product";
 import useSalesCards from '@/hooks/report/useSalesCards';
@@ -15,7 +15,7 @@ const SalesCards: FC<SalesCardsProps> = ({
   session,
   warehouse,
 }) => {
-  const { params, setParams, cards } = useSalesCards(session?.accessToken as string);
+  const { isLoading, error, params, setParams, cards } = useSalesCards(session?.accessToken as string);
 
   const currencyFormatter = new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -32,7 +32,15 @@ const SalesCards: FC<SalesCardsProps> = ({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-        {cards?.map((card, index) => (
+        {isLoading && 
+         (<>
+          <Card key={0}><Spinner/></Card>
+          <Card key={1}><Spinner/></Card>
+          <Card key={2}><Spinner/></Card>
+         </>)
+        }
+        {!isLoading && error && (<>{error.message}</>)}
+        {!isLoading && cards?.map((card, index) => (
           <Card key={index}>
             <div className="flex justify-between items-center">
               <div>
