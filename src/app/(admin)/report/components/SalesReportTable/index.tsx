@@ -52,12 +52,13 @@ const SalesReportTable: FC<SalesReportTableProps> = ({
         {!isLoading && !!error && (
           <TableRow>
             <TableCell className="text-center" colSpan={6}>
-              {(error instanceof Error) && error?.message}
+              {(error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+                (error instanceof Error && error.message)}
             </TableCell>
           </TableRow>
         )}
-        {reports?.data.map((report) => (
-          <TableRow key={report.mutationOrderId}>
+        {reports?.data.map((report, idx) => (
+          <TableRow key={idx}>
             <TableCell>{report.orderId}</TableCell>
             <TableCell>{report.productName}</TableCell>
             <TableCell>{report.categoryName}</TableCell>

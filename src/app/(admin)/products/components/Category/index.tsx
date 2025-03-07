@@ -22,7 +22,7 @@ const Category: FC = () => {
   const { data: session } = useSession();
   const [openModalConfirmation, setOpenModalConfirmation] = useState<boolean>(false);
   const { 
-    isModalCategoryOpen, setIsModalCategoryOpen, modalCategoryType, 
+    isModalCategoryOpen, setIsModalCategoryOpen, modalCategoryType, setCategory, 
     category, isDeletingCategory, setIsDeletingCategory, 
   } = useSidebarAdminStore();
   const { createCategory } = useCreateCategory(session?.accessToken as string);
@@ -84,9 +84,19 @@ const Category: FC = () => {
                 <Button color="gray" onClick={() => {
                   setIsModalCategoryOpen(false);
                 }} disabled={isSubmitting}>Cancel</Button>
-                <Button color="blue" disabled={isSubmitting} type="submit">
-                  <span className="capitalize">{modalCategoryType}</span>
-                </Button>
+                <div className="flex gap-2 justify-center">
+                  {modalCategoryType == "update" && (
+                    <Button color="red" onClick={() => {
+                        setIsDeletingCategory(true);
+                        setCategory(category);
+                      }} disabled={isSubmitting} type="button">
+                      <span className="capitalize">Delete</span>
+                    </Button>
+                  )}
+                  <Button color="blue" disabled={isSubmitting} type="submit">
+                    <span className="capitalize">{modalCategoryType}</span>
+                  </Button>
+                </div>
               </Modal.Footer>
 
               <ConfirmationModal 
