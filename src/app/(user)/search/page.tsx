@@ -5,42 +5,51 @@ import ProductCard from "@/app/components/ProductCard";
 import CustomSpinner from "@/components/CustomSpinner";
 import FilterComponent from "./components/Filter";
 import useSimpleProduct from "@/hooks/product/useSimpleProduct";
-import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
-
+import { useSearchParams } from "next/navigation";
 const SearchPage: FC = () => {
-  const { params, setParams, products, isLoading, totalData, error } =
+  const { params, setParams, products, isLoading, totalData, error, refetch } =
     useSimpleProduct();
-  const { search } = useSearchSortPaginationStore();
+
+  const searchParams = useSearchParams();
 
   const handlePageChange = (page: number) => {
     setParams({ ...params, start: (page - 1) * params.length });
   };
 
   useEffect(() => {
-    if (search) {
-      setParams({ ...params, search: search });
+    const filter = searchParams.get("filter");
+    const categoryParam = searchParams.get("categories");
+    if (filter) {
+      setParams({ ...params, search: filter });
+    } else {
+      setParams({ ...params, search: "" });
     }
-  }, [search]);
+    if (categoryParam) {
+      const categoryArray = categoryParam.split(",").map(Number);
+      setParams((prev) => ({
+        ...prev,
+        categories: categoryArray,
+      }));
+    } else {
+      setParams({ ...params, categories: [] });
+    }
+    refetch();
+  }, [searchParams]);
 
   return (
     <div>
       <div className="flex flex-col lg:flex-row gap-6">
-        <FilterComponent productParams={params} setProductParams={setParams} />
-
+        <FilterComponent />
+        {isLoading && <CustomSpinner />}
+        {error && (
+          <div className="align-middle justify-center">
+            Error: {error.message}
+          </div>
+        )}
+        {!isLoading && products?.length < 1 && (
+          <div className="align-middle justify-center">No products</div>
+        )}
         <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-          {isLoading && (
-            <div className="flex min-h-60 align-middle justify-center">
-              <CustomSpinner />
-            </div>
-          )}
-          {error && (
-            <div className="align-middle justify-center">
-              Error: {error.message}
-            </div>
-          )}
-          {!isLoading && products?.length < 1 && (
-            <div className="align-middle justify-center">No products</div>
-          )}
           {!isLoading &&
             products?.length > 0 &&
             products.map((product) => (
