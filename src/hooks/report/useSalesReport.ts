@@ -44,10 +44,28 @@ const generateExcelReport = async (data: SalesReportResponse[]) => {
     { header: "Category", key: "categoryName", width: 20 },
     { header: "Quantity", key: "quantity", width: 10 },
     { header: "Total Price", key: "totalPrice", width: 15 },
-    { header: "Created At", key: "createdAt", width: 20 },
+    { header: "Date", key: "createdAt", width: 20 },
   ] as ExcelJS.Column[];
 
   data.forEach((item) => worksheet.addRow(item));
+
+  const totalPrice = data.reduce((sum, item) => sum + item.totalPrice, 0);
+
+  worksheet.addRow({
+    orderId: "TOTAL",
+    mutationOrderId: "",
+    productId: "",
+    productName: "",
+    categoryName: "",
+    quantity: "",
+    totalPrice: totalPrice,
+    createdAt: "",
+  });
+
+  const totalRowIndex = worksheet.rowCount;
+  const totalRow = worksheet.getRow(totalRowIndex);
+  totalRow.font = { bold: true };
+  totalRow.commit();
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
@@ -85,12 +103,10 @@ const useSalesReport = (accessToken: string) => {
     },
     onError: (error: unknown) => {
       const message =
-        error instanceof Error
-          ? error.message
-          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-            "An unknown error occurred";
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (error instanceof Error ? error.message : "An unknown error occurred");
       showToast(message, "error");
-    },
+    },   
   });
 
   return {

@@ -1,7 +1,7 @@
 import { cn } from "@/utils";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Sidebar, TextInput } from "flowbite-react";
+import { Button, Sidebar, TextInput, Checkbox } from "flowbite-react";
 import { FC, useCallback, useEffect } from "react";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 import { debounce } from "lodash";
@@ -9,10 +9,12 @@ import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import { useSession } from "next-auth/react";
 import useAdminProductCategory from "@/hooks/category/useProductCategory";
 import CategoriesItem from "../CategoriesItem";
+import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
 
 const CategoriesControl: FC = () => {
   const { data: session } = useSession();
   const { setSearch } = useSearchPaginationStore();
+  const { filters, setFilters } = useSearchSortPaginationStore();
   const { categories, refetch } = useAdminProductCategory(
     session?.accessToken as string
   );
@@ -21,7 +23,6 @@ const CategoriesControl: FC = () => {
     refetchData,
     setModalCategoryType,
     setCategory,
-    setIsDeletingCategory,
     setRefetchData,
   } = useSidebarAdminStore();
   const handleFilter = useCallback(
@@ -31,12 +32,21 @@ const CategoriesControl: FC = () => {
     [setSearch]
   );
 
+  const handleCheckboxChange = () => {
+    if(filters.length > 0) {
+      setFilters([])
+    } else {
+      setFilters(categories.map((c)=>c.id))
+    }
+  }
+
   useEffect(() => {
     if (refetchData) {
       refetch();
       setRefetchData(false);
     }
   }, [refetchData]);
+
   return (
     <Sidebar.ItemGroup>
       <div
@@ -45,7 +55,14 @@ const CategoriesControl: FC = () => {
           "text-gray-500 font-semibold"
         )}
       >
-        <span>Categories</span>
+        <div className="flex items-center gap-2">
+          <span>Categories&nbsp;</span>
+          <Checkbox
+            color="black"
+            checked={filters.length > 0}
+            onChange={handleCheckboxChange}
+          />
+        </div>
         {session?.user.roles.includes("SUPER_ADMIN") && (
           <Button
             color="gray"
@@ -76,7 +93,6 @@ const CategoriesControl: FC = () => {
                 setModalCategoryType={setModalCategoryType}
                 setCategory={setCategory}
                 setIsModalCategoryOpen={setIsModalCategoryOpen}
-                setIsDeletingCategory={setIsDeletingCategory}
               />
             ))
           ) : (

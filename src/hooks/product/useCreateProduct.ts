@@ -30,14 +30,10 @@ const useCreateProduct = (accessToken: string) => {
       router.push("/update-product/" + data?.id );
     },
     onError: (error: unknown) => {
-      if (error instanceof Error) {
-        showToast(error.message, "error");
-      } else if (typeof error === "object" && error !== null && "response" in error) {
-        const err = error as { response: { data: { message: string } } };
-        showToast(err.response.data.message, "error");
-      } else {
-        showToast("An unknown error occurred", "error");
-      }
+      const message =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (error instanceof Error ? error.message : "An unknown error occurred");
+      showToast(message, "error");
     },
   });
 
