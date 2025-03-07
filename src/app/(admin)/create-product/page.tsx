@@ -1,26 +1,24 @@
 "use client"
 import Link from "next/link";
-import { useState, FC, useCallback, useRef } from "react";
+import { useState, FC, } from "react";
 import { cn } from "@/utils";
 import { 
-  Card, TextInput, Textarea, Button, Badge, Carousel, Breadcrumb, 
-  Label, Dropdown, 
+  Card, TextInput, Textarea, Badge, Carousel, Breadcrumb, Label, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMinus, faSearch, faTrash, 
+  faMinus, faTrash, 
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { CreateProductRequest } from "@/types/product";
-import useProductCategory from "@/hooks/category/useProductCategory";
-import { useSearchPaginationStore } from "@/store/useSearchPaginationStore";
 import useCreateProduct from "@/hooks/product/useCreateProduct";
 import { useSession } from "next-auth/react";
 import * as Yup from "yup";
 import MultipleImageUploader from "../products/components/MultipleImageUploader";
 import CustomSpinner from "@/components/CustomSpinner";
-import debounce from "lodash.debounce";
+import CategorySearchField from "../components/CategorySearchField";
+import { CategoryResponse } from "@/types/category";
 
 const validationSchema = Yup.object({
   sku: Yup.string()
@@ -36,17 +34,9 @@ const validationSchema = Yup.object({
 
 const CreateProduct: FC = () => {
   const { data: session } = useSession();
-  const { setSearch } = useSearchPaginationStore();
-  const { categories } = useProductCategory(session?.accessToken as string);
   const { createProduct } = useCreateProduct(session?.accessToken as string);
   const [loading, setLoading] = useState(false);
-  
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const handleFilter = useCallback(
-    debounce((value: string) => {
-      setSearch(value);
-    }, 700), [setSearch]
-  );
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
 
   const handleSubmit = async (
     values: CreateProductRequest
@@ -149,51 +139,22 @@ const CreateProduct: FC = () => {
                   />
                 </div>
                 <div className="w-full relative">
-                  <Label htmlFor="category" className="font-medium">Category</Label>
-                  <TextInput id="category" name="category" type="text" placeholder="Enter category"
-                    ref={searchInputRef}
-                    autoComplete="off" onChange={(e) => {handleFilter(e.target.value)}}/>
-                  <div className="absolute right-2 bottom-3">
-                    <Dropdown
-                      label={<FontAwesomeIcon icon={faSearch} />}
-                      inline
-                      arrowIcon={false}
-                    >
-                      {categories && categories.length > 0 ? (
-                        categories.map((option, idx) => (
-                          <Dropdown.Item
-                            key={idx}
-                            onClick={() => {
-                              if (!values.categories.includes(option.id)) {
-                                setFieldValue("categories", [...values.categories, option.id]);
-                              }
-                              searchInputRef.current!.value = "";
-                              setSearch("");
-                            }}
-                          >
-                            {option.name}
-                          </Dropdown.Item>
-                        ))
-                      ) : (
-                        <Dropdown.Item disabled>No categories found</Dropdown.Item>
-                      )}
-                    </Dropdown>
-                  </div>
+                  <Label htmlFor="categories" className="font-medium">Category</Label>
+                  <Field component={CategorySearchField} id="categories" name="categories" 
+                    session={session} type="text" placeholder="Search category" 
+                    selectedCategories={categories} setSelectedCategories={setCategories} />
                 </div>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {values.categories.map((categoryId, idx) => {
-                    const category = categories.find(c => c.id === categoryId);
+                  {categories?.map((category) => {
                     return (
                       category && (
-                        <Badge key={idx} color="info" className="relative inline-block pr-5">
+                        <Badge key={category.id} color="info" className="relative inline-block pr-5">
                           {category.name}
                           <div
                             className="absolute -top-2 -right-0 px-1 font-bold rounded-lg bg-black cursor-pointer"
                             onClick={() => {
-                              setFieldValue(
-                                "categories",
-                                values.categories.filter(id => id !== categoryId)
-                              );
+                              setCategories(categories.filter((c) => c.id !== category.id))
+                              setFieldValue( "categories", categories);
                             }}
                           >
                             <FontAwesomeIcon icon={faMinus} color="red" />
@@ -213,7 +174,7 @@ const CreateProduct: FC = () => {
                         {values.images.map((src, index) => (
                           <div key={index} className="relative w-full aspect-[9/6]">
                             <Image src={src} alt={`Product ${index + 1}`} layout="fill" objectFit="cover" />
-                            <Button
+                            <button title="delete image" type="button" 
                               onClick={() => handleDelete(src, setFieldValue, values)}
                               className={cn(
                                 'absolute top-2 right-16', 
@@ -222,7 +183,7 @@ const CreateProduct: FC = () => {
                               )}
                             >
                               <FontAwesomeIcon icon={faTrash} color="red" />
-                            </Button>
+                            </button>
                           </div>
                         ))}
                       </Carousel>
@@ -252,10 +213,13 @@ const CreateProduct: FC = () => {
                   />
                 </div>
                 <div className="w-full flex justify-end">
-                  <Button className="mt-5"
-                    disabled={isSubmitting} type="submit">
-                    Create Product
-                  </Button>
+                  <button
+                    type="submit"
+                    className="bg-shelf-blue text-white py-2 px-5 rounded-lg w-max"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Creating Product..." : "Create Product"}
+                  </button>
                 </div>
               </div>
             </Form>

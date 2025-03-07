@@ -25,6 +25,7 @@ const PROTECTED_PATHS = [
   "/warehouse",
   "/user",
   "/promotion",
+  "/report",
 ];
 const ROLE_PATHS = {
   USER: [
@@ -41,6 +42,7 @@ const ROLE_PATHS = {
     "/order-list",
     "/dashboard",
     "/product-mutation",
+    "/report",
   ],
   SUPER_ADMIN: [
     "/profile",
@@ -53,6 +55,7 @@ const ROLE_PATHS = {
     "/warehouse",
     "/user",
     "/promotion",
+    "/report",
   ],
 };
 

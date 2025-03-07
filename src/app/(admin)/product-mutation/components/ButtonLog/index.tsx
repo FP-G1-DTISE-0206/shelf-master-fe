@@ -18,7 +18,7 @@ const ButtonLog: FC<ButtonLogProps> = ({
 
   return (
     <>
-      <Button color="blue" onClick={()=>setModalOpen(true)}>View Log</Button>
+      <Button size="xs" color="blue" onClick={()=>setModalOpen(true)}>View Log</Button>
       {
         isModalOpen && <Logs mutationId={mutationId} isOpen={isModalOpen} setOpen={setModalOpen} />
       }

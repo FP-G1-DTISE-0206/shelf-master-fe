@@ -53,7 +53,7 @@ const AdminDetailProduct = () => {
                     value={product.price}/>
                 </div>
                 <div>
-                  <Label htmlFor="weight" className="font-medium">Weight</Label>
+                  <Label htmlFor="weight" className="font-medium">Weight{" (grams)"}</Label>
                   <TextInput id="weight" name="weight" 
                     type="number" disabled={true} placeholder="Enter weight in grams" 
                     value={product.weight}/>
