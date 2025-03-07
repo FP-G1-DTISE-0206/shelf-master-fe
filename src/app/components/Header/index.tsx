@@ -125,13 +125,29 @@ const Header: FC = () => {
             />
           </div>
           {!session && (
-            <div className="flex gap-5 max-lg:me-2">
+            <div className="hidden md:flex gap-5">
               <div className="text-shelf-black hover:cursor-pointer">
                 <Link href="/login">Login</Link>
               </div>
-              <div className="text-shelf-black  hover:cursor-pointer">
+              <div className="text-shelf-black hover:cursor-pointer">
                 <Link href="/register">Register</Link>
               </div>
+            </div>
+          )}
+          {!session && (
+            <div className="md:hidden ml-2">
+              <Dropdown
+                label={<FontAwesomeIcon icon={faUser} />}
+                inline
+                arrowIcon={false}
+              >
+                <DropdownItem>
+                  <Link href="/login">Login</Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link href="/register">Register</Link>
+                </DropdownItem>
+              </Dropdown>
             </div>
           )}
           {session && (

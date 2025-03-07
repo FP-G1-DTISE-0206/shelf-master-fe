@@ -49,6 +49,12 @@ const UpdateProduct: FC = () => {
   const { deleteProduct } = useDeleteProduct(accessToken);
   const [loading, setLoading] = useState(false);
 
+  useEffect(()=>{
+    if(product?.categories) {
+      setCategories(product.categories)
+    }
+  },[product])
+
   if (errorProductDetail) return <div>Error: {errorProductDetail.message}</div>;
   if (isLoading) return <div><CustomSpinner /></div>;
   if (!product) return <div>No such product</div>;
@@ -108,12 +114,6 @@ const UpdateProduct: FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(()=>{
-    if(product.categories) {
-      setCategories(product.categories)
-    }
-  },[product])
 
   return (
     <div className="container mx-auto px-4 w-full">
