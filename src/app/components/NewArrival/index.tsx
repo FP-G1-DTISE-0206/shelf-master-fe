@@ -1,6 +1,7 @@
 import { FC } from "react";
 import ProductCard from "../ProductCard";
 import useSimpleProduct from "@/hooks/product/useSimpleProduct";
+import CustomSpinner from "@/components/CustomSpinner";
 
 const NewArrival: FC = () => {
   const {
@@ -11,7 +12,11 @@ const NewArrival: FC = () => {
 
   return (
     <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
-      {isProductLoading && <p className="text-center">Loading products...</p>}
+      {isProductLoading && (
+        <div className="my-2">
+          <CustomSpinner />
+        </div>
+      )}
 
       {productError && (
         <p className="text-center text-red-500">{productError.message}</p>
