@@ -20,21 +20,15 @@ const fetchSimpleCategories = async (
 const useSimpleCategory = () => {
   const [params, setParams] = useState<PaginationRequest>({
     start: 0,
-    length: 10,
+    length: 100,
     search: "",
     field: "id",
-    order: "asc"
+    order: "asc",
   });
 
-  const {
-    isLoading,
-    error,
-    data,
-    refetch,
-  } = useQuery({
+  const { isLoading, error, data, refetch } = useQuery({
     queryKey: ["fetchSimpleCategories", params],
-    queryFn: () =>
-      fetchSimpleCategories(params),
+    queryFn: () => fetchSimpleCategories(params),
   });
 
   return {
@@ -44,7 +38,7 @@ const useSimpleCategory = () => {
     totalData: data?.recordsFiltered,
     refetch,
     params,
-    setParams
+    setParams,
   };
 };
 
