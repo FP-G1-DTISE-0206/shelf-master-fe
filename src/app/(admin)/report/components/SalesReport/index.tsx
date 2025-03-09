@@ -11,8 +11,8 @@ import {
   Datepicker,
   Pagination,
   Label,
-  Button
 } from "flowbite-react";
+import { cn } from '@/utils';
 
 interface SalesReportProps {
   session: Session | null;
@@ -45,6 +45,10 @@ const SalesReport: FC<SalesReportProps> = ({
       console.log(diffInDays)
       if(diffInDays > 31) {
         showToast(`Range date can't be more than 31 days`, "error");
+        const adjustedEndDate = new Date(newDate);
+        adjustedEndDate.setDate(adjustedEndDate.getDate() + 31);
+        setParams({ ...params, startDate: newDate, 
+          endDate: adjustedEndDate.toISOString().split("T")[0]});
         return;
       } else if(diffInDays < 0) {
         showToast(`Range date can't be less than 1 days`, "error");
@@ -62,6 +66,10 @@ const SalesReport: FC<SalesReportProps> = ({
       const diffInDays = diffInTime / (1000 * 60 * 60 * 24);
       if(diffInDays > 31) {
         showToast(`Range date can't be more than 31 days`, "error");
+        const adjustedStartDate = new Date(newDate);
+        adjustedStartDate.setDate(adjustedStartDate.getDate() - 31);
+        setParams({ ...params, startDate: adjustedStartDate.toISOString().split("T")[0], 
+          endDate: newDate });
         return;
       } else if(diffInDays < 0) {
         showToast(`Range date can't be less than 1 days`, "error");
@@ -105,28 +113,28 @@ const SalesReport: FC<SalesReportProps> = ({
 
   return (
     <>
-      <div className="flex justify-between max-lg:flex-col max-lg:items-start">
-        <div className="flex flex-wrap gap-2 items-center max-md:flex-col max-md:items-start mb-2">
-          <div className="flex gap-2 items-center">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-center mb-4">
+          <div>
             <Label htmlFor="from" className="font-medium">From: </Label>
-            <Datepicker name="from" className="max-w-44"
+            <Datepicker name="from" className="w-full"
               value={new Date(params.startDate)} onChange={(e)=>onStartDateChange(e)} />
           </div>
-          <div className="flex gap-2 items-center">
+          <div>
             <Label htmlFor="to" className="font-medium">To: </Label>
-            <Datepicker name="to" className="max-w-44"
+            <Datepicker name="to" className="w-full"
               value={new Date(params.endDate)} onChange={(e)=>onEndDateChange(e)} />
           </div>
-          <div className="flex gap-2 items-center">
+          <div>
             <Label htmlFor="product" className="font-medium">Product: </Label>
             <ProductSelect session={session} product={product} setProduct={setProduct} />
           </div>
-          <div className="flex gap-2 items-center">
+          <div>
             <Label htmlFor="category" className="font-medium">Category: </Label>
             <CategorySelect session={session} category={category} setCategory={setCategory} />
           </div>
-          <Button onClick={handleDownload}>Download</Button>
-        </div>
+          <button className={cn("bg-shelf-blue w-15 text-white py-2 px-5 md:mt-5", 
+            "rounded-lg h-10 flex items-center justify-center")} type="button" 
+              onClick={handleDownload}>Download</button>
       </div>
       <div className="overflow-x-auto">
         <SalesReportTable reports={reports} isLoading={isLoading} error={error} />

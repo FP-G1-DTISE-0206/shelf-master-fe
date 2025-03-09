@@ -35,13 +35,9 @@ const useUploadImage = () => {
 
       return newUploadedUrls; // Return the URLs for external use if needed
     } catch (error: unknown) {
-      let errorMessage = "Upload failed: An unknown error occurred";
-      if (error instanceof Error) {
-        errorMessage = `Upload failed: ${error.message}`;
-      } else if (typeof error === "object" && error !== null && "response" in error) {
-        const err = error as { response?: { data?: { message?: string } } };
-        errorMessage = `Upload failed: ${err.response?.data?.message || "Unknown server error"}`;
-      }
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (error instanceof Error ? error.message : "An unknown error occurred");
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false); // Stop loading state

@@ -26,7 +26,7 @@ const fetchReportPreview = async (
 };
 
 const fetchFullReport = async (accessToken: string, creationData: StockReportRequest) => {
-  const { data } = await axios.post(`${API_URL}/product-mutation/stock`, creationData, {
+  const { data } = await axios.post(`${API_URL}/report/stock`, creationData, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   return data.data as StockReportResponse[];
@@ -37,20 +37,54 @@ const generateExcelReport = async (data: StockReportResponse[]) => {
   const worksheet = workbook.addWorksheet("Stock Report");
 
   worksheet.columns = [
-    { header: "ID", key: "id", width: 10 },
+    { header: "Mutation ID", key: "id", width: 10 },
     { header: "Origin", key: "originName", width: 20 },
     { header: "Destination", key: "destinationName", width: 20 },
     { header: "Product ID", key: "productId", width: 15 },
     { header: "Product Name", key: "productName", width: 25 },
-    { header: "Quantity", key: "quantity", width: 10 },
-    { header: "Absolute Quantity", key: "absQuantity", width: 15 },
+    { header: "Quantity", key: "absQuantity", width: 10 },
     { header: "Requester", key: "requesterName", width: 20 },
     { header: "Processor", key: "processorName", width: 20 },
     { header: "Remark", key: "remark", width: 30 },
-    { header: "Processed At", key: "processedAt", width: 20 },
+    { header: "Processed Date", key: "processedAt", width: 20 },
   ] as ExcelJS.Column[];
 
+  const groupedData: Record<string, { productId: number; productName: string; totalQuantity: number }> = {};
+
+  data.forEach((item) => {
+    const key = `${item.productId}-${item.productName}`;
+    if (!groupedData[key]) {
+      groupedData[key] = {
+        productId: item.productId,
+        productName: item.productName,
+        totalQuantity: 0,
+      };
+    }
+    groupedData[key].totalQuantity += item.quantity;
+  });
+
   data.forEach((item) => worksheet.addRow(item));
+
+  Object.values(groupedData).forEach(({ productId, productName, totalQuantity }) => {
+    worksheet.addRow({
+      id: "TOTAL",
+      originName: "",
+      destinationName: "",
+      productId,
+      productName,
+      absQuantity: totalQuantity,
+      requesterName: "",
+      processorName: "",
+      remark: "",
+      processedAt: "",
+    });
+  });
+
+  worksheet.eachRow((row) => {
+    if (row.getCell(1).value === "TOTAL") {
+      row.font = { bold: true };
+    }
+  });
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
@@ -87,10 +121,8 @@ const useStockReport = (accessToken: string) => {
     },
     onError: (error: unknown) => {
       const message =
-        error instanceof Error
-          ? error.message
-          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-            "An unknown error occurred";
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (error instanceof Error ? error.message : "An unknown error occurred");
       showToast(message, "error");
     },
   });

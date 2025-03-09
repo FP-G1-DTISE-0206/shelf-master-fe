@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useState, useEffect } from "react";
 import { 
-  Button, TextInput, Select, Label, 
+  Button, TextInput, Select, Label, Pagination, 
 } from "flowbite-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
@@ -95,7 +95,7 @@ const Products = () => {
             session?.user.roles.includes("SUPER_ADMIN") && (
               <Button 
                 className="flex items-center h-10 mt-4 px-2 py-2 rounded-lg" 
-                as={Link} href={"/create-product"}>
+                as={Link} href={"/create-product"} color="dark" >
                 <FontAwesomeIcon icon={faAdd} className="mt-[0.15rem]" />&nbsp;Product
               </Button>
             )
@@ -125,17 +125,19 @@ const Products = () => {
           <AdminProductCard key={product.id} product={product} session={session} warehouse={warehouse} />
         ))}
       </div>
-
       {
-        !isProductLoading && products.length > 0 && totalData && (
-          <div className="flex justify-center mt-4">
-            <Button disabled={page === 1} onClick={() => handlePageChange(page - 1)} className="mr-2">
-              Previous
-            </Button>
-            <span className="my-auto">{`Page ${page}`}</span>
-            <Button disabled={totalData < length} onClick={() => handlePageChange(page + 1)} className="ml-2">
-              Next
-            </Button>
+        !isProductLoading && products?.length > 0 && totalData && ( 
+          <div className="flex overflow-x-auto sm:justify-end">
+            <Pagination
+              currentPage={page}
+              totalPages={
+                totalData
+                  ? Math.ceil(totalData / length)
+                  : 1
+              }
+              onPageChange={handlePageChange}
+              showIcons
+            />
           </div>
         )
       }

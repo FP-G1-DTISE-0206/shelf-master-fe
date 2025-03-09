@@ -29,25 +29,27 @@ const Header: FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleFilter = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-      if (window.location.pathname !== "/search") {
-        router.push("/search?filter=" + e.target.value);
+    debounce((value: string) => {
+      const params = new URLSearchParams(window.location.search);
+      if (value) {
+        params.set("filter", value);
+        setSearch(value);
+      } else {
+        params.delete("filter");
+        setSearch("");
       }
-      setSearch(e.target.value);
+      router.push(`/search?${params.toString()}`);
     }, 500),
-    [setSearch]
+    [router, setSearch]
   );
 
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    handleFilter(value);
+  };
   useEffect(() => {
     if (searchInputRef.current && filter) {
       searchInputRef.current.value = filter;
-      const params = new URLSearchParams(window.location.search);
-      params.delete("filter");
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}?${params.toString()}`
-      );
     }
   }, [filter]);
 
@@ -117,21 +119,36 @@ const Header: FC = () => {
             />
             <TextInput
               ref={searchInputRef}
-              onChange={(e) => {
-                handleFilter(e);
-              }}
+              onChange={onInputChange}
               className="pl-10"
               placeholder="Search..."
+              defaultValue={filter || ""}
             />
           </div>
           {!session && (
-            <div className="flex gap-5 max-lg:me-2">
+            <div className="hidden md:flex gap-5">
               <div className="text-shelf-black hover:cursor-pointer">
                 <Link href="/login">Login</Link>
               </div>
-              <div className="text-shelf-black  hover:cursor-pointer">
+              <div className="text-shelf-black hover:cursor-pointer">
                 <Link href="/register">Register</Link>
               </div>
+            </div>
+          )}
+          {!session && (
+            <div className="md:hidden ml-2">
+              <Dropdown
+                label={<FontAwesomeIcon icon={faUser} />}
+                inline
+                arrowIcon={false}
+              >
+                <DropdownItem>
+                  <Link href="/login">Login</Link>
+                </DropdownItem>
+                <DropdownItem>
+                  <Link href="/register">Register</Link>
+                </DropdownItem>
+              </Dropdown>
             </div>
           )}
           {session && (

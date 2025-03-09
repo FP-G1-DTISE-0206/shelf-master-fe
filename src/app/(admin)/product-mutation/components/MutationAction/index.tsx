@@ -72,11 +72,11 @@ const MutationAction: FC<MutationActionProps> = ({
         && mutation.originType === MutationTypeEnum.WAREHOUSE.toString())
         && (
           <>
-            <Button color="failure" onClick={()=>{
+            <Button size="xs" color="failure" onClick={()=>{
               setActionType("reject");
               setOpenModalRejection(true)
             }}>Reject</Button>
-            <Button onClick={()=>{
+            <Button size="xs" onClick={()=>{
               setActionType("approve");
               setOpenModalConfirmation(true)
             }}>Approve</Button>
@@ -86,7 +86,7 @@ const MutationAction: FC<MutationActionProps> = ({
       {
         (mutation.destinationId == warehouse.id 
         && mutation.destinationType === MutationTypeEnum.WAREHOUSE.toString()) && (
-          <Button color="failure" onClick={()=>{
+          <Button size="xs" color="failure" onClick={()=>{
             setActionType("cancel");
             setOpenModalConfirmation(true)
           }}>Cancel</Button>

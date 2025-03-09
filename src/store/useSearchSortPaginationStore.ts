@@ -19,7 +19,7 @@ export interface SearchSortPaginationState {
 
 export const useSearchSortPaginationStore = create<SearchSortPaginationState>((set) => ({
   page: 1,
-  length: 10,
+  length: 12,
   field: 'id',
   order: 'asc',
   search: '',
