@@ -37,6 +37,7 @@ const generateExcelReport = async (data: StockReportResponse[]) => {
   const worksheet = workbook.addWorksheet("Stock Report");
 
   worksheet.columns = [
+    { header: "Type", key: "type", width: 10 },
     { header: "Mutation ID", key: "id", width: 10 },
     { header: "Origin", key: "originName", width: 20 },
     { header: "Destination", key: "destinationName", width: 20 },
@@ -62,12 +63,13 @@ const generateExcelReport = async (data: StockReportResponse[]) => {
     }
     groupedData[key].totalQuantity += item.quantity;
   });
-
-  data.forEach((item) => worksheet.addRow(item));
-
+  
+  data.forEach((item) => worksheet.addRow({ type: "DATA", ...item }));
+  
   Object.values(groupedData).forEach(({ productId, productName, totalQuantity }) => {
-    worksheet.addRow({
-      id: "TOTAL",
+    const totalRow = worksheet.addRow({
+      type: "TOTAL",
+      id: "",
       originName: "",
       destinationName: "",
       productId,
@@ -78,12 +80,13 @@ const generateExcelReport = async (data: StockReportResponse[]) => {
       remark: "",
       processedAt: "",
     });
-  });
-
-  worksheet.eachRow((row) => {
-    if (row.getCell(1).value === "TOTAL") {
-      row.font = { bold: true };
-    }
+    
+    totalRow.font = { bold: true };
+    totalRow.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFFF99" },
+    };
   });
 
   const buffer = await workbook.xlsx.writeBuffer();
