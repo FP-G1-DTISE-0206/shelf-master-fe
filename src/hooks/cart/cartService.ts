@@ -1,20 +1,25 @@
 import axios from "axios";
 import { CartItem } from "@/types/cart";
 
-const API_URL = "http://localhost:8080/api/v1/cart";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart`;
 
 const getAuthHeaders = (token: string | undefined) => {
-  if(!token) throw new Error("User is not authenticated");
+  if (!token) throw new Error("User is not authenticated");
   return {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   };
 };
 
-
-export const getCart = async (token: string): Promise<{ cartItems: CartItem[]; totalQuantity: number; totalPrice: number; }> => {
+export const getCart = async (
+  token: string
+): Promise<{
+  cartItems: CartItem[];
+  totalQuantity: number;
+  totalPrice: number;
+}> => {
   const response = await axios.get(`${API_URL}`, getAuthHeaders(token));
   return response.data.data;
 };
@@ -24,7 +29,11 @@ export const addToCart = async (
   productId: number,
   quantity: number
 ): Promise<CartItem> => {
-  const response = await axios.post(API_URL, { productId, quantity }, getAuthHeaders(token));
+  const response = await axios.post(
+    API_URL,
+    { productId, quantity },
+    getAuthHeaders(token)
+  );
   return response.data;
 };
 
@@ -33,10 +42,18 @@ export const updateCartItem = async (
   cartId: number,
   quantity: number
 ): Promise<CartItem> => {
-  const response = await axios.put(`${API_URL}/${cartId}`, { quantity }, getAuthHeaders(token));
+  const response = await axios.put(
+    `${API_URL}/${cartId}`,
+    { quantity },
+    getAuthHeaders(token)
+  );
   return response.data;
 };
 
-export const removeCartItem = async (token: string, userId: string, cartId: number) => {
+export const removeCartItem = async (
+  token: string,
+  userId: string,
+  cartId: number
+) => {
   await axios.delete(`${API_URL}/${cartId}`, getAuthHeaders(token));
 };
