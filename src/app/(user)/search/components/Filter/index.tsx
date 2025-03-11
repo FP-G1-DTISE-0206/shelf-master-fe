@@ -70,7 +70,8 @@ const FilterComponent: FC = () => {
       <div className="flex justify-between items-center mb-2">
         <h2 className="font-semibold text-2xl">Filters</h2>
         {isSmallScreen && (
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="text-lg"
           >

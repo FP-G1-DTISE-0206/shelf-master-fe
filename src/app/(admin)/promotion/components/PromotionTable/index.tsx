@@ -126,7 +126,7 @@ const PromotionTable: FC = () => {
             )}
             {!isLoading && promotion?.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4}>No admins found.</TableCell>
+                <TableCell colSpan={4}>No promotions found.</TableCell>
               </TableRow>
             )}
             {!isLoading && error && (
