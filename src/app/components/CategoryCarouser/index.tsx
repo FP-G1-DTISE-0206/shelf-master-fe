@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import useSimpleCategory from "@/hooks/category/useSimpleCategory";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +11,6 @@ import Link from "next/link";
 import CustomSpinner from "@/components/CustomSpinner";
 
 const CategoryCarousel = () => {
-  const router = useRouter();
   const { categories = [] } = useSimpleCategory();
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(5);
