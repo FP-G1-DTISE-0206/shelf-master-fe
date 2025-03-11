@@ -40,7 +40,7 @@ const MutationTable: FC = () => {
   }
 
   const handleFilter = (type: MutationTypeResponse) => {
-    setParams({ ...params, mutationTypeId: type.id })
+    setParams({ ...params, mutationTypeId: type.id, start: 0 })
   }
 
   const onPageChange = (page: number) => {

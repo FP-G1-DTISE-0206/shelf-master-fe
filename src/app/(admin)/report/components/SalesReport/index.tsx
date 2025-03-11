@@ -48,13 +48,13 @@ const SalesReport: FC<SalesReportProps> = ({
         const adjustedEndDate = new Date(newDate);
         adjustedEndDate.setDate(adjustedEndDate.getDate() + 31);
         setParams({ ...params, startDate: newDate, 
-          endDate: adjustedEndDate.toISOString().split("T")[0]});
+          endDate: adjustedEndDate.toISOString().split("T")[0], start: 0});
         return;
       } else if(diffInDays < 0) {
         showToast(`Range date can't be less than 1 days`, "error");
         return;
       }
-      setParams({ ...params, startDate:  newDate});
+      setParams({ ...params, startDate:  newDate, start: 0});
     }
   };
   
@@ -69,37 +69,37 @@ const SalesReport: FC<SalesReportProps> = ({
         const adjustedStartDate = new Date(newDate);
         adjustedStartDate.setDate(adjustedStartDate.getDate() - 31);
         setParams({ ...params, startDate: adjustedStartDate.toISOString().split("T")[0], 
-          endDate: newDate });
+          endDate: newDate, start: 0 });
         return;
       } else if(diffInDays < 0) {
         showToast(`Range date can't be less than 1 days`, "error");
         return;
       }
-      setParams({ ...params, startDate:  newDate});
+      setParams({ ...params, startDate:  newDate, start: 0});
     }
   };
   
   useEffect(() => {
     if(warehouse.id != 0) {
-      setParams({ ...params, warehouseId: warehouse.id })
+      setParams({ ...params, warehouseId: warehouse.id, start: 0 })
     } else {
-      setParams({ ...params, warehouseId: null })
+      setParams({ ...params, warehouseId: null, start: 0 })
     }
   }, [warehouse])
   
   useEffect(() => {
     if(product.id != 0) {
-      setParams({ ...params, productId: product.id })
+      setParams({ ...params, productId: product.id, start: 0 })
     } else {
-      setParams({ ...params, productId: null })
+      setParams({ ...params, productId: null, start: 0 })
     }
   }, [product])
   
   useEffect(() => {
     if(category.id != 0) {
-      setParams({ ...params, categoryId: category.id })
+      setParams({ ...params, categoryId: category.id, start: 0 })
     } else {
-      setParams({ ...params, categoryId: null })
+      setParams({ ...params, categoryId: null, start: 0 })
     }
   }, [category])
 
