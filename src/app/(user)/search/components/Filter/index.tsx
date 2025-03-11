@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from "react";
 import { Button, Checkbox, Label, Select } from "flowbite-react";
-import { SimpleProductReq } from "@/hooks/product/useSimpleProduct";
 import useSimpleCategory from "@/hooks/category/useSimpleCategory";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
