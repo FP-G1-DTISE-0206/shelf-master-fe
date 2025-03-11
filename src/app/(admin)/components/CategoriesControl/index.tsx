@@ -1,7 +1,10 @@
 import { cn } from "@/utils";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Sidebar, TextInput, Checkbox } from "flowbite-react";
+import { 
+  Button, Sidebar, 
+  TextInput, Checkbox,  
+} from "flowbite-react";
 import { FC, useCallback, useEffect } from "react";
 import { useSidebarAdminStore } from "@/store/useSidebarAdminStore";
 import { debounce } from "lodash";

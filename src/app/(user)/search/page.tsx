@@ -6,10 +6,13 @@ import CustomSpinner from "@/components/CustomSpinner";
 import FilterComponent from "./components/Filter";
 import useSimpleProduct from "@/hooks/product/useSimpleProduct";
 import { useSearchParams } from "next/navigation";
+import { useSearchSortPaginationStore } from "@/store/useSearchSortPaginationStore";
+
 const SearchPage: FC = () => {
-  const { params, setParams, products, isLoading, totalData, error, refetch } =
+  const { params, setParams, products, isLoading, totalData, error } =
     useSimpleProduct();
 
+  const { search } = useSearchSortPaginationStore();
   const searchParams = useSearchParams();
 
   const handlePageChange = (page: number) => {
@@ -17,24 +20,26 @@ const SearchPage: FC = () => {
   };
 
   useEffect(() => {
-    const filter = searchParams.get("filter");
     const categoryParam = searchParams.get("categories");
-    if (filter) {
-      setParams({ ...params, search: filter });
-    } else {
-      setParams({ ...params, search: "" });
-    }
+    const fieldParam = searchParams.get("order")?.split(",")[0];
+    const orderParam = searchParams.get("order")?.split(",")[1];
     if (categoryParam) {
       const categoryArray = categoryParam.split(",").map(Number);
       setParams((prev) => ({
         ...prev,
         categories: categoryArray,
+        search: search,
+        field: fieldParam ? fieldParam : "name",
+        order: orderParam ? orderParam : "asc",
+        start: 0,
       }));
     } else {
-      setParams({ ...params, categories: [] });
+      setParams({ ...params, categories: [], 
+        field: fieldParam ? fieldParam : "name",
+        order: orderParam ? orderParam : "asc",
+        search: search, start: 0 });
     }
-    refetch();
-  }, [searchParams]);
+  }, [searchParams, search]);
 
   return (
     <div>

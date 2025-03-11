@@ -29,27 +29,20 @@ const Header: FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleFilter = useCallback(
-    debounce((value: string) => {
-      const params = new URLSearchParams(window.location.search);
-      if (value) {
-        params.set("filter", value);
-        setSearch(value);
-      } else {
-        params.delete("filter");
-        setSearch("");
+    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+      if(window.location.pathname !== "/search") {
+        router.push("/search?filter="+e.target.value);
       }
-      router.push(`/search?${params.toString()}`);
-    }, 500),
-    [router, setSearch]
+      setSearch(e.target.value);
+    }, 500), [setSearch]
   );
 
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    handleFilter(value);
-  };
   useEffect(() => {
     if (searchInputRef.current && filter) {
       searchInputRef.current.value = filter;
+      const params = new URLSearchParams(window.location.search);
+      params.delete("filter");
+      window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
     }
   }, [filter]);
 
@@ -119,7 +112,7 @@ const Header: FC = () => {
             />
             <TextInput
               ref={searchInputRef}
-              onChange={onInputChange}
+              onChange={handleFilter}
               className="pl-10"
               placeholder="Search..."
               defaultValue={filter || ""}
