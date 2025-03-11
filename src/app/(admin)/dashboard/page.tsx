@@ -16,7 +16,7 @@ const Dashboard = () => {
       <div className="w-full flex bg-gray-100 text-black">
         <div className="w-full p-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <h1 className="text-lg md:text-2xl font-bold">Dashboard</h1>
             <div className="flex items-center gap-4">
               <WarehouseSelect isAllowedAll={true}
                 session={session} warehouse={warehouse} setWarehouse={setWarehouse} />

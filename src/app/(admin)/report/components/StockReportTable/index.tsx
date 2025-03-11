@@ -26,7 +26,7 @@ const StockReportTable: FC<StockReportTableProps> = ({
   const formatOffsetDateTime = (offsetDateTime: string): string => {
     const date = new Date(offsetDateTime);
     const zonedDate = toZonedTime(date, 'UTC');
-    return format(zonedDate, "EEEE, dd MMMM yyyy 'at' HH.mm 'UTC'X");
+    return format(zonedDate, "dd MMMM yyyy");
   };
   return (
     <Table hoverable className="min-w-max" id="sales">

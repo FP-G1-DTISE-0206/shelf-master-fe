@@ -11,7 +11,7 @@ export interface SearchPaginationState {
 
 export const useSearchPaginationStore = create<SearchPaginationState>((set) => ({
   page: 1,
-  length: 10,
+  length: 50,
   search: '',
   setPage: (page) => set({ page }),
   setLength: (length) => set({ length }),
