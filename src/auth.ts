@@ -15,6 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 60 * 60 * 1,
   },
   secret: process.env.AUTH_SECRET,
+  trustHost: true,
   debug: process.env.NODE_ENV === "development",
   providers: [
     GoogleProvider({
