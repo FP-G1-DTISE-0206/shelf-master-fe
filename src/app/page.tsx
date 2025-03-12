@@ -4,7 +4,7 @@ import Header from "@/app/components/Header";
 import HeroCard from "./components/HeroCard";
 import NewArrival from "./components/NewArrival";
 import Footer from "./components/Footer";
-import CategoryCarousel from "./components/CategoryCarouser";
+import CategoryCarousel from "./components/CategoryCarousel";
 
 const Home: FC = () => {
   return (

@@ -26,8 +26,17 @@ const SalesReportTable: FC<SalesReportTableProps> = ({
   const formatOffsetDateTime = (offsetDateTime: string): string => {
     const date = new Date(offsetDateTime);
     const zonedDate = toZonedTime(date, 'UTC');
-    return format(zonedDate, "EEEE, dd MMMM yyyy 'at' HH.mm 'UTC'X");
+    return format(zonedDate, "dd MMMM yyyy");
   };
+  
+  const currencyFormatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    currencySign: 'accounting',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+
   return (
     <Table hoverable className="min-w-max" id="sales">
       <TableHead>
@@ -63,7 +72,7 @@ const SalesReportTable: FC<SalesReportTableProps> = ({
             <TableCell>{report.productName}</TableCell>
             <TableCell>{report.categoryName}</TableCell>
             <TableCell>{report.quantity}</TableCell>
-            <TableCell>{report.totalPrice}</TableCell>
+            <TableCell>{currencyFormatter.format(report.totalPrice)}</TableCell>
             <TableCell>{formatOffsetDateTime(report.createdAt)}</TableCell>
           </TableRow>
         ))}

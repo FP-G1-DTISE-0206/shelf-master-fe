@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from "react";
 import { Button, Checkbox, Label, Select } from "flowbite-react";
-import { SimpleProductReq } from "@/hooks/product/useSimpleProduct";
 import useSimpleCategory from "@/hooks/category/useSimpleCategory";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -71,7 +70,8 @@ const FilterComponent: FC = () => {
       <div className="flex justify-between items-center mb-2">
         <h2 className="font-semibold text-2xl">Filters</h2>
         {isSmallScreen && (
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="text-lg"
           >

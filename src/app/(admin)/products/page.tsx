@@ -35,6 +35,7 @@ const Products = () => {
   
   const handleFilter = useCallback(
     debounce((value: string) => {
+      setPage(1);
       setSearch(value);
     }, 700), [setSearch]
   );

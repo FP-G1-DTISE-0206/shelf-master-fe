@@ -37,7 +37,6 @@ const BestSellers: FC<BestSellersProps> = ({
           {!isLoading && populars?.map((product) => (
             <li key={product.id} className="flex justify-between items-center mb-3">
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-gray-200 rounded-lg mr-4"></div>
                 <div>
                   <p className="font-bold">{product.name}</p>
                   <p className="text-sm text-gray-500">
