@@ -11,7 +11,7 @@ const NewArrival: FC = () => {
   } = useSimpleProduct();
 
   return (
-    <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-20 mb-28">
+    <div className="flex flex-col gap-8 max-xl:mt-4 max-xl:mb-4 mt-10 mb-28">
       {isProductLoading && (
         <div className="my-2">
           <CustomSpinner />

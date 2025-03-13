@@ -48,7 +48,7 @@ const CategoryCarousel = () => {
   };
 
   return (
-    <div className="relative w-full flex items-center justify-center">
+    <div className="relative w-full flex items-center justify-center mt-8">
       <button
         className="absolute left-0 z-10 bg-white shadow-md p-2 rounded-full"
         onClick={prev}
