@@ -11,6 +11,7 @@ import { useCartStore } from "@/store/cartStore";
 import { Badge, Button } from "flowbite-react";
 import { HiShoppingCart } from "react-icons/hi";
 import CustomSpinner from "@/components/CustomSpinner";
+import useProductStock from "@/hooks/product/useProductStock";
 
 const ProductPage: FC = () => {
   const { id }: { id: string } = useParams() ?? { id: "" };
@@ -18,6 +19,11 @@ const ProductPage: FC = () => {
   const { addToCartLocal } = useCartStore();
   const queryClient = useQueryClient();
   const { product, isLoading, errorProductDetail } = useSimpleProductDetail(id);
+
+  const { data: productStock, isLoading: isStockLoading } = useProductStock(
+    session?.accessToken ?? "",
+    Number(id) // Convert id to number
+  );
 
   const productImage = product?.images?.map((img) => img.imageUrl) ?? [
     "/images/kohceng-senam.jpg",
@@ -101,6 +107,21 @@ const ProductPage: FC = () => {
                   Rp {product.price.toLocaleString("id-ID")}
                 </p>
               </div>
+
+              <p className="text-sm md:text-base mt-1">
+                <span className="font-semibold">Stock:</span>
+                {isStockLoading ? (
+                  <span className="ml-1 text-gray-400">Loading...</span>
+                ) : (
+                  <span
+                    className={`ml-1 font-bold ${
+                      productStock === 0 ? "text-red-500" : "text-green-600"
+                    }`}
+                  >
+                    {productStock ?? "N/A"}
+                  </span>
+                )}
+              </p>
               <div>
                 <Button
                   color="dark"
