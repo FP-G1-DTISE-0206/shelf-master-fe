@@ -33,7 +33,7 @@ export const useCartQuery = (token: string) => {
   return cartQuery;
 };
 
-export const useCartMutations = (token: string, userId: number) => {
+export const useCartMutations = (token: string) => {
   const queryClient = useQueryClient();
 
   const addMutation = useMutation({

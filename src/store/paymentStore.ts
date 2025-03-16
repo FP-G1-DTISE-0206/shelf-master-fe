@@ -1,24 +1,23 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface PaymentState {
-  snapToken: string | null;
-  isSnapEmbedded: boolean;
-  setSnapToken: (token: string) => void;
-  setSnapEmbedded: (status: boolean) => void;
-}
+type PaymentState = {
+  choosenPaymentMethod: number | null;
+  setChoosenPaymentMethod: (id: number) => void;
+};
 
-export const usePaymentStore = create<PaymentState>()(
-  persist(
+export const usePaymentStore = create(
+  persist<PaymentState>(
     (set) => ({
-      snapToken: null,
-      isSnapEmbedded: false,
-      setSnapToken: (token) => set({ snapToken: token }),
-      setSnapEmbedded: (isEmbedded) => set({ isSnapEmbedded: isEmbedded }),
+      choosenPaymentMethod: null, // Default to null
+      setChoosenPaymentMethod: (id) => set({ choosenPaymentMethod: id }),
     }),
-    { name: "payment-store" }
+    {
+      name: "payment-storage", // Persist payment method to localStorage
+    }
   )
 );
+
 
 
 // import { create } from "zustand";
