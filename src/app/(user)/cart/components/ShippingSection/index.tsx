@@ -9,22 +9,27 @@ import useCourier from "@/hooks/useCourier";
 import { Pricing } from "@/types/biteship";
 import GroupedCouriers from "../GroupedCouriers";
 import { useCartQuery } from "@/hooks/cart/useCartQuery";
+import { useWarehouseStore } from "@/store/warehouseStore";
+import { useAddressStore } from "@/store/addressStore";
+import { useShippingStore } from "@/store/shippingStore";
 
-const ShippingSection: FC = () => {
+interface ShippingSectionProps {
+  setShippingCost: (cost:number) => void;
+}
+
+const ShippingSection: FC<ShippingSectionProps> = ({setShippingCost}) => {
   const { data: session } = useSession();
-  const { error, isLoading, userAddress } = useUserAddress(
-    session?.accessToken as string
-  );
-  const { closestWarehouse, setUserAddressId } = useFindClosest(
-    session?.accessToken as string
-  );
+  const { error, isLoading, userAddress } = useUserAddress(session?.accessToken as string);
+  const { closestWarehouse, setUserAddressId } = useFindClosest(session?.accessToken as string);
 
   const { couriers, setRequest, isLoading: isCourierLoading } = useCourier();
+  
+  const { setWarehouseId } = useWarehouseStore(); 
+  const { setAddressId } = useAddressStore();
+  const { setChoosenShippingCost, setChoosenCourierId } = useShippingStore();
 
-  const [defaultAddress, setDefaultAddress] =
-    useState<UserAddressResponse | null>(null);
-  const [isChangeAddressModalOpen, setIsChangeAddressModalOpen] =
-    useState(false);
+  const [defaultAddress, setDefaultAddress] = useState<UserAddressResponse | null>(null);
+  const [isChangeAddressModalOpen, setIsChangeAddressModalOpen] = useState(false);
   const [choosenCourier, setChoosenCourier] = useState<Pricing | null>(null);
 
   const { data: cartData } = useCartQuery(session?.accessToken as string);
@@ -68,6 +73,35 @@ const ShippingSection: FC = () => {
     console.log(cartData);
   }, [closestWarehouse, defaultAddress, setRequest, cartData]);
 
+  useEffect(() => {
+    if (choosenCourier) {
+      setShippingCost(choosenCourier.price);
+    }
+  }, [choosenCourier, setShippingCost]);
+
+  useEffect(() => {
+    if (closestWarehouse) {
+      setWarehouseId(closestWarehouse.id); // Persist warehouse ID
+      console.log("Persisted Warehouse ID:", closestWarehouse.id);
+    }
+  }, [closestWarehouse, setWarehouseId]);
+  
+  useEffect(() => {
+    if (defaultAddress) {
+      setAddressId(defaultAddress.id); // Persist address ID
+      console.log("Persisted Address ID:", defaultAddress.id);
+    }
+  }, [defaultAddress, setAddressId]);
+
+  useEffect(() => {
+    if (choosenCourier) {
+      setChoosenShippingCost(choosenCourier.price); 
+      setChoosenCourierId(choosenCourier.courier_name); 
+      console.log("Persisted Shipping Cost:", choosenCourier.price);
+      console.log("Persisted Courier ID:", choosenCourier.courier_name);
+    }
+  }, [choosenCourier, setChoosenShippingCost, setChoosenCourierId]);
+  
   if (isLoading) return <CustomSpinner />;
   if (error) return <p className="text-red-500">{error.message}</p>;
   if (!userAddress) return <p className="text-gray-500">No address found.</p>;

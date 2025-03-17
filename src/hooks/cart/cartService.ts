@@ -52,7 +52,6 @@ export const updateCartItem = async (
 
 export const removeCartItem = async (
   token: string,
-  userId: string,
   cartId: number
 ) => {
   await axios.delete(`${API_URL}/${cartId}`, getAuthHeaders(token));
