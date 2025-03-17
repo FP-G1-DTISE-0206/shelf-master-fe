@@ -9,7 +9,7 @@ const getCategories = async (
   search: string
 ): Promise<CategoryResponse[]> => {
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/category?start=0&length=5&search${search}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/category?start=0&length=5&search=${search}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
