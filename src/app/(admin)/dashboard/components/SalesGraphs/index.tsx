@@ -24,6 +24,14 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
     setYearParams({ ...params, warehouseId: warehouse.id })
   }, [warehouse])
 
+  const currencyFormatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    currencySign: 'accounting',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+
   return (
     <>
       <Card className="w-full md:w-2/3 flex">
@@ -34,7 +42,7 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
               key={idx}
               onClick={()=>setType(tab)}
               className={`px-4 py-2 rounded-lg hover:bg-black ${
-                tab === "Weekly" ? "bg-shelf-blue text-white" : "bg-gray-600 text-gray-400"
+                type === tab ? "bg-shelf-blue text-white" : "bg-gray-600 text-gray-400"
               }`}
             >
               {tab}
@@ -52,7 +60,7 @@ const SalesGraphs: FC<SalesGraphsProps> = ({
                 <BarChart data={type === "Weekly" ? graph : yearGraph}>
                   <XAxis dataKey="x" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip formatter={(value) => currencyFormatter.format(value as number)} />
                   <Bar dataKey="y" fill="#3b82f6" />
                 </BarChart>
               ) : (
