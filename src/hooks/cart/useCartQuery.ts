@@ -15,7 +15,6 @@ export const useCartQuery = (token: string) => {
     queryKey: ["cart"],
     queryFn: async () => {
       if (!token) {
-        console.warn("No token or userId provided. Skipping cart fetch.");
         return { cartItems: [], totalQuantity: 0, totalPrice: 0 };
       }
       const data = await getCart(token);
@@ -34,7 +33,7 @@ export const useCartQuery = (token: string) => {
   return cartQuery;
 };
 
-export const useCartMutations = (token: string, userId: number) => {
+export const useCartMutations = (token: string) => {
   const queryClient = useQueryClient();
 
   const addMutation = useMutation({
@@ -55,7 +54,7 @@ export const useCartMutations = (token: string, userId: number) => {
 
   const removeMutation = useMutation({
     mutationFn: (cartId: number) =>
-      removeCartItem(token, userId.toString(), cartId),
+      removeCartItem(token, cartId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["cart"], exact: false });
     },

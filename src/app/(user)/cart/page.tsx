@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import ProductSuggestion from "@/app/components/ProductSuggestion";
 import ShippingSection from "./components/ShippingSection";
 import { useCartStore } from "@/store/cartStore";
@@ -7,8 +7,15 @@ import { useCartQuery } from "@/hooks/cart/useCartQuery";
 import { useSession } from "next-auth/react";
 import { CartItem } from "@/types/cart";
 import ChoosenProduct from "./components/ChoosenProduct";
-import Link from "next/link";
 import CustomSpinner from "@/components/CustomSpinner";
+import PaymentMethodSection from "./components/PaymentMethod";
+
+import { useAddressStore } from "@/store/addressStore";
+import { usePaymentStore } from "@/store/paymentStore";
+import { useWarehouseStore } from "@/store/warehouseStore";
+import { useOrderMutation } from "@/hooks/order/useOrderMutation";
+import { useRouter } from "next/navigation";
+import { useShippingStore } from "@/store/shippingStore";
 
 const Cart: FC = () => {
   const { data: session } = useSession();
@@ -17,8 +24,52 @@ const Cart: FC = () => {
     useCartQuery(accessToken);
   const { setCart, cartItems } = useCartStore();
 
-  const totalPrice = cartData?.totalPrice?.toLocaleString("id-ID") ?? 0;
+  const [shippingCost, setShippingCost] = useState<number>(0);
+
+  const totalPrice = cartData?.totalPrice ?? 0;
+  const formattedTotalPrice = (totalPrice + shippingCost).toLocaleString(
+    "id-ID"
+  );
   const totalQuantity = cartData?.totalQuantity ?? 0;
+
+  // Kerjaan Made ==========================================================
+  const { addressId } = useAddressStore();
+  const { choosenPaymentMethod } = usePaymentStore();
+  const { warehouseId } = useWarehouseStore();
+  const { choosenShippingCost, choosenCourierId } = useShippingStore.getState();
+  const { mutate: createOrder, isPending } = useOrderMutation(accessToken);
+  const router = useRouter();
+
+  const handleCheckout = () => {
+    if (!addressId || !choosenPaymentMethod || !warehouseId) {
+      alert("Please complete all required fields before checking out.");
+      return;
+    }
+
+    if (!choosenCourierId) {
+      alert("Please select a shipping method before proceeding to checkout.");
+      return;
+    }
+    
+
+    const orderRequest = {
+      addressId,
+      paymentMethodId: choosenPaymentMethod,
+      warehouseId,
+      shippingCost: choosenShippingCost,
+      shippingMethod: choosenCourierId,
+    };
+
+    console.log("Creating Order with Data:", orderRequest);
+
+    createOrder(orderRequest, {
+      onSuccess: () => {
+        router.push("/payment");
+      },
+    });
+  };
+
+  // Kerjaan Made ==========================================================
 
   useEffect(() => {
     if (cartData) {
@@ -51,7 +102,8 @@ const Cart: FC = () => {
           </div>
         </div>
         <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3 space-y-10">
-          <ShippingSection />
+          <ShippingSection setShippingCost={setShippingCost} />
+          <PaymentMethodSection />
           <div className="w-full h-auto rounded-2xl bg-shelf-white lg:bg-transparent p-4 lg:grow-3">
             <h3 className="text-xl font-semibold lg:text-[32px]">
               Order Summary
@@ -62,11 +114,15 @@ const Cart: FC = () => {
                   <tr className="lg:text-xl">
                     <td className="py-2">{totalQuantity} ITEM(S)</td>
 
-                    <td className="text-right py-2">{`Rp ${totalPrice}`}</td>
+                    <td className="text-right py-2">{`Rp ${totalPrice.toLocaleString(
+                      "id-ID"
+                    )}`}</td>
                   </tr>
                   <tr className="lg:text-xl">
                     <td className="py-2">Delivery</td>
-                    <td className="text-right py-2">Rp 6.999</td>
+                    <td className="text-right py-2">{`Rp ${shippingCost.toLocaleString(
+                      "id-ID"
+                    )}`}</td>
                   </tr>
                   <tr className="lg:text-xl">
                     <td className="py-2">Sales Tax</td>
@@ -74,18 +130,23 @@ const Cart: FC = () => {
                   </tr>
                   <tr className="font-bold lg:text-2xl">
                     <td className="py-2">Total</td>
-                    <td className="text-right py-2">{`Rp ${(
-                      (cartData?.totalPrice ?? 0) + 6999
-                    ).toLocaleString("id-ID")}`}</td>
+                    <td className="text-right py-2">{`Rp ${formattedTotalPrice}`}</td>
                   </tr>
                 </tbody>
               </table>
 
-              <Link href="/checkout">
+              {/* <Link href="/payment">
                 <button className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]">
                   CHECKOUT
                 </button>
-              </Link>
+              </Link> */}
+              <button
+                className="bg-shelf-black mt-4 xl:py-[15.5px] py-[13px] lg:px-10 px-[16px] w-full rounded-lg text-shelf-white xl:font-semibold font-medium xl:text-[14px] text-[12px]"
+                onClick={handleCheckout}
+                disabled={isPending}
+              >
+                {isPending ? "Processing..." : "CHECKOUT"}
+              </button>
             </div>
           </div>
         </div>
