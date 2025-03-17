@@ -47,7 +47,7 @@ const CategorySearchField: FC<CategorySearchFieldProps> = ({
     if (selectedOption) {
       setSelectedCategories([...selectedCategories, 
         {id: selectedOption.value, name: selectedOption.label}])
-      form.setFieldValue(field.name, selectedOption.value);
+      form.setFieldValue(field.name, [...field.value, selectedOption.value]);
     }
   };
 
@@ -59,7 +59,7 @@ const CategorySearchField: FC<CategorySearchFieldProps> = ({
 
   return (
     <>
-      <AsyncSelect
+      <AsyncSelect cacheOptions 
         instanceId="assigned-warehouse-select"
         defaultOptions={warehouseOptions}
         loadOptions={(inputValue) =>
