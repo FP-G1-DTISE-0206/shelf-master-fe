@@ -9,7 +9,7 @@ const getProducts = async (
   search: string
 ): Promise<ProductResponse[]> => {
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/product?start=0&length=5&search${search}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/product?start=0&length=5&search=${search}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
