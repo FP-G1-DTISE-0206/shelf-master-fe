@@ -74,7 +74,7 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
     mutationFn: async () => {
       if (!session?.accessToken || !session.user.id)
         throw new Error("User must be logged in.");
-      await removeCartItem(session.accessToken, session.user.id, product.cartId);
+      await removeCartItem(session.accessToken, product.cartId);
     },
     onSuccess: async () => {
       removeLocal(product.cartId);
@@ -128,7 +128,7 @@ const ChoosenProduct: FC<Props> = ({ product }) => {
               </span>
             )}
           </p>
-          
+
           <p className="text-sm md:text-base mt-1">
             Weight: {productDetail?.weight}
           </p>

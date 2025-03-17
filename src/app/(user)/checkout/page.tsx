@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { usePaymentStore } from "@/store/paymentStore";
+// import { usePaymentStore } from "@/store/paymentStore";
 import { useSession } from "next-auth/react";
-import PaymentButton from "@/app/(user)/payment/components/PaymentButton";
+// import PaymentButton from "@/app/(user)/payment/components/PaymentButton";
 //import useCartStore from "@/store/cartStore";
 
 const CheckoutPage = () => {
-  const { snapToken, setSnapToken } = usePaymentStore();
+  // const { snapToken, setSnapToken } = usePaymentStore();
   const { data: session } = useSession();
   //const totalAmount = useCartStore((state) => state.totalAmount);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
       console.log("✅ Transaction Token:", transactionData);
 
       if (transactionData) {
-        setSnapToken(transactionData);
+        // setSnapToken(transactionData);
       }
     } catch (error) {
       console.error("❌ Error fetching payment token:", error);
@@ -86,7 +86,7 @@ const CheckoutPage = () => {
         {loading ? "Fetching..." : "Get Payment Token"}
       </button>
 
-      {snapToken && <PaymentButton />}
+      {/* {snapToken && <PaymentButton />} */}
     </div>
   );
 };
