@@ -65,7 +65,7 @@ const RequestStockModal: FC<RequestStockModalProps> = ({
           {({ setSubmitting, isSubmitting, values }) => (
             <Form className="flex flex-col w-full">
               <Modal.Header>
-                Add Stock
+                Request Stock
               </Modal.Header>
               <Modal.Body>
                 <div>

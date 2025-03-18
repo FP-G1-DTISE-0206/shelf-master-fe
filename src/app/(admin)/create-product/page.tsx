@@ -88,8 +88,8 @@ const CreateProduct: FC = () => {
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, isSubmitting }) => (
-            <Form className="flex w-full">
-              <div className="w-1/2 p-4 space-y-4">
+            <Form className="flex flex-col md:flex-row w-full">
+              <div className="w-full md:w-1/2 p-4 space-y-4">
                 <div>
                   <Label htmlFor="name" className="font-medium">Product Name</Label>
                   <Field as={TextInput} id="name" name="name" placeholder="Enter product name" />
@@ -165,7 +165,7 @@ const CreateProduct: FC = () => {
                   })}
                 </div>
               </div>
-              <div className="w-1/2 p-4 space-y-4">
+              <div className="w-full md:w-1/2 p-4 space-y-4">
                 <div>
                   <Label className="font-medium">Product Gallery</Label>
                   <div className="border-dashed relative border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center">
