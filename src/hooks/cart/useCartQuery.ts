@@ -59,6 +59,9 @@ export const useCartMutations = (token: string) => {
       await queryClient.invalidateQueries({ queryKey: ["cart"], exact: false });
     },
   });
+  
+  
+  
 
   return { addMutation, updateMutation, removeMutation };
 };
